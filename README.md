@@ -162,3 +162,23 @@ The passenger-facing monitor was rebuilt from scratch to eliminate conflicts fro
 - advertising is a true full-screen mode and rotates every 6 seconds
 - advertising includes image-based Austrian / Vienna / lounge cards plus Lufthansa Group
 - pause keeps advertising visible and adds only the red closed-counter strip at the top
+
+
+## Version 8
+
+- document/passport verification now triggers a short success animation on the passenger display
+- if the active passenger is Business Class, the passenger-facing visual theme switches from Austrian red to `#2B3087`
+- Business theme applies to journey, success, seat-selection and related passenger-specific screens
+- a BUSINESS badge is shown in the display branding for Business Class passengers
+- after the passenger flow ends, the active-flight screen returns to the normal Austrian-red counter theme
+
+
+## Version 9 – seat rules
+- no seat is assigned automatically when a passenger is opened
+- **Sitz automatisch** is now the only way to trigger automatic seat assignment
+- Business Class automatic assignment uses rows 2–5
+- Economy automatic assignment uses rows 6 onward
+- rows 2–5 are marked as the Business zone on the passenger seat map
+- an Economy passenger may manually select a seat in rows 2–5 for a simulated €12 seat-selection fee
+- the €12 charge is stored in the transaction list
+- manual internal seat selection and passenger-display seat map remain available

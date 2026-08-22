@@ -68,7 +68,7 @@ body{position:relative}
 #smGrid{display:grid;grid-template-columns:repeat(3,2.25vw) 1vw repeat(3,2.25vw);gap:.25vw;align-content:center}
 .s{height:1.55vw;min-height:15px;border-radius:.28vw;border:1px solid #cbd1d7;background:#fff;display:grid;place-items:center;font-size:.5vw;font-weight:750}
 .s.occ{background:#d9dde1;color:#969da4;border-color:#d9dde1}
-.s.sel{background:#d71920;color:#fff;border-color:#d71920;animation:pulse 1s infinite}
+.s.sel{background:#d71920;color:#fff;border-color:#d71920;animation:pulse 1s infinite}.s.biz:not(.occ):not(.sel){border:2px solid #2B3087;color:#2B3087;background:#f3f4ff}
 .aisle{width:1vw}
 @keyframes pulse{50%{transform:scale(1.12);box-shadow:0 0 0 .28vw rgba(215,25,32,.12)}}
 
@@ -117,6 +117,26 @@ body{position:relative}
 .ad.lounge{background-image:url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=2400&q=88')}
 .ad.group{background:linear-gradient(135deg,#071d3d,#0b3975)}
 .version{position:absolute;right:12px;bottom:8px;z-index:1000;font-size:10px;opacity:.4}
+
+:root{--business:#2B3087}
+body.business #idle,
+body.business #flight,
+body.business #success{background:var(--business)}
+body.business .osmark{color:var(--business)}
+body.business #journey{background:linear-gradient(135deg,var(--business) 0 46%,#f7f7f7 46% 100%)}
+body.business .arrow,
+body.business .bp-arrow,
+body.business .bp-logo,
+body.business .label[style*="color:#d71920"]{color:var(--business)!important}
+body.business .current-seat,
+body.business .s.sel,
+body.business .step.current{background:var(--business);border-color:var(--business)}
+body.business .ready,
+body.business .success-icon,
+body.business .check{color:var(--business)}
+body.business #boarding .bp-logo{color:var(--business)}
+.business-badge{display:none;padding:.45vw .7vw;border-radius:999px;background:#fff;color:var(--business);font-size:.8vw;font-weight:900;letter-spacing:.05em;margin-left:.8vw}
+body.business .business-badge{display:inline-block}
 </style>
 </head>
 <body>
@@ -125,7 +145,7 @@ body{position:relative}
 
 <section id="idle" class="screen active">
  <div class="pad">
-  <div class="brand"><div class="osmark">OS</div>Austrian Airlines</div>
+  <div class="brand"><div class="osmark">OS</div>Austrian Airlines <span class="business-badge">BUSINESS</span></div>
   <div><div class="idle-word">SERVUS.</div><div class="idle-small">Welcome to Austrian Check-in at Vienna Airport.<br>Please have your travel documents ready.</div></div>
   <div class="footer"><span>Vienna Airport · Terminal 3</span><span>Have a pleasant flight.</span></div>
  </div>
@@ -133,7 +153,7 @@ body{position:relative}
 
 <section id="flight" class="screen">
  <div class="flight-layout">
-  <div class="brand"><div class="osmark">OS</div>Austrian Airlines</div>
+  <div class="brand"><div class="osmark">OS</div>Austrian Airlines <span class="business-badge">BUSINESS</span></div>
   <div class="flight-main">
    <div>
     <div class="label">Now checking in</div>
@@ -164,7 +184,7 @@ body{position:relative}
 <section id="journey" class="screen">
  <div class="journey-wrap">
   <div class="journey-left">
-   <div class="brand"><div class="osmark">OS</div>Austrian Airlines</div>
+   <div class="brand"><div class="osmark">OS</div>Austrian Airlines <span class="business-badge">BUSINESS</span></div>
    <div id="jName" class="name"></div>
    <div class="label" style="margin-top:2vw">Your flight today</div>
    <div id="jTo" class="to"></div>
@@ -186,12 +206,12 @@ body{position:relative}
 <section id="seatmap" class="screen">
  <div class="seat-shell">
   <div class="seat-copy">
-   <div class="brand"><div class="osmark" style="background:#d71920;color:#fff">OS</div>Austrian Airlines</div>
+   <div class="brand"><div class="osmark" style="background:#d71920;color:#fff">OS</div>Austrian Airlines <span class="business-badge">BUSINESS</span></div>
    <div class="label" style="color:#d71920;margin-top:3vw">Seat selection</div>
    <h1>Choose your seat.</h1>
    <p id="smName"></p>
    <div id="smCurrent" class="current-seat">Proposed seat –</div>
-   <p style="font-size:1.1vw;color:#68717a;line-height:1.5">Tell our check-in agent which available seat you prefer. The agent confirms it on the check-in screen.</p>
+   <p style="font-size:1.1vw;color:#68717a;line-height:1.5">Tell our check-in agent which available seat you prefer. Rows 2–5 are the Business zone; for Economy passengers these seats cost €12.</p>
   </div>
   <div class="cabin"><div id="smGrid"></div></div>
  </div>
@@ -199,7 +219,7 @@ body{position:relative}
 
 <section id="baggage" class="screen">
  <div class="bag-shell">
-  <div class="brand"><div class="osmark">OS</div>Austrian Airlines</div>
+  <div class="brand"><div class="osmark">OS</div>Austrian Airlines <span class="business-badge">BUSINESS</span></div>
   <div class="bag-center"><div class="scale"><div id="bName" style="font-size:1.4vw"></div><div id="bWeight" class="kg">0.0 kg</div><div id="bResult" class="bag-result"></div><div id="bFee" class="bag-fee"></div></div></div>
   <div class="footer"><span>Checked baggage</span><span>Maximum accepted weight per item: 32 kg</span></div>
  </div>
@@ -210,7 +230,7 @@ body{position:relative}
 </section>
 
 <section id="offer" class="screen">
- <div class="pad"><div class="brand"><div class="osmark">OS</div>Austrian Airlines</div><div class="offer-box"><div id="oTitle" class="big"></div><div id="oText" class="sub"></div><div id="oPrice" class="offer-price"></div></div><div class="footer"><span id="oName"></span><span>Please ask our agent for details.</span></div></div>
+ <div class="pad"><div class="brand"><div class="osmark">OS</div>Austrian Airlines <span class="business-badge">BUSINESS</span></div><div class="offer-box"><div id="oTitle" class="big"></div><div id="oText" class="sub"></div><div id="oPrice" class="offer-price"></div></div><div class="footer"><span id="oName"></span><span>Please ask our agent for details.</span></div></div>
 </section>
 
 <section id="boarding" class="screen">
@@ -224,10 +244,10 @@ body{position:relative}
 </section>
 
 <section id="ads" class="screen">
- <div class="ad austrian show"><div class="pad"><div class="brand"><div class="osmark">OS</div>Austrian Airlines</div><div><div class="ad-title">Servus über den Wolken.</div><div class="ad-copy">Discover Austrian hospitality and convenient connections via Vienna.</div></div><div class="footer"><span>Austrian Airlines</span><span>Vienna · Europe · Worldwide</span></div></div></div>
+ <div class="ad austrian show"><div class="pad"><div class="brand"><div class="osmark">OS</div>Austrian Airlines <span class="business-badge">BUSINESS</span></div><div><div class="ad-title">Servus über den Wolken.</div><div class="ad-copy">Discover Austrian hospitality and convenient connections via Vienna.</div></div><div class="footer"><span>Austrian Airlines</span><span>Vienna · Europe · Worldwide</span></div></div></div>
  <div class="ad group"><div class="pad"><div class="brand">Lufthansa Group</div><div><div class="ad-title">One group. Many journeys.</div><div class="ad-copy">Connected travel across Europe and around the world.</div></div><div class="footer"><span>Lufthansa Group</span><span>Connecting people and cultures</span></div></div></div>
  <div class="ad vienna"><div class="pad"><div class="brand">Vienna Airport</div><div><div class="ad-title">Welcome to Vienna.</div><div class="ad-copy">Shopping, restaurants, lounges and connections at Austria's largest airport.</div></div><div class="footer"><span>Vienna Airport</span><span>Enjoy your journey</span></div></div></div>
- <div class="ad lounge"><div class="pad"><div class="brand"><div class="osmark">OS</div>Austrian Airlines</div><div><div class="ad-title">Travel with more comfort.</div><div class="ad-copy">Explore Business Class and premium services for a more relaxed journey.</div></div><div class="footer"><span>Austrian Business Class</span><span>More comfort. More Austria.</span></div></div></div>
+ <div class="ad lounge"><div class="pad"><div class="brand"><div class="osmark">OS</div>Austrian Airlines <span class="business-badge">BUSINESS</span></div><div><div class="ad-title">Travel with more comfort.</div><div class="ad-copy">Explore Business Class and premium services for a more relaxed journey.</div></div><div class="footer"><span>Austrian Business Class</span><span>More comfort. More Austria.</span></div></div></div>
 </section>
 
 <script>
@@ -251,9 +271,9 @@ body{position:relative}
     const occ=new Set(x.occupied||[]);
     let h='';
     for(let r=2;r<=x.rows;r++){
-      ['A','B','C'].forEach(l=>{const seat=r+l;h+=`<div class="s ${occ.has(seat)?'occ':x.current===seat?'sel':''}">${seat}</div>`});
+      ['A','B','C'].forEach(l=>{const seat=r+l;h+=`<div class="s ${occ.has(seat)?'occ':x.current===seat?'sel':''} ${r>=2&&r<=5?'biz':''}">${seat}</div>`});
       h+='<div class="aisle"></div>';
-      ['D','E','F'].forEach(l=>{const seat=r+l;h+=`<div class="s ${occ.has(seat)?'occ':x.current===seat?'sel':''}">${seat}</div>`});
+      ['D','E','F'].forEach(l=>{const seat=r+l;h+=`<div class="s ${occ.has(seat)?'occ':x.current===seat?'sel':''} ${r>=2&&r<=5?'biz':''}">${seat}</div>`});
     }
     document.getElementById('smGrid').innerHTML=h;
   }
@@ -261,13 +281,17 @@ body{position:relative}
     if(!p||!p.mode)p={mode:'idle'};
     lastPayload=p;
     currentMode=p.mode;
+    const isBusiness=(p.class==="Business")||(p.p&&((p.p.class==="Business")||(p.p.travelClass==="Business")));
+    document.body.classList.toggle("business",!!isBusiness);
     setClosed(p.paused);
 
     if(p.mode==='idle'){show('idle');return}
     if(p.mode==='ads'){show('ads');return}
 
     if(p.mode==='flight'){
-      const x=p.f; show('flight');
+      const x=p.f;
+      document.body.classList.toggle("business",!!x.businessMode);
+      show('flight');
       document.getElementById('fDest').textContent=(x.to||'').toUpperCase();
       document.getElementById('fNo').textContent=x.number||'';
       document.getElementById('fIata').textContent=x.iata||'';
