@@ -36,12 +36,6 @@ input,select,textarea{width:100%;border:1px solid #ced4db;border-radius:7px;back
 .toast{position:fixed;right:20px;bottom:20px;background:#252b31;color:#fff;border-radius:8px;padding:10px 13px;font-size:8px;opacity:0;transform:translateY(6px);transition:.2s;z-index:70}.toast.show{opacity:1;transform:none}
 .empty{padding:30px;text-align:center;font-size:9px;color:var(--muted)}
 @media(max-width:1100px){.stats{grid-template-columns:repeat(2,1fr)}.grid2,.grid3,.workarea,.cardbody{grid-template-columns:1fr}.flightrow{grid-template-columns:70px 80px 1fr 80px}}
-
-.seat.business-zone:not(.occupied):not(.selected){
-  border:2px solid #2B3087;
-  color:#2B3087;
-  background:#f4f4ff;
-}
 </style>
 </head>
 <body>
@@ -201,8 +195,17 @@ function makeState(){
  ps.filter(p=>p.status==="Checked-in").forEach((p,i)=>p.bags=[{tag:`OS${String(600000+i)}`,weight:18+(i%5),type:"Standard",fee:0}]);
  return {passengers:ps,transactions:[],activePassengerId:null,activeFlight:null,paused:false,counter:"351",created:Date.now()};
 }
-function autoSeat(ac,n){const rows=ac==="B787-9"?35:28;return `${2+(n%(rows-1))}${["A","B","C","D","E","F"][n%6]}`}
-let state=load();
+function autoSeat(){
+ const p=activeP();if(!p)return showToast("Kein Passagier geöffnet");
+ const seats=availableSeatsFor(p);if(!seats.length)return showToast("Keine freien Sitze in dieser Reiseklasse");
+ const preferred=seats.filter(s=>["A","C","D","F"].includes(s.slice(-1)));
+ const pool=preferred.length?preferred:seats;
+ p.seat=pool[Math.floor(Math.random()*pool.length)];
+ save();
+ sendDisplay({mode:"success",title:"Seat assigned",text:`Seat ${p.seat}`,flight:p.flight,class:p.class});
+ setTimeout(()=>sendJourney(),1800);
+ showToast(`Automatisch Sitz ${p.seat} zugewiesen`);
+}
 function load(){
   try{
     const s=JSON.parse(localStorage.getItem(STORE))||makeState();
@@ -309,14 +312,9 @@ function availableSeatsFor(p){
  const f=flight(p.flight),rows=f.aircraft==="B787-9"?35:28;
  const occupied=new Set(state.passengers.filter(x=>x.flight===p.flight&&x.seat&&x.id!==p.id).map(x=>x.seat));
  const seats=[];
- const start=p.class==="Business"?2:6;
- const end=p.class==="Business"?5:rows;
- for(let r=start;r<=end;r++){
-   ["A","B","C","D","E","F"].forEach(l=>{
-     const s=r+l;
-     if(!occupied.has(s))seats.push(s);
-   });
- }
+ const start=p.class==="Business"?1:5;
+ const end=p.class==="Business"?4:rows;
+ for(let r=start;r<=end;r++)["A","B","C","D","E","F"].forEach(l=>{const s=r+l;if(!occupied.has(s))seats.push(s)});
  return seats;
 }
 function autoSeat(){
@@ -335,60 +333,51 @@ function showSeatMapDisplay(){
  const p=activeP();if(!p)return showToast("Kein Passagier geöffnet");
  const f=flight(p.flight),rows=f.aircraft==="B787-9"?35:28;
  const occupied=state.passengers.filter(x=>x.flight===p.flight&&x.seat&&x.id!==p.id).map(x=>x.seat);
- sendDisplay({mode:"seatmap",p:{name:p.name,flight:p.flight,to:p.destination,iata:p.iata,current:p.seat||"",aircraft:f.aircraft,rows,occupied}});
+ sendDisplay({mode:"seatmap",p:{name:p.name,flight:p.flight,to:p.destination,iata:p.iata,current:p.seat||"",aircraft:f.aircraft,rows,occupied,travelClass:p.class,businessRows:4,businessColor:"#2B3087",businessFee:12}});
  showToast("Sitzplan wird am Passagierdisplay angezeigt");
 }
 function renderSeats(){
- const p=activeP();if(!p){$("#seatView").className="panel empty";$("#seatView").innerHTML="Kein aktiver Passagier.";return}
- const f=flight(p.flight),rows=f.aircraft==="B787-9"?35:28,occupied=new Set(state.passengers.filter(x=>x.flight===p.flight&&x.seat&&x.id!==p.id).map(x=>x.seat));
- let html=`<div class="panelhead"><div><span class="kicker">${f.aircraft}</span><h2>${p.flight} · ${p.name}</h2></div><strong>Sitz ${p.seat||"–"}</strong></div><div class="seatmap">`;
- for(let r=2;r<=rows;r++){["A","B","C"].forEach(l=>{const s=r+l;html+=`<button class="seat ${occupied.has(s)?"occupied":p.seat===s?"selected":""} ${r>=2&&r<=5?"business-zone":""}" ${occupied.has(s)?"disabled":""} data-action="selectSeat" data-seat="${s}" title="${r>=2&&r<=5?"Business-Zone · Economy +12 €":"Standard"}">${s}</button>`});html+=`<span class="aisle"></span>`;["D","E","F"].forEach(l=>{const s=r+l;html+=`<button class="seat ${occupied.has(s)?"occupied":p.seat===s?"selected":""} ${r>=2&&r<=5?"business-zone":""}" ${occupied.has(s)?"disabled":""} data-action="selectSeat" data-seat="${s}" title="${r>=2&&r<=5?"Business-Zone · Economy +12 €":"Standard"}">${s}</button>`})}
- html+=`</div>`;$("#seatView").className="panel";$("#seatView").innerHTML=html
+ const box=$("#seatMap"),p=activeP();
+ if(!box)return;
+ if(!p){box.innerHTML='<div class="empty">Kein Passagier geöffnet.</div>';return}
+ const f=flight(p.flight),rows=f.aircraft==="B787-9"?35:28;
+ const occupied=new Set(state.passengers.filter(x=>x.flight===p.flight&&x.seat&&x.id!==p.id).map(x=>x.seat));
+ let h=`<div style="padding:14px 18px 0"><strong>${f.aircraft} · ${p.flight}</strong><br><span style="font-size:9px;color:#68717a">Reihen 1–4 Business · Economy kann diese Sitze für 12 € wählen</span></div>`;
+ h+='<div class="seatmap">';
+ for(let r=1;r<=rows;r++){
+   ["A","B","C"].forEach(l=>{
+     const s=r+l,occ=occupied.has(s),sel=p.seat===s,biz=r<=4;
+     h+=`<button class="seat ${occ?"occupied":""} ${sel?"selected":""}" ${occ?"disabled":""} data-action="selectSeat" data-seat="${s}" style="${biz&&!sel&&!occ?"border-color:#2B3087;color:#2B3087;font-weight:800":""}">${s}${biz?'<small style="display:block;font-size:6px">BUS</small>':""}</button>`;
+   });
+   h+='<span class="aisle"></span>';
+   ["D","E","F"].forEach(l=>{
+     const s=r+l,occ=occupied.has(s),sel=p.seat===s,biz=r<=4;
+     h+=`<button class="seat ${occ?"occupied":""} ${sel?"selected":""}" ${occ?"disabled":""} data-action="selectSeat" data-seat="${s}" style="${biz&&!sel&&!occ?"border-color:#2B3087;color:#2B3087;font-weight:800":""}">${s}${biz?'<small style="display:block;font-size:6px">BUS</small>':""}</button>`;
+   });
+ }
+ h+='</div>';box.innerHTML=h;
+}
+function confirmPaidSeat(s){
+ const p=activeP();if(!p)return;
+ p.seat=s;
+ state.transactions.push({id:"SEAT-"+Date.now(),passengerId:p.id,passenger:p.name,type:"Seat selection",amount:12,flight:p.flight,seat:s,time:new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"})});
+ save();closeModal();renderSeats();
+ sendDisplay({mode:"success",title:"Seat confirmed",text:`Seat ${s} · €12.00`,flight:p.flight,class:p.class});
+ setTimeout(()=>sendJourney(),1800);
+ showToast(`Sitz ${s} gewählt · 12 € Aufpreis`);
 }
 function selectSeat(s){
  const p=activeP();if(!p)return;
- const row=parseInt(s,10);
- const isBusinessZone=row>=2&&row<=5;
-
- if(isBusinessZone && p.class!=="Business"){
-   openModal(`<h2>Business-Zone · Sitz ${s}</h2>
-     <p>Reihen 2–5 sind die Business-Zone. Für Economy-Passagiere kostet die Auswahl dieses Sitzplatzes <strong>12,00 €</strong>.</p>
-     <div class="modalactions">
-       <button class="ghost" data-action="closeModal">Abbrechen</button>
-       <button class="primary" data-action="confirmPaidSeat" data-seat="${s}">12 € berechnen & Sitz wählen</button>
-     </div>`);
+ const row=Number(String(s).match(/^\d+/)[0]);
+ const fee=(row<=4 && p.class!=="Business")?12:0;
+ if(fee){
+   openModal(`<h2>Business-Bereich</h2><p>Sitz <strong>${s}</strong> liegt in den Reihen 1–4.</p><div style="margin:18px 0;padding:14px;background:#f5f5fb;border:1px solid #d9daef;border-radius:9px"><span style="font-size:9px;color:#68717a">Sitzplatz-Aufpreis</span><strong style="display:block;font-size:24px;color:#2B3087;margin-top:4px">12,00 €</strong></div><div class="modalactions"><button class="ghost" data-action="closeModal">Abbrechen</button><button class="primary" data-action="confirmPaidSeat" data-seat="${s}">12 € berechnen & Sitz wählen</button></div>`);
    return;
  }
- applySeatSelection(s,0);
-}
-
-function confirmPaidSeat(s){
- const p=activeP();if(!p)return;
- state.transactions.push({
-   time:new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"}),
-   passenger:p.name,
-   pnr:p.pnr,
-   type:`Seat selection ${s}`,
-   amount:12
- });
- applySeatSelection(s,12);
- closeModal();
-}
-
-function applySeatSelection(s,fee){
- const p=activeP();if(!p)return;
- p.seat=s;
- save();
- renderSeats();
- sendDisplay({
-   mode:"success",
-   title:"Seat confirmed",
-   text:`Seat ${s}${fee?" · €12.00":""}`,
-   flight:p.flight,
-   class:p.class
- });
+ p.seat=s;save();renderSeats();
+ sendDisplay({mode:"success",title:"Seat confirmed",text:`Seat ${s}`,flight:p.flight,class:p.class});
  setTimeout(()=>sendJourney(),1800);
- showToast(`Sitz ${s} gewählt${fee?" · 12 € berechnet":""}`);
+ showToast(`Sitz ${s} gewählt`);
 }
 function randomBagWeight(p){
   const al=allowance(p);
@@ -532,7 +521,7 @@ document.addEventListener("click",e=>{
 $("#modalbg").addEventListener("click",e=>{if(e.target===$("#modalbg"))closeModal()});
 $("#checkinSearch").addEventListener("keydown",e=>{if(e.key==="Enter")searchCheckin()});
 $("#passengerSearch").addEventListener("keydown",e=>{if(e.key==="Enter")searchPassengers()});
-$("#openDisplay").addEventListener("click",()=>window.open("passenger-display.html?v=7","AustrianPassengerDisplay","width=1280,height=800"));
+$("#openDisplay").addEventListener("click",()=>window.open("passenger-display.html?v=9","AustrianPassengerDisplay","width=1280,height=800"));
 function init(){
  updateClock();setInterval(updateClock,1000);renderAll();broadcastSnapshot();
  if(state.paused)sendDisplay({mode:"ads",paused:true,counter:state.counter});

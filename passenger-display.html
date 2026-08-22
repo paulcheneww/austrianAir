@@ -68,7 +68,7 @@ body{position:relative}
 #smGrid{display:grid;grid-template-columns:repeat(3,2.25vw) 1vw repeat(3,2.25vw);gap:.25vw;align-content:center}
 .s{height:1.55vw;min-height:15px;border-radius:.28vw;border:1px solid #cbd1d7;background:#fff;display:grid;place-items:center;font-size:.5vw;font-weight:750}
 .s.occ{background:#d9dde1;color:#969da4;border-color:#d9dde1}
-.s.sel{background:#d71920;color:#fff;border-color:#d71920;animation:pulse 1s infinite}.s.biz:not(.occ):not(.sel){border:2px solid #2B3087;color:#2B3087;background:#f3f4ff}
+.s.biz{border-color:#2B3087;color:#2B3087}.s.biz.occ{background:#d9dde1;color:#969da4;border-color:#d9dde1}.s.sel{background:#d71920;color:#fff;border-color:#d71920;animation:pulse 1s infinite}.s.biz.sel{background:#2B3087;color:#fff;border-color:#2B3087}
 .aisle{width:1vw}
 @keyframes pulse{50%{transform:scale(1.12);box-shadow:0 0 0 .28vw rgba(215,25,32,.12)}}
 
@@ -141,7 +141,7 @@ body.business .business-badge{display:inline-block}
 </head>
 <body>
 <div id="closedStrip">Dieser Schalter ist momentan geschlossen · This counter is temporarily closed</div>
-<div class="version">DISPLAY V7</div>
+<div class="version">DISPLAY V9</div>
 
 <section id="idle" class="screen active">
  <div class="pad">
@@ -210,8 +210,8 @@ body.business .business-badge{display:inline-block}
    <div class="label" style="color:#d71920;margin-top:3vw">Seat selection</div>
    <h1>Choose your seat.</h1>
    <p id="smName"></p>
-   <div id="smCurrent" class="current-seat">Proposed seat –</div>
-   <p style="font-size:1.1vw;color:#68717a;line-height:1.5">Tell our check-in agent which available seat you prefer. Rows 2–5 are the Business zone; Economy passengers can select them for €12.</p>
+   <div id="smCurrent" class="current-seat">No seat selected yet</div><div id="smBusinessInfo" style="margin-top:1vw;font-size:1vw;color:#2B3087;font-weight:850">Rows 1–4 · Business Class</div>
+   <p style="font-size:1.1vw;color:#68717a;line-height:1.5">Tell our check-in agent which available seat you prefer. The agent confirms it on the check-in screen.</p>
   </div>
   <div class="cabin"><div id="smGrid"></div></div>
  </div>
@@ -267,143 +267,16 @@ body.business .business-badge{display:inline-block}
   }
   function renderSeatMap(x){
     document.getElementById('smName').textContent=`${x.name} · ${x.flight} to ${x.to}`;
-    document.getElementById('smCurrent').textContent=`Proposed seat ${x.current||'–'}`;
+    document.getElementById('smCurrent').textContent=x.current?`Selected seat ${x.current}`:'No seat selected yet';
+    document.getElementById('smBusinessInfo').textContent=x.travelClass==="Business"?'Business Class · Rows 1–4 included':'Rows 1–4 · Business section · €12 surcharge';
     const occ=new Set(x.occupied||[]);
     let h='';
-    for(let r=2;r<=x.rows;r++){
-      ['A','B','C'].forEach(l=>{const seat=r+l;h+=`<div class="s ${occ.has(seat)?'occ':x.current===seat?'sel':''} ${r>=2&&r<=5?'biz':''}">${seat}</div>`});
+    for(let r=1;r<=x.rows;r++){
+      ['A','B','C'].forEach(l=>{const seat=r+l;h+=`<div class="s ${r<=4?'biz ':''}${occ.has(seat)?'occ':x.current===seat?'sel':''}">${seat}</div>`});
       h+='<div class="aisle"></div>';
-      ['D','E','F'].forEach(l=>{const seat=r+l;h+=`<div class="s ${occ.has(seat)?'occ':x.current===seat?'sel':''} ${r>=2&&r<=5?'biz':''}">${seat}</div>`});
+      ['D','E','F'].forEach(l=>{const seat=r+l;h+=`<div class="s ${r<=4?'biz ':''}${occ.has(seat)?'occ':x.current===seat?'sel':''}">${seat}</div>`});
     }
     document.getElementById('smGrid').innerHTML=h;
-  }
-  function apply(p){
-    if(!p||!p.mode)p={mode:'idle'};
-    lastPayload=p;
-    currentMode=p.mode;
-    const isBusiness=(p.class==="Business")||(p.p&&((p.p.class==="Business")||(p.p.travelClass==="Business")));
-    document.body.classList.toggle("business",!!isBusiness);
-    setClosed(p.paused);
-
-    if(p.mode==='idle'){show('idle');return}
-    if(p.mode==='ads'){show('ads');return}
-
-    if(p.mode==='flight'){
-      const x=p.f;
-      document.body.classList.toggle("business",!!x.businessMode);
-      show('flight');
-      document.getElementById('fDest').textContent=(x.to||'').toUpperCase();
-      document.getElementById('fNo').textContent=x.number||'';
-      document.getElementById('fIata').textContent=x.iata||'';
-      document.getElementById('fTime').textContent=x.time||'';
-      document.getElementById('fGate').textContent=x.gate||'';
-      document.getElementById('fAircraft').textContent=x.aircraft||'';
-      document.getElementById('fCounter').textContent=x.counter||'';
-      document.getElementById('fReady').textContent=x.next||'Ready for next passenger';
-      document.getElementById('fProgress').textContent=`${x.checked||0} of ${x.total||0} passengers checked in`;
-      document.getElementById('fRemaining').textContent=`${x.open||0} passenger${x.open===1?'':'s'} remaining`;
-      document.getElementById('fStatus').textContent=x.checkinStatus||'Check-in open';
-      return;
-    }
-
-    if(p.mode==='journey'){
-      const x=p.p; show('journey');
-      document.getElementById('jName').textContent=x.name||'';
-      document.getElementById('jTo').textContent=(x.to||'').toUpperCase();
-      document.getElementById('jIata').textContent=x.iata||'';
-      document.getElementById('jDest').textContent=x.to||'';
-      document.getElementById('jFlight').textContent=x.flight||'';
-      document.getElementById('jTime').textContent=x.time||'';
-      document.getElementById('jGate').textContent=x.gate||'';
-      document.getElementById('jSeat').textContent=x.seat||'Not assigned';
-      document.getElementById('jClass').textContent=x.class||'';
-      document.getElementById('jBags').textContent=String(x.bags??0);
-      return;
-    }
-
-    if(p.mode==='seatmap'){show('seatmap');renderSeatMap(p.p);return}
-
-    if(p.mode==='baggage'){
-      show('baggage');
-      document.getElementById('bName').textContent=p.passenger||'';
-      const w=Number(p.weight||0),r=p.result||{};
-      const el=document.getElementById('bWeight');
-      el.textContent=w.toFixed(1)+' kg';
-      el.className='kg '+(r.reject?'bad':r.fee?'warn':'good');
-      document.getElementById('bResult').textContent=r.text||'';
-      document.getElementById('bFee').textContent=r.fee?euro(r.fee):'';
-      return;
-    }
-
-    if(p.mode==='success'){
-      show('success');
-      document.getElementById('sTitle').textContent=p.title||'Done';
-      document.getElementById('sText').textContent=p.text||'';
-      // retrigger CSS animation
-      const icon=document.querySelector('.check');
-      icon.style.animation='none'; void icon.offsetWidth; icon.style.animation='';
-      return;
-    }
-
-    if(p.mode==='offer'){
-      show('offer');
-      document.getElementById('oTitle').textContent=p.title||'';
-      document.getElementById('oText').textContent=p.text||'';
-      document.getElementById('oPrice').textContent=euro(p.amount||0);
-      document.getElementById('oName').textContent=p.passenger||'';
-      return;
-    }
-
-    if(p.mode==='boarding'){
-      const x=p.p;show('boarding');
-      document.getElementById('bpName').textContent=x.name||'';
-      document.getElementById('bpIata').textContent=x.iata||'';
-      document.getElementById('bpTo').textContent=x.to||'';
-      document.getElementById('bpFlight').textContent=x.flight||'';
-      document.getElementById('bpBoard').textContent=x.boarding||'';
-      document.getElementById('bpTime').textContent=x.time||'';
-      document.getElementById('bpGate').textContent=x.gate||'';
-      document.getElementById('bpSeat').textContent=x.seat||'';
-      document.getElementById('bpClass').textContent=x.class||'';
-      return;
-    }
-    show('idle');
-  }
-
-  // Advertisement rotation is independent, but only visible in ads mode.
-  setInterval(()=>{
-    if(currentMode!=='ads')return;
-    ads[adIndex].classList.remove('show');
-    adIndex=(adIndex+1)%ads.length;
-    ads[adIndex].classList.add('show');
-  },6000);
-
-  window.addEventListener('storage',e=>{
-    if(e.key==='austrianPassengerDisplay'){
-      try{apply(JSON.parse(e.newValue||'{}'))}catch(_){}
-    }
-  });
-
-  try{
-    const channel=new BroadcastChannel('austrian-checkin-display');
-    channel.onmessage=e=>apply(e.data);
-  }catch(_){}
-
-  function pull(){
-    try{
-      const raw=localStorage.getItem('austrianPassengerDisplay');
-      if(raw){
-        const parsed=JSON.parse(raw);
-        // Only reapply if payload timestamp/mode changed, preventing animations from being constantly reset.
-        if(!lastPayload || parsed.timestamp!==lastPayload.timestamp || parsed.mode!==lastPayload.mode){
-          apply(parsed);
-        }
-      }
-    }catch(_){}
-  }
-  setInterval(pull,800);
-  pull();
-})();
-</script>
+  }</script>
 </body>
 </html>

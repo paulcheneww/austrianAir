@@ -173,15 +173,15 @@ The passenger-facing monitor was rebuilt from scratch to eliminate conflicts fro
 - after the passenger flow ends, the active-flight screen returns to the normal Austrian-red counter theme
 
 
-## Version 10 – repaired build
-V9 accidentally lost the main JavaScript block during generation. V10 is rebuilt from the working V8 base.
+## Version 9 – seat logic
 
-Seat rules:
-- no automatic seat when opening a passenger
-- **Sitz automatisch** assigns a seat only when pressed
-- Business auto-seat: rows 2–5
-- Economy auto-seat: row 6 onward
-- rows 2–5 are visibly marked as Business zone
-- Economy can manually choose rows 2–5 for €12
-- the €12 fee appears in transactions
-- internal and passenger-facing seat maps remain available
+- opening a passenger no longer assigns a seat automatically
+- **Sitz automatisch** is the only automatic assignment action
+- Business automatic assignment uses rows 1–4
+- Economy automatic assignment uses rows 5 onward
+- rows 1–4 are visually marked as Business in `#2B3087`
+- manual seat selection remains available internally
+- Economy passengers may select a Business-section seat for a simulated €12 surcharge
+- the €12 charge is added to the payment / transaction history
+- the passenger display shows `No seat selected yet` until a seat is actually selected
+- Business rows are also marked in `#2B3087` on the passenger display
