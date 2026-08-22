@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Austrian Check-in Simulator | Vienna</title>
+<style>
+*{box-sizing:border-box}
+:root{
+ --bg:#f4f5f7;--surface:#fff;--line:#dfe3e8;--text:#1d2329;--muted:#717b85;
+ --red:#d71920;--red2:#ad1117;--dark:#20252b;--green:#2f7d59;--amber:#b97b22;--blue:#315d89;
+}
+html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.topbar{position:fixed;top:0;left:0;right:0;height:68px;background:#fff;border-bottom:1px solid var(--line);display:grid;grid-template-columns:280px 1fr auto;align-items:center;z-index:20}
+.brand{height:100%;display:flex;align-items:center;gap:11px;padding:0 20px;border-right:1px solid var(--line)}
+.logo{width:38px;height:38px;border-radius:9px;background:var(--red);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:900}
+.brand strong,.brand span,.agent strong,.agent span{display:block}.brand strong{font-size:14px}.brand span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.11em;margin-top:3px}
+.center{display:flex;justify-content:center;gap:18px;align-items:center}.pill{border:1px solid var(--line);background:#fafbfc;border-radius:999px;padding:7px 10px;font-size:9px;color:var(--muted)}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px}.clock{font-size:10px;color:var(--muted)}
+.agent{display:flex;gap:10px;align-items:center;padding:0 20px}.avatar{width:34px;height:34px;border-radius:50%;background:#f6e7e8;color:var(--red);display:grid;place-items:center;font-weight:800;font-size:10px}.agent strong{font-size:11px}.agent span{font-size:9px;color:var(--muted);margin-top:3px}
+.sidebar{position:fixed;top:68px;left:0;bottom:0;width:280px;background:#24292f;color:#d9dee3;padding:14px;display:flex;flex-direction:column;justify-content:space-between;z-index:10;overflow:auto}.nav{display:grid;gap:4px}.nav button{border:0;background:transparent;color:#adb5bd;border-radius:8px;padding:10px 11px;display:grid;grid-template-columns:24px 1fr auto;text-align:left;align-items:center;font-size:10px}.nav button:hover{background:#30363d;color:#fff}.nav button.active{background:#353b42;color:#fff;box-shadow:inset 3px 0 0 var(--red)}.nav b{font-weight:600}.badge{min-width:20px;padding:2px 5px;border-radius:999px;background:var(--red);font-size:8px;color:#fff;text-align:center}.sidebar-foot{display:grid;gap:9px}.display-btn{border:1px solid #4c535a;background:#30363d;color:#fff;border-radius:8px;padding:10px;font-size:9px}.sidebar-foot span{font-size:8px;text-align:center;color:#727b84}
+.main{margin-left:280px;padding-top:68px;min-height:100vh}.view{display:none;padding:28px;max-width:1600px;margin:0 auto}.view.active{display:block}
+.pagehead{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:20px}.eyebrow{display:block;font-size:8px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--red);margin-bottom:6px}h1{font-size:26px;margin:0}.pagehead p{font-size:10px;color:var(--muted);margin:6px 0 0}.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.primary,.secondary,.ghost,.danger{border-radius:8px;padding:9px 12px;font-size:9px;font-weight:800}.primary{border:0;background:var(--red);color:#fff}.primary:hover{background:var(--red2)}.secondary{border:1px solid #edc7ca;background:#fff4f4;color:var(--red)}.ghost{border:1px solid var(--line);background:#fff;color:#49515a}.danger{border:1px solid #efc6c6;background:#fff1f1;color:#a42b2b}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin-bottom:14px}.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:15px}.stat span{font-size:8px;color:var(--muted)}.stat strong{display:block;font-size:23px;margin:6px 0 2px}.stat small{font-size:8px;color:#949ca4}
+.grid2{display:grid;grid-template-columns:1.45fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.panel{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.panelhead{padding:14px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.panelhead h2{font-size:12px;margin:0}.kicker{display:block;font-size:7px;font-weight:900;color:var(--red);letter-spacing:.11em;text-transform:uppercase;margin-bottom:3px}
+.table{width:100%;border-collapse:collapse;font-size:9px}.table th,.table td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}.table th{background:#fafbfc;color:var(--muted);font-weight:700}.table tr:hover td{background:#fcfcfd}.status{display:inline-block;border-radius:999px;padding:4px 7px;font-size:7px;font-weight:800}.ok{background:#e9f4ee;color:var(--green)}.warn{background:#fff4e3;color:#99610f}.bad{background:#fff0f0;color:#a33434}.info{background:#edf3f8;color:#416481}
+.searchbox{padding:16px}.searchrow{display:flex;gap:8px}.searchrow input{flex:1}
+input,select,textarea{width:100%;border:1px solid #ced4db;border-radius:7px;background:#fff;padding:9px 10px;font-size:9px;outline:none}input:focus,select:focus,textarea:focus{border-color:#e08f92;box-shadow:0 0 0 3px rgba(215,25,32,.06)}textarea{min-height:85px;resize:vertical}
+.stack{display:grid;gap:11px}.card{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.cardhead{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start}.cardhead h3{font-size:12px;margin:0}.cardhead p{font-size:8px;color:var(--muted);margin:4px 0 0}.cardbody{padding:14px 15px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}.data{display:grid;grid-template-columns:110px 1fr;gap:7px 10px;font-size:8px}.data dt{color:var(--muted)}.data dd{margin:0;font-weight:600}.actions{padding:11px 15px;border-top:1px solid var(--line);display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap}
+.workarea{display:grid;grid-template-columns:330px 1fr;gap:14px}.leftstack{display:grid;gap:12px;align-content:start}.formpanel{padding:16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font-size:8px;font-weight:800;color:#515a63;margin-bottom:5px}.full{grid-column:1/-1}
+.seatmap{display:grid;grid-template-columns:repeat(7,34px);gap:5px;justify-content:center;padding:18px}.seat{height:30px;border:1px solid #cfd5db;border-radius:6px;background:#fff;font-size:8px}.seat.occupied{background:#e9ecef;color:#9aa1a8;cursor:not-allowed}.seat.selected{background:var(--red);color:#fff;border-color:var(--red)}.aisle{width:15px}
+.bagrow{display:grid;grid-template-columns:1fr 90px 100px auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:8px}.bagrow:last-child{border-bottom:0}.money{font-size:18px;font-weight:800}
+.flightboard{display:grid;gap:0}.flightrow{display:grid;grid-template-columns:80px 90px 1fr 90px 90px 110px;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);font-size:8px;align-items:center}.flightrow:hover{background:#fafafa}.flightrow strong{font-size:10px}
+.modalbg{position:fixed;inset:0;background:rgba(20,24,28,.5);display:grid;place-items:center;padding:20px;z-index:60}.modalbg.hidden{display:none}.modal{width:min(800px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:12px;padding:20px}.modal h2{font-size:17px;margin:0 0 5px}.modal>p{font-size:9px;color:var(--muted)}.modalactions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
+.toast{position:fixed;right:20px;bottom:20px;background:#252b31;color:#fff;border-radius:8px;padding:10px 13px;font-size:8px;opacity:0;transform:translateY(6px);transition:.2s;z-index:70}.toast.show{opacity:1;transform:none}
+.empty{padding:30px;text-align:center;font-size:9px;color:var(--muted)}
+@media(max-width:1100px){.stats{grid-template-columns:repeat(2,1fr)}.grid2,.grid3,.workarea,.cardbody{grid-template-columns:1fr}.flightrow{grid-template-columns:70px 80px 1fr 80px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+ <div class="brand"><div class="logo">OS</div><div><strong>Austrian Airlines</strong><span>Vienna Airport Check-in Simulator</span></div></div>
+ <div class="center">
+      <span class="pill"><i class="dot"></i>DCS Online</span>
+      <span class="pill" id="activeFlightPill">Kein aktiver Check-in-Flug</span>
+      <span class="pill">VIE · Terminal 3 · Level 1</span>
+      <span id="clock" class="clock"></span>
+    </div>
+ <div class="agent"><div class="avatar">PS</div><div><strong>Paul S.</strong><span>Check-in Agent · Counter 351</span></div></div>
+</header>
+
+<aside class="sidebar">
+ <div class="nav">
+  <button class="active" data-view="dashboard"><span>⌂</span><b>Übersicht</b></button>
+  <button data-view="checkin"><span>✓</span><b>Check-in</b><i class="badge" id="queueBadge">0</i></button>
+  <button data-view="flights"><span>✈</span><b>Flüge</b></button>
+  <button data-view="passengers"><span>◉</span><b>Passagiere</b></button>
+  <button data-view="baggage"><span>▣</span><b>Gepäck</b></button>
+  <button data-view="seats"><span>▦</span><b>Sitzplan</b></button>
+  <button data-view="special"><span>!</span><b>Special Services</b></button>
+  <button data-view="transactions"><span>€</span><b>Zahlungen</b></button>
+  <button data-view="stats"><span>▥</span><b>Statistik</b></button>
+ </div>
+ <div class="sidebar-foot">
+  <button class="display-btn" id="openDisplay">Passagierdisplay öffnen</button>
+  <span>Austrian Check-in Simulator · lokale Demo</span>
+ </div>
+</aside>
+
+<main class="main">
+ <section class="view active" id="view-dashboard">
+  <div class="pagehead">
+      <div><span class="eyebrow">VIENNA HUB</span><h1>Check-in Operations</h1><p>Fiktive Trainingsdaten · Austrian Airlines · Flughafen Wien</p></div>
+      <div class="btnrow">
+        <button class="secondary" data-action="chooseFlight">Check-in-Flug wählen</button>
+        <button class="ghost" data-action="toggleFlightCheckin" id="flightCloseBtn">Check-in schließen</button>
+        <button class="ghost" data-action="displayStandard">Display Standard</button>
+        <button class="ghost" data-action="displayFlight">Display Fluginfo</button>
+        <button class="ghost" data-action="displayAds">Display Werbung</button>
+        <button class="secondary" data-action="togglePause" id="pauseBtn">Pause</button>
+      </div>
+    </div>
+  <div class="stats">
+   <article class="stat"><span>Abflüge</span><strong id="flightStat">0</strong><small>heute im Datensatz</small></article>
+   <article class="stat"><span>Offen Check-in</span><strong id="openStat">0</strong><small>Passagiere</small></article>
+   <article class="stat"><span>Eingecheckt</span><strong id="checkedStat">0</strong><small>Passagiere</small></article>
+   <article class="stat"><span>Gepäck</span><strong id="bagsStat">0</strong><small>aufgegebene Stücke</small></article>
+   <article class="stat"><span>Gebühren</span><strong id="feesStat">€ 0</strong><small>simuliert</small></article>
+  </div>
+  <div class="grid2">
+   <article class="panel"><div class="panelhead"><div><span class="kicker">DEPARTURES</span><h2>Nächste Austrian-Flüge</h2></div></div><div id="dashboardFlights"></div></article>
+   <article class="panel"><div class="panelhead"><div><span class="kicker">COUNTER QUEUE</span><h2>Wartende Passagiere</h2></div></div><div id="dashboardQueue"></div></article>
+  </div>
+ </section>
+
+ <section class="view" id="view-checkin">
+  <div class="pagehead"><div><span class="eyebrow">DCS / CHECK-IN</span><h1>Passagierabfertigung</h1><p>Wähle zuerst einen aktiven Flug. Danach arbeitest du dessen offene Passagiere nacheinander ab.</p></div></div>
+  <div class="workarea">
+   <div class="leftstack">
+    <article class="panel searchbox">
+     <span class="kicker">PASSENGER SEARCH</span>
+     <div class="searchrow"><input id="checkinSearch" placeholder="PNR, Name, Ticketnummer..."><button class="primary" data-action="searchCheckin">Suchen</button></div>
+    </article>
+    <article class="panel"><div class="panelhead"><div><span class="kicker">QUEUE</span><h2>Warteschlange</h2></div></div><div id="checkinQueue"></div></article>
+   </div>
+   <div id="checkinWorkspace" class="panel empty">Noch kein Passagier geöffnet.</div>
+  </div>
+ </section>
+
+ <section class="view" id="view-flights">
+  <div class="pagehead"><div><span class="eyebrow">FLIGHT CONTROL</span><h1>Flüge</h1><p>Austrian-Abflüge aus Wien mit Check-in-Status, Gate und Auslastung.</p></div></div>
+  <article class="panel"><div class="flightboard" id="flightBoard"></div></article>
+ </section>
+
+ <section class="view" id="view-passengers">
+  <div class="pagehead"><div><span class="eyebrow">PASSENGER LIST</span><h1>Passagiere</h1><p>Alle fiktiven Buchungen durchsuchen.</p></div></div>
+  <article class="panel searchbox"><div class="searchrow"><input id="passengerSearch" placeholder="Name, PNR, Flug, Status, Ziel..."><button class="secondary" data-action="searchPassengers">Suchen</button></div></article>
+  <div class="stack" id="passengerList"></div>
+ </section>
+
+ <section class="view" id="view-baggage">
+  <div class="pagehead"><div><span class="eyebrow">BAGGAGE</span><h1>Gepäckübersicht</h1><p>Aufgegebenes Gepäck, Gewichte, Tags und Gebühren.</p></div></div>
+  <div class="stack" id="baggageList"></div>
+ </section>
+
+ <section class="view" id="view-seats">
+  <div class="pagehead"><div><span class="eyebrow">SEAT CONTROL</span><h1>Sitzplätze</h1><p>Öffne einen Passagier im Check-in, um seinen Sitzplatz zu bearbeiten.</p></div></div>
+  <div id="seatView" class="panel empty">Kein aktiver Passagier.</div>
+ </section>
+
+ <section class="view" id="view-special">
+  <div class="pagehead"><div><span class="eyebrow">SSR</span><h1>Special Services</h1><p>Rollstuhl, UMNR, Haustier, Sportgepäck und besondere Hinweise.</p></div></div>
+  <div id="specialList" class="stack"></div>
+ </section>
+
+ <section class="view" id="view-transactions">
+  <div class="pagehead"><div><span class="eyebrow">PAYMENTS</span><h1>Zahlungen</h1><p>Übergepäck, Zusatzgepäck, Sitzplatz- und Upgradegebühren.</p></div></div>
+  <div id="transactionList" class="stack"></div>
+ </section>
+
+ <section class="view" id="view-stats">
+  <div class="pagehead"><div><span class="eyebrow">REPORTING</span><h1>Schichtstatistik</h1><p>Operative Kennzahlen der aktuellen Simulation.</p></div></div>
+  <div id="statsView" class="grid3"></div>
+ </section>
+</main>
+
+<div class="modalbg hidden" id="modalbg"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const STORE="austrianCheckinSimulatorV1";
+const firstNames=["Anna","Lukas","Sophie","Michael","David","Laura","Jonas","Clara","Felix","Mara","Oliver","Nina","Thomas","Sarah","Max","Julia","Daniel","Emily","Noah","Emma","Leon","Johanna","Simon","Elena"];
+const lastNames=["Berger","Huber","Keller","Novak","Schmidt","Weiß","Hartmann","Baumann","Wagner","Steiner","Meier","Fischer","Leitner","Moser","Gruber","König","Hofer","Brown","Wilson","Müller","Schneider","Fuchs"];
+const flights=[
+["OS201","Berlin","BER","07:00","F12","A320neo","Schengen"],["OS111","Munich","MUC","07:15","F08","E195","Schengen"],
+["OS561","Zurich","ZRH","07:30","F21","A320","Schengen"],["OS371","Amsterdam","AMS","08:05","F16","A320neo","Schengen"],
+["OS451","London","LHR","08:20","D24","A320neo","Non-Schengen"],["OS301","Copenhagen","CPH","08:45","F10","A320","Schengen"],
+["OS351","Brussels","BRU","09:10","F18","E195","Schengen"],["OS431","Paris","CDG","09:25","F22","A320neo","Schengen"],
+["OS215","Frankfurt","FRA","09:45","F06","E195","Schengen"],["OS463","Manchester","MAN","10:10","D21","A320","Non-Schengen"],
+["OS81","Los Angeles","LAX","10:35","D31","B787-9","Long-haul"],["OS65","Chicago","ORD","10:55","D34","B787-9","Long-haul"],
+["OS87","New York","JFK","11:20","D36","B787-9","Long-haul"],["OS93","Washington","IAD","11:45","D32","B787-9","Long-haul"],
+["OS207","Berlin","BER","12:05","F14","A320neo","Schengen"],["OS513","Milan","MXP","12:20","F19","A320","Schengen"],
+["OS535","Bologna","BLQ","12:40","F05","E195","Schengen"],["OS741","Kosice","KSC","13:00","F09","E195","Schengen"],
+["OS723","Budapest","BUD","13:25","F11","E195","Schengen"],["OS795","Sofia","SOF","13:50","D18","A320","Non-Schengen"],
+["OS601","Moscow Training","SVO","14:10","D20","A320neo","Training"],["OS721","Belgrade","BEG","14:30","D15","A320","Non-Schengen"],
+["OS649","Iasi","IAS","15:00","D12","E195","Non-Schengen"],["OS553","Zurich","ZRH","15:25","F24","A320neo","Schengen"]
+].map((x,i)=>({number:x[0],destination:x[1],iata:x[2],time:x[3],gate:x[4],aircraft:x[5],zone:x[6],status:i<4?"Boarding":i<13?"Check-in open":"Scheduled",closed:i<2}));
+
+function makeState(){
+ const ps=[]; let num=1;
+ flights.forEach((f,fi)=>{
+   const count=f.aircraft==="B787-9"?14:7;
+   for(let i=0;i<count;i++){
+     const fn=firstNames[(fi*3+i)%firstNames.length],ln=lastNames[(fi*5+i)%lastNames.length];
+     const cls=f.aircraft==="B787-9"?(i%8===0?"Business":i%5===0?"Premium Economy":"Economy"):(i%9===0?"Business":"Economy");
+     const fare=cls==="Business"?"Business Classic":(i%4===0?"Economy Light":"Economy Classic");
+     const pnr=("A"+String(10000+num).slice(-5)).slice(0,6);
+     const docIssue=i%13===0?"Visa check":i%17===0?"Passport expiry":"OK";
+     const ssr=i%19===0?["WCHR"]:i%23===0?["UMNR"]:i%29===0?["PETC"]:i%31===0?["SPEQ"]:[];
+     ps.push({
+       id:num,pnr,name:`${fn} ${ln}`,first:fn,last:ln,ticket:`257-${String(4000000000+num)}`,
+       flight:f.number,destination:f.destination,iata:f.iata,class:cls,fare,status:(i<2&&fi<3)?"Checked-in":"Open",
+       seat:(i<2&&fi<3)?autoSeat(f.aircraft,num):"",nationality:["AT","DE","CH","IT","FR","NL","GB","US"][num%8],
+       passport:`P${String(7000000+num)}`,dob:`${String(1+num%27).padStart(2,"0")}.${String(1+num%12).padStart(2,"0")}.${1970+num%35}`,
+       docIssue,ssr,bags:[],frequent:i%11===0?"HON Circle":i%7===0?"Senator":i%5===0?"Frequent Traveller":"None",
+       connection:i%6===0?["OS"+(700+num%60),["PRG","KRK","TIA","SKP"][num%4]]:null,
+       phone:`+43 660 ${String(1000000+num)}`,email:`${fn.toLowerCase()}.${ln.toLowerCase()}@example.com`,
+       checkedAt:null,boardingPass:false
+     }); num++;
+   }
+ });
+ // seed some checked bags
+ ps.filter(p=>p.status==="Checked-in").forEach((p,i)=>p.bags=[{tag:`OS${String(600000+i)}`,weight:18+(i%5),type:"Standard",fee:0}]);
+ return {passengers:ps,transactions:[],activePassengerId:null,activeFlight:null,paused:false,counter:"351",created:Date.now()};
+}
+function autoSeat(ac,n){const rows=ac==="B787-9"?35:28;return `${2+(n%(rows-1))}${["A","B","C","D","E","F"][n%6]}`}
+let state=load();
+function load(){
+  try{
+    const s=JSON.parse(localStorage.getItem(STORE))||makeState();
+    if(!("activeFlight" in s))s.activeFlight=null;
+    if(!("paused" in s))s.paused=false;
+    return s;
+  }catch(e){return makeState()}
+}
+function save(){localStorage.setItem(STORE,JSON.stringify(state));renderAll();broadcastSnapshot()}
+function euro(v){return new Intl.NumberFormat("de-AT",{style:"currency",currency:"EUR"}).format(v||0)}
+function flight(n){return flights.find(f=>f.number===n)}
+function activeP(){return state.passengers.find(p=>p.id===state.activePassengerId)}
+function allowance(p){
+ if(p.class==="Business")return {pieces:p.fare==="Business Comfort"?1:2,kg:32};
+ if(p.class==="Premium Economy")return {pieces:p.fare.includes("Light")?1:2,kg:23};
+ if(p.fare.includes("Light"))return {pieces:0,kg:23};
+ return {pieces:1,kg:23};
+}
+function showToast(t){const el=$("#toast");el.textContent=t;el.classList.add("show");clearTimeout(showToast.t);showToast.t=setTimeout(()=>el.classList.remove("show"),2200)}
+function updateClock(){const d=new Date();$("#clock").textContent=d.toLocaleString("de-AT",{weekday:"short",hour:"2-digit",minute:"2-digit",second:"2-digit"})}
+function switchView(v){$$(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===v));$$(".view").forEach(x=>x.classList.remove("active"));$(`#view-${v}`).classList.add("active");renderView(v)}
+function renderView(v){if(v==="flights")renderFlights();if(v==="passengers")renderPassengers();if(v==="baggage")renderBaggage();if(v==="seats")renderSeats();if(v==="special")renderSpecial();if(v==="transactions")renderTransactions();if(v==="stats")renderStats();if(v==="checkin")renderCheckin()}
+function renderAll(){renderDashboard();renderFlights();renderPassengers();renderCheckin();renderBaggage();renderSeats();renderSpecial();renderTransactions();renderStats()}
+function renderDashboard(){
+ const open=state.passengers.filter(p=>p.status==="Open").length,checked=state.passengers.filter(p=>p.status==="Checked-in").length,bags=state.passengers.reduce((s,p)=>s+p.bags.length,0),fees=state.transactions.reduce((s,t)=>s+t.amount,0);
+ $("#flightStat").textContent=flights.length;
+ const af=state.activeFlight?flight(state.activeFlight):null;
+ $("#activeFlightPill").textContent=af?`Aktiver Check-in: ${af.number} · ${af.destination} · ${af.time}`:"Kein aktiver Check-in-Flug";
+ const pb=$("#pauseBtn");if(pb){pb.textContent=state.paused?"Pause beenden":"Pause";pb.className=state.paused?"primary":"secondary";}
+ const cb=$("#flightCloseBtn");
+ if(cb){
+   const af2=state.activeFlight?flight(state.activeFlight):null;
+   cb.textContent=af2&&af2.closed?"Check-in öffnen":"Check-in schließen";
+   cb.disabled=!af2;
+ }$("#openStat").textContent=open;$("#checkedStat").textContent=checked;$("#bagsStat").textContent=bags;$("#feesStat").textContent=euro(fees);$("#queueBadge").textContent=open;
+ $("#dashboardFlights").innerHTML=`<table class="table"><thead><tr><th>Flug</th><th>Ziel</th><th>Zeit</th><th>Gate</th><th>Status</th></tr></thead><tbody>${flights.slice(0,8).map(f=>`<tr><td><strong>${f.number}</strong></td><td>${f.destination}</td><td>${f.time}</td><td>${f.gate}</td><td><span class="status ${f.status==="Boarding"?"warn":"ok"}">${f.status}</span></td></tr>`).join("")}</tbody></table>`;
+ const q=state.passengers.filter(p=>p.status==="Open"&&(!state.activeFlight||p.flight===state.activeFlight)).slice(0,7);
+ $("#dashboardQueue").innerHTML=q.map(p=>`<div class="cardhead"><div><h3>${p.name}</h3><p>${p.pnr} · ${p.flight} ${p.iata}</p></div><button class="ghost" data-action="openPassenger" data-id="${p.id}">Öffnen</button></div>`).join("");
+}
+function renderFlights(){
+ $("#flightBoard").innerHTML=flights.map(f=>{const pax=state.passengers.filter(p=>p.flight===f.number),ci=pax.filter(p=>p.status==="Checked-in").length;return `<div class="flightrow"><strong>${f.time}</strong><strong>${f.number}</strong><span>${f.destination} (${f.iata})</span><span>${f.gate}</span><span>${f.aircraft}</span><span class="status ${f.closed?"bad":f.status==="Boarding"?"warn":"ok"}">${f.closed?"Check-in closed":f.status} · ${ci}/${pax.length}</span></div>`}).join("");
+}
+function passengerCard(p){const f=flight(p.flight);return `<article class="card"><div class="cardhead"><div><h3>${p.name}</h3><p>${p.pnr} · ${p.ticket}</p></div><span class="status ${p.status==="Checked-in"?"ok":"warn"}">${p.status}</span></div><div class="cardbody"><dl class="data"><dt>Flug</dt><dd>${p.flight} · ${p.destination}</dd><dt>Abflug</dt><dd>${f.time} · Gate ${f.gate}</dd><dt>Klasse</dt><dd>${p.class}</dd><dt>Tarif</dt><dd>${p.fare}</dd></dl><dl class="data"><dt>Sitz</dt><dd>${p.seat||"–"}</dd><dt>Frequent Flyer</dt><dd>${p.frequent}</dd><dt>Dokument</dt><dd>${p.docIssue}</dd><dt>SSR</dt><dd>${p.ssr.join(", ")||"–"}</dd></dl><dl class="data"><dt>Gepäck</dt><dd>${p.bags.length} Stück</dd><dt>Nationalität</dt><dd>${p.nationality}</dd><dt>Anschluss</dt><dd>${p.connection?`${p.connection[0]} · ${p.connection[1]}`:"–"}</dd><dt>Status</dt><dd>${p.status}</dd></dl></div><div class="actions"><button class="primary" data-action="openPassenger" data-id="${p.id}">Im Check-in öffnen</button></div></article>`}
+function renderPassengers(filter=""){
+ let l=state.passengers;const q=filter.toLowerCase().trim();if(q)l=l.filter(p=>JSON.stringify(p).toLowerCase().includes(q));
+ $("#passengerList").innerHTML=l.slice(0,80).map(passengerCard).join("");
+}
+function renderCheckin(){
+ const p=activeP(); const queue=state.passengers.filter(x=>x.status==="Open"&&(!state.activeFlight||x.flight===state.activeFlight)).slice(0,50);
+ $("#checkinQueue").innerHTML=queue.map(x=>`<div class="cardhead"><div><h3>${x.name}</h3><p>${x.pnr} · ${x.flight} ${x.iata}</p></div><button class="ghost" data-action="openPassenger" data-id="${x.id}">Öffnen</button></div>`).join("");
+ if(!state.activeFlight){
+   $("#checkinWorkspace").className="panel empty";
+   $("#checkinWorkspace").innerHTML=`<div><strong>Noch kein Check-in-Flug ausgewählt.</strong><br><br><button class="primary" data-action="chooseFlight">Flug auswählen</button></div>`;
+   return;
+ }
+ if(!p){
+   const af=flight(state.activeFlight);
+   $("#checkinWorkspace").className="panel empty";
+   $("#checkinWorkspace").innerHTML=`<div><strong>${af.number} · ${af.destination}</strong><br><br>Wähle links den nächsten Passagier aus.</div>`;
+   return;
+ }
+ const f=flight(p.flight),al=allowance(p);$("#checkinWorkspace").className="panel";
+ $("#checkinWorkspace").innerHTML=`<div class="panelhead"><div><span class="kicker">ACTIVE PNR</span><h2>${p.name} · ${p.pnr}</h2></div><span class="status ${p.status==="Checked-in"?"ok":"warn"}">${p.status}</span></div>
+ <div class="formpanel">
+  <div class="grid3">
+   <dl class="data"><dt>Flug</dt><dd>${p.flight} · ${p.destination}</dd><dt>Abflug</dt><dd>${f.time}</dd><dt>Gate</dt><dd>${f.gate}</dd><dt>Zone</dt><dd>${f.zone}</dd></dl>
+   <dl class="data"><dt>Klasse</dt><dd>${p.class}</dd><dt>Tarif</dt><dd>${p.fare}</dd><dt>Freigepäck</dt><dd>${al.pieces} × ${al.kg} kg</dd><dt>Status</dt><dd>${p.frequent}</dd></dl>
+   <dl class="data"><dt>Pass</dt><dd>${p.passport}</dd><dt>Nationalität</dt><dd>${p.nationality}</dd><dt>Geburtsdatum</dt><dd>${p.dob}</dd><dt>Dokumentencheck</dt><dd>${p.docIssue}</dd></dl>
+  </div>
+  <div class="btnrow" style="margin-top:14px">
+   <button class="secondary" data-action="sendJourney">Auf Passagierdisplay</button>
+   <button class="ghost" data-action="openDocs">Dokumente prüfen</button>
+   <button class="ghost" data-action="autoSeat">Sitz automatisch</button><button class="ghost" data-action="showSeatMapDisplay">Sitzplan am Display</button><button class="ghost" data-view="seats">Sitzplan intern</button>
+   <button class="ghost" data-action="openBag">Gepäck annehmen</button>
+   <button class="ghost" data-action="openUpgrade">Upgrade</button>
+   ${p.status!=="Checked-in"?`<button class="primary" data-action="completeCheckin">Check-in abschließen</button>`:`<button class="primary" data-action="showBoardingPass">Bordkarte anzeigen</button>`}
+  </div>
+ </div>`;
+}
+function openPassenger(id){
+  if(state.paused)return showToast("Schalter ist in Pause");
+  const p=state.passengers.find(x=>x.id===+id);if(!p)return;
+  if(state.activeFlight&&p.flight!==state.activeFlight)return showToast("Passagier gehört nicht zum aktiven Flug");
+  state.activePassengerId=+id;
+  if(!p.seat){
+    const seats=availableSeatsFor(p);
+    if(seats.length)p.seat=seats[Math.floor(Math.random()*seats.length)];
+  }
+  switchView("checkin");save();sendJourney()
+}
+function searchCheckin(){const q=$("#checkinSearch").value.trim().toLowerCase();const p=state.passengers.find(x=>(!state.activeFlight||x.flight===state.activeFlight)&&[x.pnr,x.name,x.ticket].some(v=>String(v).toLowerCase().includes(q)));if(!p)return showToast("Keine Buchung gefunden");openPassenger(p.id)}
+function openDocs(){const p=activeP();openModal(`<h2>Dokumentenprüfung</h2><p>${p.name} · ${p.flight} ${p.iata}</p><div class="formgrid"><div class="field"><label>Reisedokument</label><select id="docType"><option>Reisepass</option><option>Personalausweis</option></select></div><div class="field"><label>Dokumentnummer</label><input value="${p.passport}"></div><div class="field"><label>Nationalität</label><input value="${p.nationality}"></div><div class="field"><label>Prüfergebnis</label><select id="docResult"><option>OK</option><option>Visa check</option><option>Manual verification</option></select></div></div><div class="modalactions"><button class="ghost" data-action="closeModal">Abbrechen</button><button class="primary" data-action="saveDocs">Bestätigen</button></div>`)}
+function saveDocs(){const p=activeP();p.docIssue=$("#docResult").value;save();closeModal();showToast("Dokumentenprüfung gespeichert")}
+
+function availableSeatsFor(p){
+ const f=flight(p.flight),rows=f.aircraft==="B787-9"?35:28;
+ const occupied=new Set(state.passengers.filter(x=>x.flight===p.flight&&x.seat&&x.id!==p.id).map(x=>x.seat));
+ const seats=[];
+ for(let r=2;r<=rows;r++)["A","B","C","D","E","F"].forEach(l=>{const s=r+l;if(!occupied.has(s))seats.push(s)});
+ return seats;
+}
+function autoSeat(){
+ const p=activeP();if(!p)return showToast("Kein Passagier geöffnet");
+ const seats=availableSeatsFor(p);if(!seats.length)return showToast("Keine freien Sitze");
+ // Prefer window/aisle, but keep it random.
+ const preferred=seats.filter(s=>["A","C","D","F"].includes(s.slice(-1)));
+ const pool=preferred.length?preferred:seats;
+ p.seat=pool[Math.floor(Math.random()*pool.length)];
+ save();
+ sendDisplay({mode:"success",title:"Seat assigned",text:`Seat ${p.seat}`,flight:p.flight});
+ setTimeout(()=>sendJourney(),1800);
+ showToast(`Automatisch Sitz ${p.seat} zugewiesen`);
+}
+function showSeatMapDisplay(){
+ const p=activeP();if(!p)return showToast("Kein Passagier geöffnet");
+ const f=flight(p.flight),rows=f.aircraft==="B787-9"?35:28;
+ const occupied=state.passengers.filter(x=>x.flight===p.flight&&x.seat&&x.id!==p.id).map(x=>x.seat);
+ sendDisplay({mode:"seatmap",p:{name:p.name,flight:p.flight,to:p.destination,iata:p.iata,current:p.seat||"",aircraft:f.aircraft,rows,occupied}});
+ showToast("Sitzplan wird am Passagierdisplay angezeigt");
+}
+function renderSeats(){
+ const p=activeP();if(!p){$("#seatView").className="panel empty";$("#seatView").innerHTML="Kein aktiver Passagier.";return}
+ const f=flight(p.flight),rows=f.aircraft==="B787-9"?35:28,occupied=new Set(state.passengers.filter(x=>x.flight===p.flight&&x.seat&&x.id!==p.id).map(x=>x.seat));
+ let html=`<div class="panelhead"><div><span class="kicker">${f.aircraft}</span><h2>${p.flight} · ${p.name}</h2></div><strong>Sitz ${p.seat||"–"}</strong></div><div class="seatmap">`;
+ for(let r=2;r<=rows;r++){["A","B","C"].forEach(l=>{const s=r+l;html+=`<button class="seat ${occupied.has(s)?"occupied":p.seat===s?"selected":""}" ${occupied.has(s)?"disabled":""} data-action="selectSeat" data-seat="${s}">${s}</button>`});html+=`<span class="aisle"></span>`;["D","E","F"].forEach(l=>{const s=r+l;html+=`<button class="seat ${occupied.has(s)?"occupied":p.seat===s?"selected":""}" ${occupied.has(s)?"disabled":""} data-action="selectSeat" data-seat="${s}">${s}</button>`})}
+ html+=`</div>`;$("#seatView").className="panel";$("#seatView").innerHTML=html
+}
+function selectSeat(s){
+ const p=activeP();p.seat=s;save();renderSeats();
+ sendDisplay({mode:"success",title:"Seat confirmed",text:`Seat ${s}`,flight:p.flight});
+ setTimeout(()=>sendJourney(),1800);
+ showToast(`Sitz ${s} gewählt`)
+}
+function randomBagWeight(p){
+  const al=allowance(p);
+  const roll=Math.random();
+  let w;
+  if(roll<0.66){
+    // mostly normal checked baggage
+    const upper=al.kg===32?29.5:22.4;
+    w=12+Math.random()*(upper-12);
+  }else if(roll<0.92){
+    // occasional overweight, but still acceptable
+    const low=Math.max(al.kg+0.4,23.4);
+    w=low+Math.random()*(31.6-low);
+  }else{
+    // rare bag above 32kg
+    w=32.2+Math.random()*4.5;
+  }
+  return Math.round(w*10)/10;
+}
+function openBag(){const p=activeP(),al=allowance(p),randomWeight=randomBagWeight(p);openModal(`<h2>Gepäck annehmen</h2><p>${p.name} · Freigepäck ${al.pieces} × ${al.kg} kg</p><div class="formgrid"><div class="field"><label>Gewicht</label><input id="bagWeight" type="number" step="0.1" value="${randomWeight.toFixed(1)}" readonly></div><div class="field"><label>Art</label><select id="bagType"><option>Standard</option><option>Sportgepäck</option><option>Kinderwagen</option><option>Priority</option></select></div></div><div id="bagCalc" style="margin-top:12px;font-size:10px"></div><div class="modalactions"><button class="secondary" data-action="newBagWeight">Neu wiegen</button><button class="secondary" data-action="previewBag">Auf Display wiegen</button><button class="ghost" data-action="closeModal">Abbrechen</button><button class="primary" data-action="addBag">Gepäck übernehmen</button></div>`);previewBag()}
+function newBagWeight(){
+  const p=activeP();if(!p||!$("#bagWeight"))return;
+  const w=randomBagWeight(p);
+  $("#bagWeight").value=w.toFixed(1);
+  previewBag();
+  showToast(`Waage: ${w.toFixed(1)} kg`);
+}
+function bagFee(p,w){const al=allowance(p);if(w>32)return {fee:0,reject:true,text:"Über 32 kg – am Check-in nicht akzeptierbar"};const pieceNo=p.bags.length+1;if(pieceNo>al.pieces)return {fee:65,reject:false,text:"Zusätzliches Gepäckstück"};if(w>al.kg)return {fee:55,reject:false,text:"Übergewicht"};return {fee:0,reject:false,text:"Innerhalb Freigepäck"}}
+function previewBag(){const p=activeP(),w=parseFloat($("#bagWeight")?.value)||0,r=bagFee(p,w);if($("#bagCalc"))$("#bagCalc").innerHTML=`<strong>${w.toFixed(1)} kg</strong> · ${r.text}${r.fee?` · <b>${euro(r.fee)}</b>`:""}`;sendDisplay({mode:"baggage",passenger:p.name,weight:w,allowance:allowance(p),result:r})}
+function addBag(){const p=activeP(),w=parseFloat($("#bagWeight").value)||0,r=bagFee(p,w);if(r.reject)return showToast("Gepäck über 32 kg nicht akzeptiert");const tag=`OS${String(700000+state.passengers.reduce((s,x)=>s+x.bags.length,0))}`;p.bags.push({tag,weight:w,type:$("#bagType").value,fee:r.fee});if(r.fee)state.transactions.push({time:new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"}),passenger:p.name,pnr:p.pnr,type:r.text,amount:r.fee});save();closeModal();
+ sendDisplay({mode:"success",title:"Baggage accepted",text:`${w.toFixed(1)} kg · Bag tag ${tag}`,flight:p.flight});
+ setTimeout(()=>sendJourney(),2600);
+ showToast(`Bag Tag ${tag} erstellt`)}
+function openUpgrade(){const p=activeP();const f=flight(p.flight);const available=p.class==="Economy"?(f.aircraft==="B787-9"?["Premium Economy","Business"]:["Business"]):[];if(!available.length)return showToast("Kein Upgrade verfügbar");openModal(`<h2>Upgrade</h2><p>${p.name} · aktuell ${p.class}</p><div class="field"><label>Zielklasse</label><select id="upgradeClass">${available.map(x=>`<option>${x}</option>`).join("")}</select></div><div class="field" style="margin-top:10px"><label>Preis</label><input id="upgradePrice" type="number" value="${f.aircraft==="B787-9"?349:179}"></div><div class="modalactions"><button class="secondary" data-action="previewUpgrade">Auf Display anzeigen</button><button class="ghost" data-action="closeModal">Abbrechen</button><button class="primary" data-action="confirmUpgrade">Upgrade buchen</button></div>`)}
+function previewUpgrade(){const p=activeP(),to=$("#upgradeClass").value,price=+$("#upgradePrice").value;sendDisplay({mode:"offer",title:"Upgrade verfügbar",passenger:p.name,text:`Upgrade auf ${to}`,amount:price})}
+function confirmUpgrade(){const p=activeP(),to=$("#upgradeClass").value,price=+$("#upgradePrice").value;p.class=to;p.fare=to==="Business"?"Business Classic":"Premium Economy Classic";state.transactions.push({time:new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"}),passenger:p.name,pnr:p.pnr,type:`Upgrade ${to}`,amount:price});save();closeModal();showToast("Upgrade gebucht")}
+function completeCheckin(){const p=activeP(),f=flight(p.flight);if(f.closed)return showToast("Check-in für diesen Flug geschlossen");if(p.docIssue!=="OK")return showToast("Dokumentenprüfung noch offen");if(!p.seat)return showToast("Zuerst Sitzplatz vergeben");p.status="Checked-in";
+ p.checkedAt=new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"});
+ p.boardingPass=true;
+ const finishedName=p.name;
+ state.activePassengerId=null;
+ save();
+ sendDisplay({mode:"success",title:"Check-in complete",text:`${finishedName} is checked in.`,flight:state.activeFlight});
+ setTimeout(()=>sendActiveFlightDisplay(),3200);
+ showToast(`${finishedName} eingecheckt · Display zeigt kurz Erfolg`)}
+function showBoardingPass(){const p=activeP(),f=flight(p.flight);sendDisplay({mode:"boarding",p:{name:p.name,flight:p.flight,to:p.destination,iata:p.iata,time:f.time,gate:f.gate,seat:p.seat,class:p.class,boarding:boardingTime(f.time),pnr:p.pnr}});openModal(`<h2>Boarding Pass</h2><p>${p.name}</p><div class="grid3"><dl class="data"><dt>Flight</dt><dd>${p.flight}</dd><dt>To</dt><dd>${p.destination}</dd><dt>Gate</dt><dd>${f.gate}</dd></dl><dl class="data"><dt>Seat</dt><dd>${p.seat}</dd><dt>Class</dt><dd>${p.class}</dd><dt>Boarding</dt><dd>${boardingTime(f.time)}</dd></dl><dl class="data"><dt>PNR</dt><dd>${p.pnr}</dd><dt>Bags</dt><dd>${p.bags.length}</dd><dt>Status</dt><dd>Checked-in</dd></dl></div><div class="modalactions"><button class="secondary" data-action="sendBoarding">Auf Display</button><button class="primary" data-action="closeModal">Fertig</button></div>`)}
+function boardingTime(t){let [h,m]=t.split(":").map(Number);m-=35;if(m<0){m+=60;h--}return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`}
+function sendJourney(){const p=activeP();if(!p)return;const f=flight(p.flight);sendDisplay({mode:"journey",p:{name:p.name,flight:p.flight,to:p.destination,iata:p.iata,time:f.time,gate:f.gate,seat:p.seat||"Noch offen",class:p.class,bags:p.bags.length,connection:p.connection}})}
+function sendBoarding(){showBoardingPass();closeModal()}
+function sendDisplay(payload){payload.timestamp=Date.now();localStorage.setItem("austrianPassengerDisplay",JSON.stringify(payload));try{if(!window.osChannel)window.osChannel=new BroadcastChannel("austrian-checkin-display");window.osChannel.postMessage(payload)}catch(e){}}
+
+
+function toggleFlightCheckin(){
+  if(!state.activeFlight)return showToast("Kein aktiver Flug ausgewählt");
+  const f=flight(state.activeFlight);
+  f.closed=!f.closed;
+  save();
+  sendActiveFlightDisplay();
+  showToast(f.closed?`${f.number} Check-in geschlossen`:`${f.number} Check-in wieder geöffnet`);
+}
+function displayAds(){
+  sendDisplay({mode:"ads",paused:state.paused,counter:state.counter});
+}
+
+function chooseFlight(){
+  if(state.paused)return showToast("Pause zuerst beenden");
+  const opts=flights.filter(f=>!f.closed).map(f=>{
+    const open=state.passengers.filter(p=>p.flight===f.number&&p.status==="Open").length;
+    const done=state.passengers.filter(p=>p.flight===f.number&&p.status==="Checked-in").length;
+    return `<option value="${f.number}">${f.number} · ${f.destination} · ${f.time} · offen ${open} · done ${done}</option>`;
+  }).join("");
+  openModal(`<h2>Check-in-Flug wählen</h2>
+    <p>Alle weiteren Passagierlisten und der Schalter beziehen sich danach nur auf diesen Flug.</p>
+    <div class="field"><label>Flug</label><select id="flightSessionSelect">${opts}</select></div>
+    <div class="modalactions">
+      <button class="ghost" data-action="closeModal">Abbrechen</button>
+      <button class="primary" data-action="confirmFlight">Flug aktivieren</button>
+    </div>`);
+}
+function confirmFlight(){
+  const n=$("#flightSessionSelect").value;
+  state.activeFlight=n;state.activePassengerId=null;state.paused=false;
+  save();closeModal();sendActiveFlightDisplay();switchView("checkin");
+  showToast(`${n} als aktiver Check-in-Flug gesetzt`);
+}
+function sendActiveFlightDisplay(){
+  if(!state.activeFlight)return displayStandard();
+  const f=flight(state.activeFlight);
+  const pax=state.passengers.filter(p=>p.flight===f.number);
+  const open=pax.filter(p=>p.status==="Open").length;
+  const checked=pax.filter(p=>p.status==="Checked-in").length;
+  const next=open>0?"Ready for next passenger":"All passengers processed";
+  sendDisplay({mode:"flight",f:{
+    number:f.number,to:f.destination,iata:f.iata,time:f.time,gate:f.gate,aircraft:f.aircraft,
+    open,checked,total:pax.length,next,
+    counter:state.counter,
+    checkinStatus:f.closed?"Check-in closed":"Check-in open"
+  }});
+}
+function displayStandard(){
+  sendDisplay({mode:"idle"});
+}
+function displayFlight(){
+  if(!state.activeFlight)return showToast("Kein aktiver Flug ausgewählt");
+  sendActiveFlightDisplay();
+}
+function togglePause(){
+  state.paused=!state.paused;
+  state.activePassengerId=null;
+  save();
+  if(state.paused){
+    sendDisplay({mode:"ads",paused:true,counter:state.counter});
+    showToast("Pause gestartet · Display zeigt Werbung");
+  }else{
+    sendActiveFlightDisplay();
+    showToast("Pause beendet");
+  }
+}
+function renderBaggage(){const list=state.passengers.filter(p=>p.bags.length);$("#baggageList").innerHTML=list.length?list.map(p=>`<article class="card"><div class="cardhead"><div><h3>${p.name} · ${p.flight}</h3><p>${p.pnr}</p></div><span>${p.bags.length} bag(s)</span></div><div class="formpanel">${p.bags.map(b=>`<div class="bagrow"><span>${b.tag} · ${b.type}</span><strong>${b.weight.toFixed(1)} kg</strong><span>${b.fee?euro(b.fee):"Included"}</span><span class="status ok">Accepted</span></div>`).join("")}</div></article>`).join(""):`<div class="panel empty">Noch kein Gepäck erfasst.</div>`}
+function renderSpecial(){const l=state.passengers.filter(p=>p.ssr.length);$("#specialList").innerHTML=l.map(p=>`<article class="card"><div class="cardhead"><div><h3>${p.name}</h3><p>${p.flight} ${p.iata} · ${p.pnr}</p></div><span class="status warn">${p.ssr.join(", ")}</span></div><div class="cardbody"><dl class="data"><dt>SSR</dt><dd>${p.ssr.join(", ")}</dd><dt>Status</dt><dd>${p.status}</dd></dl><dl class="data"><dt>Telefon</dt><dd>${p.phone}</dd><dt>Dokument</dt><dd>${p.docIssue}</dd></dl><dl class="data"><dt>Sitz</dt><dd>${p.seat||"–"}</dd><dt>Gepäck</dt><dd>${p.bags.length}</dd></dl></div><div class="actions"><button class="primary" data-action="openPassenger" data-id="${p.id}">Öffnen</button></div></article>`).join("")}
+function renderTransactions(){$("#transactionList").innerHTML=state.transactions.length?state.transactions.slice().reverse().map(t=>`<article class="card"><div class="cardhead"><div><h3>${t.passenger}</h3><p>${t.time} · ${t.pnr} · ${t.type}</p></div><strong class="money">${euro(t.amount)}</strong></div></article>`).join(""):`<div class="panel empty">Noch keine Zahlungen.</div>`}
+function renderStats(){const checked=state.passengers.filter(p=>p.status==="Checked-in"),bags=state.passengers.reduce((s,p)=>s+p.bags.length,0),kg=state.passengers.reduce((s,p)=>s+p.bags.reduce((a,b)=>a+b.weight,0),0),fees=state.transactions.reduce((s,t)=>s+t.amount,0);$("#statsView").innerHTML=[["Passagiere",state.passengers.length,"im Datensatz"],["Checked-in",checked.length,`${Math.round(checked.length/state.passengers.length*100)}%`],["Gepäckstücke",bags,`${kg.toFixed(1)} kg gesamt`],["Gebühren",euro(fees),"simuliert"],["SSR Fälle",state.passengers.filter(p=>p.ssr.length).length,"Special Services"],["Dokumentenfälle",state.passengers.filter(p=>p.docIssue!=="OK").length,"noch zu prüfen"]].map(x=>`<article class="stat"><span>${x[0]}</span><strong>${x[1]}</strong><small>${x[2]}</small></article>`).join("")}
+function searchPassengers(){renderPassengers($("#passengerSearch").value)}
+function generateQueue(){const open=state.passengers.filter(p=>p.status==="Open");open.sort(()=>Math.random()-.5);showToast("Warteschlange neu gemischt");renderDashboard();renderCheckin()}
+function openModal(h){$("#modal").innerHTML=h;$("#modalbg").classList.remove("hidden")}
+function closeModal(){$("#modalbg").classList.add("hidden")}
+function broadcastSnapshot(){const snap={mode:"idle",stats:{flights:flights.length,open:state.passengers.filter(p=>p.status==="Open").length,checked:state.passengers.filter(p=>p.status==="Checked-in").length,bags:state.passengers.reduce((s,p)=>s+p.bags.length,0)}};localStorage.setItem("austrianOpsSnapshot",JSON.stringify(snap))}
+function handle(btn){
+ const a=btn.dataset.action,id=btn.dataset.id,seat=btn.dataset.seat;
+ const m={
+ openPassenger:()=>openPassenger(id),searchCheckin,searchPassengers,openDocs,saveDocs,openBag,newBagWeight,previewBag,addBag,autoSeat,showSeatMapDisplay,
+ openUpgrade,previewUpgrade,confirmUpgrade,completeCheckin,showBoardingPass,sendJourney,sendBoarding,
+ selectSeat:()=>selectSeat(seat),generateQueue,closeModal,chooseFlight,confirmFlight,displayStandard,displayFlight,displayAds,togglePause,toggleFlightCheckin
+};
+ if(m[a])m[a]()
+}
+document.addEventListener("click",e=>{
+ const v=e.target.closest("[data-view]");if(v){e.preventDefault();switchView(v.dataset.view);return}
+ const b=e.target.closest("[data-action]");if(b){e.preventDefault();handle(b)}
+});
+$("#modalbg").addEventListener("click",e=>{if(e.target===$("#modalbg"))closeModal()});
+$("#checkinSearch").addEventListener("keydown",e=>{if(e.key==="Enter")searchCheckin()});
+$("#passengerSearch").addEventListener("keydown",e=>{if(e.key==="Enter")searchPassengers()});
+$("#openDisplay").addEventListener("click",()=>window.open("passenger-display.html?v=7","AustrianPassengerDisplay","width=1280,height=800"));
+function init(){
+ updateClock();setInterval(updateClock,1000);renderAll();broadcastSnapshot();
+ if(state.paused)sendDisplay({mode:"ads",paused:true,counter:state.counter});
+ else if(state.activeFlight)sendActiveFlightDisplay();
+ else displayStandard();
+}
+init();
+</script>
+</body>
+</html>
