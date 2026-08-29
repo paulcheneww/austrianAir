@@ -1,175 +1,172 @@
 <!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VIE Multi-Airline Check-in Simulator V2</title>
+<title>VIE Check-in Control V3</title>
 <style>
-:root{--brand:#e21b22;--accent:#fff;--ink:#17202a;--muted:#6d7680;--bg:#edf1f3;--panel:#fff;--line:#dce1e5;--warn:#b97411;--ok:#25845c;--bad:#b64040}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:13px}
-button,input,select,textarea{font:inherit}button{cursor:pointer}
-header{height:76px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 22px;position:sticky;top:0;z-index:20}
-.vie{height:42px;max-width:190px;object-fit:contain}.headtitle{margin-left:22px;border-left:1px solid var(--line);padding-left:22px}.headtitle b{font-size:16px}.headtitle span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
-.status{margin-left:auto;display:flex;gap:8px;align-items:center}.pill{border:1px solid var(--line);border-radius:99px;padding:8px 11px;background:#fff;font-size:11px}.dot{width:8px;height:8px;border-radius:50%;background:#24a568;display:inline-block;margin-right:6px}
-.layout{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:calc(100vh - 76px)}
-aside{background:#161b20;color:#dbe0e4;padding:18px 13px;position:relative}.airtitle{font-size:10px;color:#88939c;text-transform:uppercase;letter-spacing:.12em;padding:8px}
-.airbtn{width:100%;height:58px;border:0;border-radius:9px;margin:5px 0;background:#20262c;color:#fff;display:flex;align-items:center;padding:8px 11px;cursor:pointer;text-align:left;transition:.18s}.airbtn:hover{background:#2a3138}.airbtn.active{outline:2px solid var(--brand);background:#fff;color:#111}
-.airbtn img{width:100px;height:34px;object-fit:contain;object-position:left center;margin-right:9px}.airbtn .fallback{font-weight:900;font-size:14px;width:100px}.airbtn small{display:block;font-size:9px;color:#89939b}.airbtn.active small{color:#666}
-nav{margin-top:16px;border-top:1px solid #30373d;padding-top:12px}.navbtn{width:100%;border:0;background:transparent;color:#cfd5d9;padding:10px;border-radius:7px;text-align:left;cursor:pointer;font-weight:700;font-size:11px}.navbtn:hover,.navbtn.active{background:#2a3138;color:#fff}
-main{padding:20px}.hero{border-radius:14px;min-height:122px;background:var(--brand);color:var(--accent);padding:20px 23px;display:flex;align-items:center;overflow:hidden;position:relative}.hero:after{content:"";position:absolute;width:340px;height:340px;border:55px solid rgba(255,255,255,.08);border-radius:50%;right:-100px;top:-160px}
-.brandlogo{width:220px;height:65px;object-fit:contain;object-position:left center}.brandfallback{font-size:29px;font-weight:900}.hero .meta{margin-left:auto;text-align:right;z-index:2}.hero .meta b{font-size:24px}.hero .meta span{display:block;font-size:11px;margin-top:5px;opacity:.85}
-.grid{display:grid;grid-template-columns:1.32fr .92fr;gap:14px;margin-top:14px}.panel{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 8px 24px #1c273011}.ph{padding:12px 14px;border-bottom:1px solid var(--line);font-weight:900;font-size:12px;display:flex;align-items:center}.ph span{margin-left:auto;color:var(--muted);font-size:10px;font-weight:500}.pb{padding:13px}
-.flight{display:grid;grid-template-columns:82px 1fr 80px 65px 80px;gap:9px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:10px;margin-bottom:7px;cursor:pointer}.flight:hover{border-color:#adb5bc}.flight.selected{border:2px solid var(--brand);padding:9px}.flight small{color:var(--muted)}.gate{font-weight:900}.badge{border-radius:99px;background:#edf1f3;padding:5px 8px;font-size:9px;text-align:center}.badge.warn{background:#fff3da;color:#94620f}.badge.ok{background:#e8f5ee;color:#267654}
-.passenger{border:1px solid var(--line);border-radius:9px;padding:10px;margin-bottom:7px;cursor:pointer}.passenger:hover{background:#fafbfb}.passenger.active{border:2px solid var(--brand);padding:9px}.passenger b{display:block}.passenger small{color:var(--muted)}
-.casechips{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}.chip{font-size:8px;border-radius:99px;padding:4px 6px;background:#eef1f3;color:#59636b}.chip.warn{background:#fff1dd;color:#94620f}.chip.bad{background:#fff0f0;color:#a63e3e}.chip.biz{background:#eef0fb;color:#404b92}
-.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field label{font-size:9px;font-weight:800;color:#69727a;display:block;margin-bottom:4px}.field input,.field select,.field textarea{width:100%;border:1px solid #cfd5da;border-radius:7px;padding:9px;background:#fff}.field textarea{min-height:68px;resize:vertical}.full{grid-column:1/-1}
-.section{border-top:1px solid var(--line);margin-top:13px;padding-top:12px}.section h3{font-size:11px;margin:0 0 8px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 12px;font-weight:800;font-size:10px}.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--accent)}.btn.dark{background:#1b2025;color:#fff;border-color:#1b2025}.btn.warn{background:#fff5df;border-color:#ead39d;color:#8d5c0e}.btn.good{background:#eaf6ef;border-color:#c9e5d5;color:#237650}.btn:disabled{opacity:.4}
-.seatmap{display:grid;grid-template-columns:repeat(7,32px);gap:5px;justify-content:center;margin:10px 0}.seat{height:30px;border:1px solid #cbd1d5;border-radius:5px;background:#f7f8f9;font-size:9px}.seat.biz{background:#eef0fb;border-color:#7981ad}.seat.taken{background:#d9dde0;color:#9aa1a6}.seat.sel{background:var(--brand);color:var(--accent);border-color:var(--brand)}.aisle{visibility:hidden}
-.pricebox{border:1px solid #ead6a9;background:#fff8e8;border-radius:9px;padding:10px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}.pricebox strong{font-size:20px}
-.issue{padding:9px 10px;border-radius:8px;background:#fff0f0;border:1px solid #efcece;font-size:10px;margin-top:8px}.okbox{padding:9px 10px;border-radius:8px;background:#edf8f2;border:1px solid #cce6d7;font-size:10px;margin-top:8px}
-.screenctl{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.screenctl .btn{min-height:42px}.log{max-height:500px;overflow:auto;font-size:10px}.log div{padding:7px 0;border-bottom:1px solid #eee}
-.hidden{display:none!important}
-@media(max-width:980px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.airbtn{display:inline-flex;width:180px;margin-right:4px}.flight{grid-template-columns:70px 1fr 60px}.flight>*:nth-child(4),.flight>*:nth-child(5){display:none}}
+:root{--brand:#00733f;--accent:#fff;--bg:#eef1f3;--panel:#fff;--ink:#17202a;--muted:#6f7880;--line:#d9dfe3;--green:#23815a;--red:#bf4040;--amber:#ad7414}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:12px}button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{height:74px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:30}.vie{width:170px;height:46px;object-fit:contain}.title{margin-left:18px;border-left:1px solid var(--line);padding-left:18px}.title b{font-size:15px}.title small{display:block;color:var(--muted);margin-top:3px}.headActions{margin-left:auto;display:flex;gap:8px;align-items:center}.pill{padding:7px 10px;border:1px solid var(--line);border-radius:99px;background:#fff;font-size:10px}.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 12px;font-weight:800;font-size:10px}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}.btn.dark{background:#1c2126;color:#fff;border-color:#1c2126}.btn.warn{background:#fff4dd;border-color:#ead19b;color:#8d5b0d}.btn.good{background:#eaf7f0;border-color:#c9e6d6;color:#1f7450}
+main{max-width:1700px;margin:auto;padding:20px}.screen{display:none}.screen.active{display:block}
+.welcomeHero{min-height:160px;background:linear-gradient(120deg,#0d4637,#087553);color:#fff;border-radius:16px;padding:28px;display:flex;align-items:center;overflow:hidden;position:relative}.welcomeHero:after{content:"";position:absolute;width:420px;height:420px;border:75px solid #ffffff10;border-radius:50%;right:-120px;top:-220px}.welcomeHero img{width:260px;filter:brightness(0) invert(1)}.welcomeHero h1{margin:0 0 6px;font-size:28px}.welcomeHero p{opacity:.85;margin:0}
+.modeGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.modeCard{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px;cursor:pointer;transition:.15s;min-height:135px}.modeCard:hover{transform:translateY(-2px);box-shadow:0 10px 28px #1c2b3613}.modeCard.star{background:linear-gradient(135deg,#fff,#f4f4f4)}.modeCard img{height:48px;max-width:220px;object-fit:contain;object-position:left}.modeCard h2{font-size:17px;margin:12px 0 5px}.modeCard p{color:var(--muted);line-height:1.5;margin:0}
+.sectionTitle{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:900;margin:20px 0 9px}.airGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.airCard{background:#fff;border:1px solid var(--line);border-radius:11px;padding:12px;min-height:94px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between}.airCard:hover{border-color:#aeb7be;box-shadow:0 6px 18px #0000000b}.airCard img{height:46px;width:100%;object-fit:contain;object-position:left center}.airCard small{color:var(--muted)}
+.deskHeader{background:var(--brand);color:#fff;border-radius:14px;padding:17px 20px;display:flex;align-items:center}.deskHeader img{width:210px;height:62px;object-fit:contain;object-position:left center;background:#fff;border-radius:9px;padding:7px}.deskHeader .info{margin-left:18px}.deskHeader h2{margin:0 0 3px;font-size:20px}.deskHeader small{opacity:.85}.deskHeader .right{margin-left:auto;text-align:right}.deskHeader .right b{font-size:18px}.tabs{display:flex;gap:6px;margin:12px 0}.tab{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 11px;font-weight:800;font-size:10px}.tab.active{background:#1e2328;color:#fff;border-color:#1e2328}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px}.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:11px}.stat{padding:11px}.stat small{color:var(--muted);font-size:8px}.stat b{display:block;font-size:19px;margin-top:4px}.workspace{display:grid;grid-template-columns:1fr 390px;gap:12px}.panelHead{padding:11px 13px;border-bottom:1px solid var(--line);font-weight:900;display:flex;justify-content:space-between}.panelBody{padding:12px}
+.flightList{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.flight{border:1px solid var(--line);border-radius:9px;padding:10px;cursor:pointer}.flight.active{border:2px solid var(--brand);padding:9px}.flight b{font-size:13px}.flight small{display:block;color:var(--muted);margin-top:3px}
+.paxTable{width:100%;border-collapse:collapse}.paxTable th,.paxTable td{padding:8px;border-bottom:1px solid var(--line);text-align:left;font-size:9px}.paxTable th{color:var(--muted);background:#f8f9fa}.paxTable tr.click{cursor:pointer}.paxTable tr.click:hover td{background:#fafbfb}.badge{display:inline-block;border-radius:99px;padding:4px 6px;background:#eef1f3;font-size:7px}.badge.wait{background:#fff4df;color:#8c5d10}.badge.done{background:#e9f6ef;color:#23744e}.badge.bad{background:#fff0f0;color:#a33d3d}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field label{display:block;font-size:8px;font-weight:850;color:#68737b;margin-bottom:4px}.field input,.field select,.field textarea{width:100%;border:1px solid #cfd5da;border-radius:7px;padding:8px;background:#fff}.field textarea{min-height:58px;resize:vertical}.full{grid-column:1/-1}.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.casebox{padding:8px 9px;border-radius:8px;background:#fff5e5;border:1px solid #edd7ae;margin-bottom:9px;font-size:9px}.casebox b{display:block;margin-bottom:3px}
+.seats{display:grid;grid-template-columns:repeat(7,30px);gap:4px;justify-content:center;margin:8px 0}.seat{height:28px;border:1px solid #cfd5d9;border-radius:5px;background:#f8f9fa;font-size:8px}.seat.biz{background:#eef0fb}.seat.taken{background:#dce0e3;color:#9da4aa}.seat.sel{background:var(--brand);color:#fff;border-color:var(--brand)}.aisle{visibility:hidden}.hidden{display:none!important}
+@media(max-width:1100px){.airGrid{grid-template-columns:repeat(3,1fr)}.workspace{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.flightList{grid-template-columns:1fr 1fr}}
 </style></head><body>
-<header><img src="vie-airport.png" class="vie"><div class="headtitle"><b>Common Use Check-in V2</b><span>Vienna International Airport · Terminal 3 · Counter 347</span></div><div class="status"><div class="pill"><i class="dot"></i>Display verbunden</div><div class="pill" id="clock"></div></div></header>
-<div class="layout"><aside><div class="airtitle">Airline auswählen</div><div id="airlines"></div><nav>
-<button class="navbtn active" data-view="work">Check-in Arbeitsplatz</button><button class="navbtn" data-view="display">Kundendisplay</button><button class="navbtn" data-view="log">Schichtprotokoll</button></nav></aside>
+<header><img class="vie" src="vie-airport.png"><div class="title"><b>Common Use Passenger Processing</b><small>Vienna Airport · Check-in Training Simulator</small></div><div class="headActions"><span class="pill" id="clock"></span><button class="btn dark" id="openDisplay">2. Bildschirm öffnen</button></div></header>
 <main>
-<section id="workView"><div class="hero"><div id="heroBrand"></div><div class="meta"><b id="heroName"></b><span id="heroDesc"></span></div></div>
-<div class="grid"><div>
-<div class="panel"><div class="ph">Abflüge <span id="flightCount"></span></div><div class="pb" id="flightList"></div></div>
-<div class="panel" style="margin-top:14px"><div class="ph">Passagier bearbeiten <span id="currentFlightLabel">Kein Flug ausgewählt</span></div><div class="pb" id="passengerWork"><div style="color:#7a838a">Wähle zuerst einen Flug und anschließend einen Passagier.</div></div></div>
+<section id="selectScreen" class="screen active">
+<div class="welcomeHero"><div><h1>Check-in Session auswählen</h1><p>Öffne einen einzelnen Airline-Schalter oder einen gemeinsamen Star Alliance Trainingsschalter.</p></div></div>
+<div class="modeGrid"><div class="modeCard star" data-mode="STAR"><img src="star-alliance-wordmark.png"><h2>Star Alliance Common Check-in</h2><p>Gemeinsamer Trainingsmodus für alle 26 Star Alliance Mitgliedsfluggesellschaften. Alle offenen Passagiere und Flüge in einer gemeinsamen Arbeitsansicht.</p></div><div class="modeCard" data-mode="VIE"><img src="vie-airport.png"><h2>VIE Today · Multi-Airline</h2><p>Wien-Ansicht mit aktuellen Airlines am Flughafen und ausschließlich hinterlegten Nonstop-Zielen ab VIE. Flugzeiten in der Simulation sind Trainingszeiten.</p></div></div>
+<div class="sectionTitle">Einzelne Airline · Original-/echte Airline-Logos</div><div class="airGrid" id="airGrid"></div>
+</section>
+
+<section id="deskScreen" class="screen">
+<div class="deskHeader"><img id="deskLogo"><div class="info"><h2 id="deskName"></h2><small id="deskSub"></small><small style="display:block;margin-top:3px">Routen: reale VIE-Direktziele · Uhrzeiten/Gates: Simulation</small></div><div class="right"><small>Check-in desk</small><b id="deskRange"></b></div></div>
+<div class="tabs"><button class="tab active" data-tab="queue">Offen / noch einzuchecken</button><button class="tab" data-tab="flights">Flüge</button><button class="tab" data-tab="exceptions">Sonderfälle</button><button class="tab" data-tab="done">Eingecheckt</button><button class="tab" data-tab="stats">Übersicht</button><button class="btn" id="backSelect" style="margin-left:auto">Airline wechseln</button></div>
+<div class="stats" id="stats"></div>
+<div class="workspace"><div>
+<div class="panel" id="queuePanel"><div class="panelHead"><span id="mainTitle">Noch einzuchecken</span><span id="queueHint"></span></div><div class="panelBody" id="mainContent"></div></div>
 </div><div>
-<div class="panel"><div class="ph">Passagierliste <span id="paxCount"></span></div><div class="pb" id="passengers"><div style="color:#7a838a">Noch kein Flug gewählt.</div></div></div>
-<div class="panel" style="margin-top:14px"><div class="ph">Display-Schnellsteuerung</div><div class="pb screenctl">
-<button class="btn" data-screen="idle">Airport Screensaver</button><button class="btn" data-screen="blank">Nichts anzeigen</button><button class="btn" data-screen="flight">Fluginformation</button><button class="btn" data-screen="ad">Werbung</button><button class="btn" data-screen="star">Star Alliance</button><button class="btn dark" data-screen="closed">Schalter geschlossen</button>
-</div></div></div></div></section>
-<section id="displayView" class="hidden"><div class="panel"><div class="ph">Kundendisplay / Bildschirm 2</div><div class="pb"><div class="screenctl"><button class="btn" data-screen="idle">Airport Screensaver</button><button class="btn" data-screen="blank">Leerer Bildschirm</button><button class="btn" data-screen="flight">Fluginformation</button><button class="btn" data-screen="ad">Werbung</button><button class="btn" data-screen="star">Star Alliance</button><button class="btn dark" data-screen="closed">Schalter geschlossen</button></div><p style="color:#6d7680;margin-top:12px">Boardingpass, Bag Tag, Zahlungen, Upgrade und Sonderfall-Hinweise werden automatisch aus dem Arbeitsablauf gesendet.</p></div></div></section>
-<section id="logView" class="hidden"><div class="panel"><div class="ph">Schichtprotokoll</div><div class="pb log" id="logBox"></div></div></section>
-</main></div>
+<div class="panel"><div class="panelHead">Aktiver Passagier <span id="activeRef"></span></div><div class="panelBody" id="workBox">Wähle links einen Passagier aus.</div></div>
+<div class="panel" style="margin-top:10px"><div class="panelHead">Kundendisplay</div><div class="panelBody actions"><button class="btn" data-display="idle">Screensaver</button><button class="btn" data-display="blank">Leer</button><button class="btn" data-display="ad">Werbung</button><button class="btn" data-display="star">Star Alliance</button><button class="btn dark" data-display="closed">Geschlossen</button></div></div>
+</div></div>
+</section>
+</main>
 <script>
-const A={
-OS:{name:"Austrian Airlines",short:"Austrian",logo:"austrian.png",brand:"#e21b22",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#2B3087"},
-LH:{name:"Lufthansa",short:"Lufthansa",logo:"lufthansa.png",brand:"#071d49",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#071d49"},
-LX:{name:"SWISS",short:"SWISS",logo:"swiss.png",brand:"#e00000",accent:"#fff",desc:"Swiss International Air Lines · Star Alliance",alliance:true,biz:"#b80000"},
-SN:{name:"Brussels Airlines",short:"Brussels",logo:"brussels.png",brand:"#061a54",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#061a54"},
-BA:{name:"British Airways",short:"British Airways",logo:"british-airways.png",brand:"#075aaa",accent:"#fff",desc:"oneworld member",alliance:false,biz:"#143b72"},
-EW:{name:"Eurowings",short:"Eurowings",brand:"#6b2b72",accent:"#fff",desc:"Lufthansa Group",alliance:false,biz:"#6b2b72"},
-TK:{name:"Turkish Airlines",short:"Turkish Airlines",brand:"#c70a0c",accent:"#fff",desc:"Star Alliance member",alliance:true,biz:"#9c0a0b"},
-AC:{name:"Air Canada",short:"Air Canada",brand:"#d8292f",accent:"#fff",desc:"Star Alliance member",alliance:true,biz:"#1c1c1c"},
-UA:{name:"United Airlines",short:"United",brand:"#005daa",accent:"#fff",desc:"Star Alliance member",alliance:true,biz:"#003b6f"}
+const AIR={A3:{name:'Aegean Airlines',color:'#13294b',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/A3.png',star:true},AC:{name:'Air Canada',color:'#d8292f',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AC.png',star:true},CA:{name:'Air China',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/CA.png',star:true},AI:{name:'Air India',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AI.png',star:true},NZ:{name:'Air New Zealand',color:'#111111',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/NZ.png',star:true},NH:{name:'ANA',color:'#183b8f',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/NH.png',star:true},OZ:{name:'Asiana Airlines',color:'#7a1f3d',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/OZ.png',star:true},OS:{name:'Austrian Airlines',color:'#e21b22',logo:'austrian.png',star:true},AV:{name:'Avianca',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AV.png',star:true},SN:{name:'Brussels Airlines',color:'#061a54',logo:'brussels.png',star:true},CM:{name:'Copa Airlines',color:'#154a8a',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/CM.png',star:true},OU:{name:'Croatia Airlines',color:'#17478b',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/OU.png',star:true},MS:{name:'EGYPTAIR',color:'#153e7e',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/MS.png',star:true},ET:{name:'Ethiopian Airlines',color:'#0b7a3b',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/ET.png',star:true},BR:{name:'EVA Air',color:'#007f6d',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/BR.png',star:true},LO:{name:'LOT Polish Airlines',color:'#0d2d5e',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/LO.png',star:true},LH:{name:'Lufthansa',color:'#071d49',logo:'lufthansa.png',star:true},ZH:{name:'Shenzhen Airlines',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/ZH.png',star:true},SQ:{name:'Singapore Airlines',color:'#0b2d59',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/SQ.png',star:true},SA:{name:'South African Airways',color:'#0c6cab',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/SA.png',star:true},LX:{name:'SWISS',color:'#e00000',logo:'swiss.png',star:true},TG:{name:'Thai Airways',color:'#5f2c83',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/TG.png',star:true},TP:{name:'TAP Air Portugal',color:'#1b8f4d',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/TP.png',star:true},TK:{name:'Turkish Airlines',color:'#c8102e',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/TK.png',star:true},UA:{name:'United Airlines',color:'#005daa',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/UA.png',star:true},AZ:{name:'ITA Airways',color:'#0064a8',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AZ.png',star:true},BA:{name:'British Airways',color:'#075aaa',logo:'british-airways.png',star:false},EW:{name:'Eurowings',color:'#6b2b72',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/EW.png',star:false},
+EI:{name:'Aer Lingus',color:'#137b49',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/EI.png',star:false},
+AF:{name:'Air France',color:'#1f4e9a',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AF.png',star:false},
+JU:{name:'Air Serbia',color:'#183b72',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/JU.png',star:false},
+BT:{name:'airBaltic',color:'#a7c628',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/BT.png',star:false},
+CI:{name:'China Airlines',color:'#6d388b',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/CI.png',star:false},
+MU:{name:'China Eastern Airlines',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/MU.png',star:false},
+DE:{name:'Condor',color:'#ffd100',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/DE.png',star:false},
+EK:{name:'Emirates',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/EK.png',star:false},
+EY:{name:'Etihad Airways',color:'#7a6a3a',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/EY.png',star:false},
+AY:{name:'Finnair',color:'#17365d',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AY.png',star:false},
+IB:{name:'Iberia',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/IB.png',star:false},
+KL:{name:'KLM',color:'#00a1de',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/KL.png',star:false},
+KE:{name:'Korean Air',color:'#1b56a5',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/KE.png',star:false},
+QR:{name:'Qatar Airways',color:'#5b0f2f',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/QR.png',star:false},
+FR:{name:'Ryanair',color:'#073590',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/FR.png',star:false},
+SK:{name:'SAS Scandinavian Airlines',color:'#123d72',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/SK.png',star:false},
+SV:{name:'Saudia',color:'#107b61',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/SV.png',star:false},
+TR:{name:'Scoot',color:'#f6c800',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/TR.png',star:false},
+RJ:{name:'Royal Jordanian',color:'#9c7d3a',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/RJ.png',star:false},
+OV:{name:'SalamAir',color:'#4b9b42',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/OV.png',star:false},
+G9:{name:'Air Arabia',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/G9.png',star:false},
+PC:{name:'Pegasus Airlines',color:'#f4c300',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/PC.png',star:false},
+XQ:{name:'SunExpress',color:'#ef7b1b',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/XQ.png',star:false},
+VY:{name:'Vueling',color:'#f6d900',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/VY.png',star:false},
+KM:{name:'KM Malta Airlines',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/KM.png',star:false},
+LG:{name:'Luxair',color:'#0b62a3',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/LG.png',star:false},
+U2:{name:'easyJet Europe',color:'#f05a28',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/U2.png',star:false},
+SM:{name:'Air Cairo',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/SM.png',star:false}};
+const STAR=["A3","AC","CA","AI","NH","OS","SN","OU","MS","ET","BR","LO","LH","LX","TP","TK"];
+const VIE_ACTIVE=["OS","LH","LX","SN","A3","AC","CA","AI","NH","OU","MS","ET","BR","LO","TP","TK","EI","AF","JU","BT","BA","CI","MU","DE","EK","EY","EW","AY","IB","KL","KE","QR","FR","SK","SV","TR","RJ","OV","G9","PC","XQ","VY","KM","LG","U2","SM"];
+const ROUTES={
+OS:["FRA|Frankfurt","MUC|Munich","ZRH|Zurich","BRU|Brussels","CDG|Paris CDG","LHR|London Heathrow","ARN|Stockholm","BCN|Barcelona","FCO|Rome Fiumicino","JFK|New York JFK","ORD|Chicago O'Hare","BKK|Bangkok","ALC|Alicante","BIO|Bilbao","BGO|Bergen","BIA|Bastia","OHD|Ohrid","MJT|Mytilene","PDL|Ponta Delgada"],
+LH:["FRA|Frankfurt","MUC|Munich"], LX:["ZRH|Zurich"], SN:["BRU|Brussels"], A3:["ATH|Athens"],
+AC:["YYZ|Toronto"], CA:["PEK|Beijing"], AI:["DEL|Delhi"], NH:["HND|Tokyo Haneda"], OU:["ZAG|Zagreb"],
+MS:["CAI|Cairo"], ET:["ADD|Addis Ababa","CPH|Copenhagen","BRU|Brussels"], BR:["TPE|Taipei"],
+LO:["WAW|Warsaw"], TP:["LIS|Lisbon"], TK:["IST|Istanbul"],
+EI:["DUB|Dublin"], AF:["CDG|Paris CDG"], JU:["BEG|Belgrade"], BT:["RIX|Riga","TLL|Tallinn"],
+BA:["LHR|London Heathrow"], CI:["TPE|Taipei"], MU:["PVG|Shanghai Pudong","XIY|Xi'an"], DE:["FRA|Frankfurt"],
+EK:["DXB|Dubai"], EY:["AUH|Abu Dhabi"], EW:["DUS|Düsseldorf","HAM|Hamburg","CGN|Cologne/Bonn"],
+AY:["HEL|Helsinki"], IB:["MAD|Madrid"], KL:["AMS|Amsterdam"], KE:["ICN|Seoul Incheon"],
+QR:["DOH|Doha"], FR:["STN|London Stansted","PMI|Palma de Mallorca","BCN|Barcelona","FCO|Rome Fiumicino"],
+SK:["CPH|Copenhagen"], SV:["JED|Jeddah"], TR:["SIN|Singapore"], RJ:["AMM|Amman"], OV:["MCT|Muscat"],
+G9:["SHJ|Sharjah"], PC:["SAW|Istanbul Sabiha Gökçen"], XQ:["AYT|Antalya"], VY:["BCN|Barcelona"],
+KM:["MLA|Malta"], LG:["LUX|Luxembourg"], U2:["LGW|London Gatwick","BRS|Bristol","LPL|Liverpool","BSL|Basel","BOD|Bordeaux"],
+SM:["HRG|Hurghada"]
 };
-const destinations=["London Heathrow","Frankfurt","Zurich","Brussels","Paris CDG","Amsterdam","Stockholm","Copenhagen","Barcelona","Rome Fiumicino","New York JFK","Chicago O'Hare","Istanbul","Munich","Berlin","Hamburg","Athens","Lisbon"];
-const first=["Anna","Felix","Sophie","Leon","Emma","Lukas","Mia","David","Laura","Jonas","Sarah","Noah","Julia","Maximilian","Nina","Alexander","Lena","Daniel","Marie","Tobias"];
-const last=["Huber","Gruber","Wagner","Mayer","Schmidt","Bauer","Hofer","Leitner","Moser","Berger","Fischer","Steiner","Wolf","Pichler","Weber"];
-let state={air:"OS",flight:null,pax:null,logs:[]};
-function rand(a){return a[Math.floor(Math.random()*a.length)]}
-function casesFor(j,flightIndex){
- const list=[];
- if(j===1)list.push("STATUS");
- if(j===2)list.push("OVERWEIGHT");
- if(j===3)list.push("DOC");
- if(j===4)list.push("WCHR");
- if(j===5)list.push("UMNR");
- if(j===6)list.push("PET");
- if(j===7)list.push("STANDBY");
- if(j===8)list.push("CONNECTION");
- if(j===9||flightIndex===2&&j===0)list.push("UPGRADE");
- return list;
+const COUNTERS={OS:"T3 · 351–372",LH:"T3 · 351–372",SN:"T3 · 351–372",LX:"T3 · 351–372",TP:"T3 · 351–372",AC:"T3 · 301–348",CA:"T3 · 331–347",AI:"T3 · 321–325",NH:"T3 · 301–348",A3:"T1 · 173–196",TK:"T1 · 173–196",BA:"T1 · 173–196",LO:"T1 · 173–196",EW:"Common-use training",AZ:"Star Alliance training",EI:'T1 · 173–196',AF:'T1 · 188–193',JU:'T1 · 173–196',BT:'T1 · 151–162',CI:'T1A · 111–120',MU:'T3 · 301–348',DE:'T1 · 173–196',EK:'T3 · 301–313',EY:'T3 · 301–348',AY:'T1 · 173–196',IB:'T1 · 173–196',KL:'T1 · 188–193',KE:'T3 · 302–308',QR:'T3 · 301–348',FR:'T1 · 151–162',SK:'T1 · 173–196',SV:'T1 · 173–196',TR:'T3 · 301–348',RJ:'T3 · 301–348',OV:'T3 · 301–348',G9:'T1A · 111–132',PC:'T1A · 111–132',XQ:'T1A · 111–132',VY:'T1A · 111–132',KM:'T1 · 173–196',LG:'T3 · 351–372',U2:'T1A · 111–132',SM:'T1A · 111–132',OU:'T3 · 351–372',MS:'T3 · 301–348',ET:'T3 · 311–314',BR:'T3 · 301–348'};
+const names=["Anna Berger","Felix Huber","Sophie Gruber","Leon Wagner","Emma Mayer","Lukas Schmidt","Mia Bauer","David Hofer","Laura Leitner","Jonas Moser","Sarah Fischer","Noah Steiner","Julia Wolf","Nina Weber","Daniel Pichler"];
+let state={mode:null,air:null,tab:"queue",activePax:null,activeFlight:null};
+function rand(arr,n){return arr[n%arr.length]}
+function makeFlights(code){
+ const routes=ROUTES[code]||[];
+ return routes.slice(0, code==="OS"?10:4).map((route,i)=>{
+   const [iata,dest]=route.split("|");
+   return {
+     id:code+String(110+i*17),dest,iata,
+     time:String(8+i*2).padStart(2,"0")+":"+["05","20","35","50"][i%4],
+     gate:["F12","F23","G03","G17","D26","C31"][i%6],
+     aircraft:["A320neo","A321","A220","B787-9"][i%4],
+     pax:Array.from({length:11},(_,j)=>({id:code+"-"+i+"-"+j,name:rand(names,j+i),pnr:code+String(430000+i*100+j),status:j<2?"Checked-in":"Waiting",seat:j<2?(5+j)+"A":null,bag:null,group:j<2?3:null,fare:j===1?"Business":"Economy",tier:j===1?"Star Gold":"None",case:["","OVERWEIGHT","DOC","WCHR","UMNR","PETC","STANDBY","CONNECTION","UPGRADE","",""][j],note:""}))
+   };
+ });
 }
-function flightData(code,i){
- let h=9+i*2+(code.charCodeAt(0)%2),m=[5,20,35,50][i%4];
- return {id:code+(110+i*17),dest:destinations[(i+code.charCodeAt(1))%destinations.length],time:String(h%24).padStart(2,"0")+":"+String(m).padStart(2,"0"),gate:["F12","F23","G03","G17","D26","C31"][i%6],status:i===0?"CHECK-IN":i===1?"OPEN":"SCHEDULED",aircraft:["A320neo","A321","A220","B787-9"][i%4],pax:makePax(code,i)}
+const DB={};Object.keys(AIR).forEach(c=>DB[c]=makeFlights(c));
+function allowedCodes(){if(state.mode==="STAR")return STAR;if(state.mode==="VIE")return VIE_ACTIVE;return [state.air]}
+function allFlights(){return allowedCodes().flatMap(c=>DB[c].map(f=>({...f,code:c})))}
+function allPax(){return allFlights().flatMap(f=>f.pax.map(p=>({...p,flight:f})))}
+function send(o){localStorage.setItem("vieDisplayV3",JSON.stringify({...o,t:Date.now(),theme:state.air?AIR[state.air]:null}))}
+function setupAirGrid(){
+ airGrid.innerHTML=Object.entries(AIR).map(([c,a])=>`<div class="airCard" data-air="${c}">
+ <img src="${a.logo}" alt="${a.name} logo" onerror="this.style.display='none';this.nextElementSibling.querySelector('.logoFallback').style.display='inline'">
+ <div><b>${a.name}</b><span class="logoFallback" style="display:none;font-size:8px;color:#a44"> · Logo konnte nicht geladen werden</span><small>${a.star?" · Star Alliance":""}</small></div></div>`).join("")
 }
-function makePax(code,i){
- return Array.from({length:10},(_,j)=>({
-  id:j,name:rand(first)+" "+rand(last),booking:code+String(420000+i*100+j),doc:j===3?"Passport":"ID Card",docStatus:j===3?"CHECK_REQUIRED":"OK",
-  bag:null,seat:null,group:null,status:j===0?"Checked-in":"Waiting",fare:j===1?"Business":"Economy",tier:j===1?"Frequent Traveller":"None",
-  cases:casesFor(j,i),special:j===4?"Wheelchair requested":j===5?"Unaccompanied minor":j===6?"Pet in cabin":j===7?"Standby passenger":j===8?"Connection via "+["FRA","MUC","ZRH"][i%3]:"",
-  payment:0,upgrade:false,fastBag:false
- }))
+function openDesk(mode,air){
+ state.mode=mode;state.air=air||null;state.tab="queue";state.activePax=null;selectScreen.classList.remove("active");deskScreen.classList.add("active");
+ renderDesk();send({mode:"idle"});
 }
-const flightDB={};Object.keys(A).forEach(k=>flightDB[k]=Array.from({length:6},(_,i)=>flightData(k,i)));
-function send(p){localStorage.setItem("vieDisplay",JSON.stringify({...p,t:Date.now(),air:state.air,theme:A[state.air]}))}
-function log(x){state.logs.unshift(new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"})+" · "+x);renderLog()}
-function renderAir(){airlines.innerHTML=Object.entries(A).map(([k,a])=>`<button class="airbtn ${state.air===k?"active":""}" data-air="${k}">${a.logo?`<img src="${a.logo}">`:`<span class="fallback">${a.short}</span>`}<span><b>${k}</b><small>${a.alliance?"Star Alliance":"Partner airline"}</small></span></button>`).join("")}
-function setTheme(){let a=A[state.air];document.documentElement.style.setProperty("--brand",a.brand);document.documentElement.style.setProperty("--accent",a.accent);heroBrand.innerHTML=a.logo?`<img class="brandlogo" src="${a.logo}">`:`<div class="brandfallback">${a.name}</div>`;heroName.textContent=a.name;heroDesc.textContent=a.desc}
-function renderFlights(){let fs=flightDB[state.air];flightCount.textContent=fs.length+" Flüge";flightList.innerHTML=fs.map(f=>`<div class="flight ${state.flight===f.id?"selected":""}" data-flight="${f.id}"><b>${f.id}</b><div><b>${f.dest}</b><small> ${f.aircraft}</small></div><div><b>${f.time}</b><small> Abflug</small></div><div class="gate">${f.gate}</div><div class="badge ${f.status==="CHECK-IN"?"ok":f.status==="OPEN"?"warn":""}">${f.status}</div></div>`).join("")}
-function curFlight(){return flightDB[state.air].find(x=>x.id===state.flight)}
-function curPax(){let f=curFlight();return f?.pax.find(x=>x.id===state.pax)}
-function caseLabel(c){return {STATUS:"Statuskunde",OVERWEIGHT:"Übergepäck",DOC:"Dokument prüfen",WCHR:"Special Assistance",UMNR:"Minderjährig",PET:"Haustier",STANDBY:"Standby",CONNECTION:"Anschlussflug",UPGRADE:"Upgrade möglich"}[c]||c}
-function renderPax(){
- let f=curFlight();if(!f){passengers.innerHTML='<div style="color:#7a838a">Noch kein Flug gewählt.</div>';paxCount.textContent="";return}
- currentFlightLabel.textContent=f.id+" · "+f.dest;paxCount.textContent=f.pax.filter(x=>x.status==="Waiting").length+" offen";
- passengers.innerHTML=f.pax.map(p=>`<div class="passenger ${state.pax===p.id?"active":""}" data-pax="${p.id}"><b>${p.name}</b><small>${p.booking} · ${p.status}${p.seat?" · Sitz "+p.seat:""}</small><div class="casechips">${p.fare==="Business"?'<span class="chip biz">Business</span>':""}${p.cases.map(c=>`<span class="chip ${["OVERWEIGHT","DOC","STANDBY"].includes(c)?"warn":""}">${caseLabel(c)}</span>`).join("")}</div></div>`).join("")
+function deskIdentity(){
+ if(state.mode==="STAR")return {name:"Star Alliance Common Check-in",logo:"star-alliance-wordmark.png",color:"#111",sub:"26 member airlines · training common-use desk",range:"Training desk · ALL STAR"};
+ if(state.mode==="VIE")return {name:"VIE Today · Multi-Airline",logo:"vie-airport.png",color:"#00733f",sub:"Vienna operating-carrier selection · common-use training",range:"T1 / T3 common use"};
+ let a=AIR[state.air];return {name:a.name,logo:a.logo,color:a.color,sub:(a.star?"Star Alliance · ":"")+ "Individual airline check-in",range:COUNTERS[state.air]||"Common-use training"};
 }
-function seatMap(p){let out="";for(let r=1;r<=16;r++){for(let c=0;c<7;c++){if(c===3){out+='<span class="aisle"></span>';continue}let l="ABCDEF"[c>3?c-1:c],s=r+l,taken=((r*7+c)%11===0);out+=`<button class="seat ${r<=4?"biz":""} ${taken?"taken":""} ${p.seat===s?"sel":""}" ${taken?"disabled":""} data-seat="${s}">${s}</button>`}}return out}
-function extraCost(p,newSeat){
- let row=Number((newSeat||p.seat||"99").match(/\d+/)?.[0]||99),cost=0;
- if(p.fare==="Economy"&&row<=4)cost+=12;
- return cost;
+function renderDesk(){
+ let d=deskIdentity();document.documentElement.style.setProperty("--brand",d.color);deskLogo.src=d.logo;deskName.textContent=d.name;deskSub.textContent=d.sub;deskRange.textContent=d.range;
+ document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===state.tab));
+ let p=allPax(),waiting=p.filter(x=>x.status==="Waiting"),done=p.filter(x=>x.status==="Checked-in"),exc=waiting.filter(x=>x.case);
+ stats.innerHTML=[["Offen",waiting.length],["Eingecheckt",done.length],["Sonderfälle",exc.length],["Flüge",allFlights().length],["Business",p.filter(x=>x.fare==="Business").length],["Star Gold",p.filter(x=>x.tier==="Star Gold").length]].map(x=>`<div class="stat"><small>${x[0]}</small><b>${x[1]}</b></div>`).join("");
+ renderMain();renderWork();
 }
+function renderMain(){
+ let rows=allPax();
+ if(state.tab==="queue"){rows=rows.filter(x=>x.status==="Waiting");mainTitle.textContent="Noch einzuchecken";queueHint.textContent="Alle offenen Passagiere der Session";mainContent.innerHTML=paxTable(rows)}
+ if(state.tab==="done"){rows=rows.filter(x=>x.status==="Checked-in");mainTitle.textContent="Eingecheckt";queueHint.textContent="Bereits abgeschlossen";mainContent.innerHTML=paxTable(rows)}
+ if(state.tab==="exceptions"){rows=rows.filter(x=>x.status==="Waiting"&&x.case);mainTitle.textContent="Sonderfälle";queueHint.textContent="Manuelle Bearbeitung nötig";mainContent.innerHTML=paxTable(rows)}
+ if(state.tab==="flights"){mainTitle.textContent="Flüge";queueHint.textContent="Aktive Session";mainContent.innerHTML=`<div class="flightList">${allFlights().map(f=>`<div class="flight" data-flight="${f.code}|${f.id}"><b>${f.id} · ${AIR[f.code].name}</b><small>${f.dest} · ${f.time} · Gate ${f.gate} · ${f.aircraft}</small><small>${f.pax.filter(p=>p.status==="Waiting").length} noch offen</small></div>`).join("")}</div>`}
+ if(state.tab==="stats"){mainTitle.textContent="Session Übersicht";queueHint.textContent="Live";let codes=allowedCodes();mainContent.innerHTML=`<table class="paxTable"><thead><tr><th>Airline</th><th>Flüge</th><th>Offen</th><th>Done</th></tr></thead><tbody>${codes.map(c=>`<tr><td><img src="${AIR[c].logo}" style="height:25px;max-width:100px;object-fit:contain"></td><td>${DB[c].length}</td><td>${DB[c].flatMap(f=>f.pax).filter(p=>p.status==="Waiting").length}</td><td>${DB[c].flatMap(f=>f.pax).filter(p=>p.status==="Checked-in").length}</td></tr>`).join("")}</tbody></table>`}
+}
+function paxTable(rows){
+ return `<table class="paxTable"><thead><tr><th>Airline</th><th>Flug</th><th>Passagier</th><th>PNR</th><th>Klasse</th><th>Hinweis</th><th>Status</th></tr></thead><tbody>${rows.map(x=>`<tr class="click" data-pax="${x.id}" data-code="${x.flight.code}" data-fid="${x.flight.id}"><td><img src="${AIR[x.flight.code].logo}" style="height:20px;max-width:78px;object-fit:contain"></td><td><b>${x.flight.id}</b><br>${x.flight.dest}</td><td><b>${x.name}</b></td><td>${x.pnr}</td><td>${x.fare}<br><small>${x.tier}</small></td><td>${x.case?`<span class="badge wait">${x.case}</span>`:"–"}</td><td><span class="badge ${x.status==="Waiting"?"wait":"done"}">${x.status}</span></td></tr>`).join("")}</tbody></table>`;
+}
+function findActive(){
+ if(!state.activePax)return null;let f=DB[state.activeFlight.code].find(x=>x.id===state.activeFlight.id);let p=f.pax.find(x=>x.id===state.activePax);return {p,f,code:state.activeFlight.code};
+}
+function seatMap(p){let o="";for(let r=1;r<=14;r++)for(let c=0;c<7;c++){if(c===3){o+='<span class="aisle"></span>';continue}let L="ABCDEF"[c>3?c-1:c],s=r+L,t=(r*7+c)%10===0;o+=`<button class="seat ${r<=4?"biz":""} ${t?"taken":""} ${p.seat===s?"sel":""}" ${t?"disabled":""} data-seat="${s}">${s}</button>`}return o}
 function renderWork(){
- let f=curFlight(),p=curPax();if(!p){passengerWork.innerHTML='<div style="color:#7a838a">Wähle einen Passagier aus der Liste.</div>';return}
- let issueText=p.cases.length?`<div class="issue"><b>Sonderfall:</b> ${p.cases.map(caseLabel).join(" · ")}<br>${p.special||""}</div>`:'<div class="okbox">Keine besonderen Hinweise für diesen Passagier.</div>';
- passengerWork.innerHTML=`${issueText}
- <div class="section"><h3>1 · Identität & Dokumente</h3><div class="formgrid">
- <div class="field"><label>Name</label><input value="${p.name}" id="nm"></div><div class="field"><label>Buchungscode</label><input value="${p.booking}" id="pnr"></div>
- <div class="field"><label>Reisedokument</label><select id="doc"><option>${p.doc}</option><option>Passport</option><option>ID Card</option></select></div>
- <div class="field"><label>Dokumentennummer</label><input id="docno" placeholder="z. B. P4382019"></div>
- <div class="field"><label>Dokumentenprüfung</label><select id="doccheck"><option value="OK">Gültig / geprüft</option><option value="MANUAL">Manuelle Prüfung erforderlich</option><option value="FAIL">Nicht akzeptiert</option></select></div>
- <div class="field"><label>Nationalität</label><input id="nation" value="AT"></div></div></div>
-
- <div class="section"><h3>2 · Gepäck & Bag Drop</h3><div class="formgrid">
- <div class="field"><label>Aufgabegepäck kg</label><input id="bag" type="number" step=".1" placeholder="Gewicht kg"></div>
- <div class="field"><label>Handgepäck</label><select id="cabin"><option>1 Stück</option><option>2 Stück</option><option>Keines</option></select></div>
- <div class="field"><label>Bag Drop</label><select id="bagdrop"><option>Normaler Check-in</option><option>Fast Bag Drop</option></select></div>
- <div class="field"><label>Bag Tag Ziel</label><input id="bagdest" value="${p.cases.includes("CONNECTION")?p.special.split(" ").pop():f.dest}"></div>
- </div><div class="actions"><button class="btn" id="weigh">Gewicht simulieren</button><button class="btn" id="calcBag">Übergepäck prüfen</button><button class="btn" id="showBag">Bag Tag anzeigen</button></div><div id="bagCost"></div></div>
-
- <div class="section"><h3>3 · Sitzplatz & Reiseklasse</h3><div class="seatmap">${seatMap(p)}</div>
- <div class="actions"><button class="btn" id="autoSeat">Automatisch wählen</button><button class="btn" id="showSeat">Sitzplatz am Display</button>${p.cases.includes("UPGRADE")||p.fare==="Economy"?'<button class="btn warn" id="offerUpgrade">Upgrade anbieten</button>':""}</div><div id="seatCost"></div></div>
-
- <div class="section"><h3>4 · Sonderfälle</h3><div class="formgrid">
- <div class="field"><label>SSR / Assistance</label><select id="ssr"><option>Keine</option><option ${p.cases.includes("WCHR")?"selected":""}>WCHR · Wheelchair</option><option ${p.cases.includes("UMNR")?"selected":""}>UMNR · Unaccompanied Minor</option><option ${p.cases.includes("PET")?"selected":""}>PETC · Pet in cabin</option></select></div>
- <div class="field"><label>Status / Priority</label><select id="tier"><option>${p.tier}</option><option>Frequent Traveller</option><option>Senator</option><option>HON Circle</option></select></div>
- <div class="field"><label>Standby</label><select id="standby"><option>${p.cases.includes("STANDBY")?"Ja":"Nein"}</option><option>Ja</option><option>Nein</option></select></div>
- <div class="field"><label>Anschlussflug</label><input id="connection" value="${p.cases.includes("CONNECTION")?p.special:"Keiner"}"></div>
- <div class="field full"><label>Interne Notiz</label><textarea id="note" placeholder="z. B. Assistance bestätigt, Guardian geprüft, PETC Dokumente geprüft">${p.special}</textarea></div></div>
- <div class="actions"><button class="btn" id="showSpecial">Hinweis am Display</button><button class="btn" id="showConnection">Anschlussinfo anzeigen</button></div></div>
-
- <div class="section"><h3>5 · Abschluss</h3><div class="actions"><button class="btn" id="showPax">Passagierinfo</button><button class="btn" id="showBP">Boardingpass Vorschau</button><button class="btn primary" id="complete">Check-in abschließen</button></div></div>`;
-
- document.querySelectorAll(".seat").forEach(b=>b.onclick=()=>{let old=p.seat;p.seat=b.dataset.seat;let c=extraCost(p,p.seat);seatCost.innerHTML=c?`<div class="pricebox"><span>Sitzplatz-/Premiumzonen-Aufpreis</span><strong>${c.toFixed(2)} €</strong></div>`:"";renderWork();});
+ let a=findActive();if(!a){workBox.innerHTML="Wähle links einen Passagier aus.";activeRef.textContent="";return}let {p,f,code}=a;activeRef.textContent=f.id+" · "+p.pnr;let c=p.case||"Kein Sonderfall";
+ workBox.innerHTML=`<div class="casebox"><b>Fall / Hinweis</b>${c} · ${p.fare} · ${p.tier}</div>
+ <div class="formgrid"><div class="field"><label>Name</label><input id="nm" value="${p.name}"></div><div class="field"><label>PNR</label><input id="pnr" value="${p.pnr}"></div><div class="field"><label>Dokument</label><select id="doc"><option>Passport</option><option>ID Card</option></select></div><div class="field"><label>Dokumentnummer</label><input id="docno" placeholder="Nummer eingeben"></div><div class="field"><label>Dokumentenstatus</label><select id="docok"><option value="OK">Geprüft / gültig</option><option value="MANUAL">Manuelle Prüfung</option><option value="FAIL">Nicht akzeptiert</option></select></div><div class="field"><label>Gepäck kg</label><input id="bag" type="number" step=".1"></div><div class="field"><label>Bag Drop</label><select id="bagdrop"><option>Normal</option><option>Fast Bag Drop</option></select></div><div class="field"><label>SSR</label><select id="ssr"><option>Keine</option><option>WCHR</option><option>UMNR</option><option>PETC</option></select></div><div class="field full"><label>Interne Notiz</label><textarea id="note" placeholder="Prüfung, Assistance, Guardian, PETC, Standby-Freigabe ..."></textarea></div></div>
+ <div style="font-weight:900;margin-top:10px">Sitzplatz</div><div class="seats">${seatMap(p)}</div>
+ <div class="actions"><button class="btn" id="autoSeat">Auto Seat</button><button class="btn" id="simBag">Gewicht simulieren</button><button class="btn" id="showPassenger">Kundeninfo</button><button class="btn" id="showBagTag">Bag Tag</button><button class="btn" id="showBP">Boardingpass</button><button class="btn warn" id="upgrade">Upgrade</button><button class="btn primary" id="complete">Check-in abschließen</button></div>`;
+ document.querySelectorAll(".seat").forEach(b=>b.onclick=()=>{p.seat=b.dataset.seat;renderWork()});
  autoSeat.onclick=()=>{let free=[...document.querySelectorAll(".seat:not(:disabled)")];if(free.length){p.seat=free[Math.floor(Math.random()*free.length)].dataset.seat;renderWork()}};
- weigh.onclick=()=>bag.value=(8+Math.random()*22).toFixed(1);
- calcBag.onclick=()=>{let w=+(bag.value||0),limit=p.fare==="Business"?32:23,cost=w>limit?Math.ceil(w-limit)*12:0;p.payment=cost;bagCost.innerHTML=cost?`<div class="pricebox"><span>Übergepäck · ${(w-limit).toFixed(1)} kg</span><strong>${cost.toFixed(2)} €</strong></div>`:`<div class="okbox">Gepäck innerhalb des Freigepäcks (${limit} kg).</div>`;if(cost)send({mode:"payment",title:"Excess baggage",amount:cost,text:`${w.toFixed(1)} kg · allowance ${limit} kg`})};
- showBag.onclick=()=>send({mode:"bagtag",flight:f,passenger:p,weight:bag.value||"–",destination:bagdest.value});
- showSeat.onclick=()=>send({mode:"seat",flight:f,passenger:p,cost:extraCost(p,p.seat)});
- if(document.getElementById("offerUpgrade"))offerUpgrade.onclick=()=>{let price=f.aircraft==="B787-9"?280:95;send({mode:"upgrade",flight:f,passenger:p,amount:price});if(confirm(`Upgrade für ${price} € akzeptieren?`)){p.upgrade=true;p.fare="Business";p.payment+=price;log(`${p.name} Upgrade akzeptiert · ${price} €`);renderWork()}};
- showSpecial.onclick=()=>send({mode:"special",passenger:p,ssr:ssr.value,note:note.value});
- showConnection.onclick=()=>send({mode:"connection",flight:f,passenger:p,connection:connection.value});
- showPax.onclick=()=>send({mode:"passenger",flight:f,passenger:{...p,bag:bag.value||"–",docno:docno.value||"–"}});
- showBP.onclick=()=>send({mode:"boardingpass",flight:f,passenger:p,seat:p.seat||"–",group:p.group||"–"});
- complete.onclick=()=>{
-   if(!p.seat)return alert("Bitte Sitzplatz wählen.");
-   if(!docno.value.trim())return alert("Bitte Dokumentennummer eintragen.");
-   if(doccheck.value==="FAIL")return alert("Dokument nicht akzeptiert. Check-in kann nicht abgeschlossen werden.");
-   if(p.cases.includes("UMNR")&&!note.value.trim())return alert("Für UMNR bitte Betreuungs-/Guardian-Vermerk eintragen.");
-   if(p.cases.includes("PET")&&!note.value.toLowerCase().includes("pet"))return alert("Für PETC bitte Dokumenten-/Transportvermerk eintragen.");
-   if(p.cases.includes("STANDBY")&&standby.value==="Ja")return alert("Standby-Passagier muss vor Check-in bestätigt werden.");
-   p.bag=bag.value||"0";p.fastBag=bagdrop.value==="Fast Bag Drop";p.group=p.fare==="Business"?1:Number(p.seat.match(/\d+/)[0])<=4?2:3;p.status="Checked-in";
-   let seatFee=extraCost(p,p.seat);p.payment+=seatFee;
-   log(`${p.name} eingecheckt · ${f.id} · ${p.seat} · Gruppe ${p.group}${p.upgrade?" · Upgrade":""}${p.fastBag?" · Fast Bag Drop":""}`);
-   send({mode:"success",flight:f,passenger:p,total:p.payment});
-   state.pax=null;renderPax();renderWork();setTimeout(()=>send({mode:"boardingpass",flight:f,passenger:p,seat:p.seat,group:p.group}),2200)
- };
+ simBag.onclick=()=>bag.value=(8+Math.random()*22).toFixed(1);
+ showPassenger.onclick=()=>send({mode:"passenger",flight:f,passenger:p,air:AIR[code],bag:bag.value||"–",docno:docno.value||"–"});
+ showBagTag.onclick=()=>send({mode:"bagtag",flight:f,passenger:p,air:AIR[code],weight:bag.value||"–"});
+ showBP.onclick=()=>send({mode:"boardingpass",flight:f,passenger:p,air:AIR[code]});
+ upgrade.onclick=()=>{let amount=f.aircraft==="B787-9"?290:99;send({mode:"upgrade",flight:f,passenger:p,air:AIR[code],amount});if(confirm(`Upgrade für ${amount} € annehmen?`)){p.fare="Business";p.tier=p.tier==="None"?"Priority":p.tier;renderDesk()}};
+ complete.onclick=()=>{if(!p.seat)return alert("Sitzplatz fehlt.");if(!docno.value.trim())return alert("Dokumentnummer fehlt.");if(docok.value==="FAIL")return alert("Dokument nicht akzeptiert.");if(p.case==="UMNR"&&!note.value.trim())return alert("UMNR-Vermerk fehlt.");if(p.case==="PETC"&&!note.value.toLowerCase().includes("pet"))return alert("PETC-Vermerk fehlt.");if(p.case==="STANDBY"&&!note.value.toLowerCase().includes("frei"))return alert("Standby-Freigabe im Vermerk fehlt.");p.bag=bag.value||"0";p.group=p.fare==="Business"?1:3;p.status="Checked-in";p.note=note.value;send({mode:"success",flight:f,passenger:p,air:AIR[code]});state.activePax=null;renderDesk();setTimeout(()=>send({mode:"boardingpass",flight:f,passenger:p,air:AIR[code]}),2200)}
 }
-function renderLog(){logBox.innerHTML=state.logs.map(x=>`<div>${x}</div>`).join("")||"<div>Noch keine Aktionen.</div>"}
-function refresh(){renderAir();setTheme();renderFlights();renderPax();renderWork();renderLog()}
 document.addEventListener("click",e=>{
- let a=e.target.closest("[data-air]");if(a){state.air=a.dataset.air;state.flight=null;state.pax=null;refresh();send({mode:"idle"});log("Airline gewechselt: "+A[state.air].name)}
- let f=e.target.closest("[data-flight]");if(f){state.flight=f.dataset.flight;state.pax=null;refresh();send({mode:"flight",flight:curFlight()});log("Flug ausgewählt: "+state.flight)}
- let p=e.target.closest("[data-pax]");if(p){state.pax=+p.dataset.pax;renderPax();renderWork()}
- let sc=e.target.closest("[data-screen]");if(sc){let mode=sc.dataset.screen;if(mode==="flight"&&!curFlight())return alert("Zuerst Flug auswählen.");send({mode,flight:curFlight()});log("Display: "+mode)}
- let n=e.target.closest("[data-view]");if(n){document.querySelectorAll(".navbtn").forEach(x=>x.classList.remove("active"));n.classList.add("active");workView.classList.toggle("hidden",n.dataset.view!=="work");displayView.classList.toggle("hidden",n.dataset.view!=="display");logView.classList.toggle("hidden",n.dataset.view!=="log")}
+ let m=e.target.closest("[data-mode]");if(m)openDesk(m.dataset.mode,null);
+ let ac=e.target.closest("[data-air]");if(ac)openDesk("AIR",ac.dataset.air);
+ let t=e.target.closest("[data-tab]");if(t){state.tab=t.dataset.tab;renderDesk()}
+ let pr=e.target.closest("[data-pax]");if(pr){state.activePax=pr.dataset.pax;state.activeFlight={code:pr.dataset.code,id:pr.dataset.fid};renderWork()}
+ let fl=e.target.closest("[data-flight]");if(fl){let [c,id]=fl.dataset.flight.split("|");state.tab="queue";mainContent.innerHTML=paxTable(DB[c].find(x=>x.id===id).pax.map(p=>({...p,flight:{...DB[c].find(x=>x.id===id),code:c}})));document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"))}
+ let ds=e.target.closest("[data-display]");if(ds)send({mode:ds.dataset.display});
 });
+openDisplay.onclick=()=>window.open("customer-display.html","VIE_CUSTOMER_DISPLAY","width=1280,height=800");
+backSelect.onclick=()=>{deskScreen.classList.remove("active");selectScreen.classList.add("active");state={mode:null,air:null,tab:"queue",activePax:null,activeFlight:null};send({mode:"idle"})};
 setInterval(()=>clock.textContent=new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"}),1000);
-refresh();send({mode:"idle"});
+setupAirGrid();
 </script></body></html>

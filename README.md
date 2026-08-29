@@ -1,55 +1,28 @@
-# VIE Multi-Airline Check-in Simulator V2
+# VIE Multi-Airline Check-in V5 – echte Logos
 
-V2 erweitert den Multi-Airline-Check-in deutlich.
+Diese Version entfernt die vorher selbst erzeugten Trainings-Wordmarks vollständig.
 
-## Airlines
-- Austrian
+## Logos
+
+Lokal im selben Ordner bleiben die vom Nutzer hochgeladenen Originaldateien:
+- Vienna Airport
+- Austrian Airlines
 - Lufthansa
 - SWISS
 - Brussels Airlines
 - British Airways
-- Eurowings
-- Turkish Airlines
-- Air Canada
-- United
+- Star Alliance Wortmarke
+- Star Alliance Symbol
 
-Die hochgeladenen Original-Logos werden lokal eingebunden, wo vorhanden.
+Für die weiteren Airlines verwendet die Website echte Airline-Logo-Bilddateien aus der öffentlichen,
+nach IATA-Codes organisierten `spydogenesis/airlines-logo` Sammlung über jsDelivr.
 
-## Neue Check-in-Fälle
-- Übergepäck mit simuliertem Preis
-- kostenpflichtige Premium-/Business-Sitzplatzwahl
-- Dokument nicht akzeptiert / manuelle Prüfung
-- Anschlussflug
-- Fast Bag Drop
-- Business Class
-- Statuskunden
-- Wheelchair / WCHR
-- UMNR / unbegleitete Minderjährige
-- PETC / Haustier in Kabine
-- Standby
-- Upgrade-Angebot und Annahme
-- SSR- und interne Notizen
+Dadurch werden nicht mehr die selbst erzeugten Kreis-/Textlogos angezeigt.
 
-## Zweiter Bildschirm
-- VIE-Screensaver
-- leerer Bildschirm
-- Fluginformation
-- Passagierprüfung
-- Zahlung
-- Sitzplatzanzeige
-- Upgrade-Angebot
-- Special-Service-Hinweis
-- Anschlussflug
-- Boardingpass
-- Bag Tag
-- Star Alliance Info
-- Werbung
-- Check-in-Erfolg
-- Schalter geschlossen
+## Hinweis
 
-## GitHub Pages
-Alle Dateien gemeinsam in ein Repository hochladen. `index.html` ist der Arbeitsplatz, `customer-display.html` der zweite Bildschirm.
+Die zusätzlichen Logos werden beim Öffnen der Website aus dem Internet geladen.
+Die HTML-Dateien und die vom Nutzer gelieferten Logos liegen weiterhin flach im Hauptordner.
+Die Route-/Airline-Logik aus V4 bleibt erhalten.
 
-
-## Dateistruktur
-Alle HTML-Dateien und Bilder liegen absichtlich im selben Hauptordner. Es gibt keinen `assets`-Unterordner.
+Alle Marken und Logos gehören ihren jeweiligen Rechteinhabern; Nutzung hier nur im privaten Simulator.
