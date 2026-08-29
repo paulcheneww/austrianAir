@@ -27,7 +27,7 @@ main{padding:20px}.hero{border-radius:14px;min-height:122px;background:var(--bra
 .hidden{display:none!important}
 @media(max-width:980px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.airbtn{display:inline-flex;width:180px;margin-right:4px}.flight{grid-template-columns:70px 1fr 60px}.flight>*:nth-child(4),.flight>*:nth-child(5){display:none}}
 </style></head><body>
-<header><img src="assets/vie-airport.png" class="vie"><div class="headtitle"><b>Common Use Check-in V2</b><span>Vienna International Airport · Terminal 3 · Counter 347</span></div><div class="status"><div class="pill"><i class="dot"></i>Display verbunden</div><div class="pill" id="clock"></div></div></header>
+<header><img src="vie-airport.png" class="vie"><div class="headtitle"><b>Common Use Check-in V2</b><span>Vienna International Airport · Terminal 3 · Counter 347</span></div><div class="status"><div class="pill"><i class="dot"></i>Display verbunden</div><div class="pill" id="clock"></div></div></header>
 <div class="layout"><aside><div class="airtitle">Airline auswählen</div><div id="airlines"></div><nav>
 <button class="navbtn active" data-view="work">Check-in Arbeitsplatz</button><button class="navbtn" data-view="display">Kundendisplay</button><button class="navbtn" data-view="log">Schichtprotokoll</button></nav></aside>
 <main>
@@ -45,11 +45,11 @@ main{padding:20px}.hero{border-radius:14px;min-height:122px;background:var(--bra
 </main></div>
 <script>
 const A={
-OS:{name:"Austrian Airlines",short:"Austrian",logo:"assets/austrian.png",brand:"#e21b22",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#2B3087"},
-LH:{name:"Lufthansa",short:"Lufthansa",logo:"assets/lufthansa.png",brand:"#071d49",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#071d49"},
-LX:{name:"SWISS",short:"SWISS",logo:"assets/swiss.png",brand:"#e00000",accent:"#fff",desc:"Swiss International Air Lines · Star Alliance",alliance:true,biz:"#b80000"},
-SN:{name:"Brussels Airlines",short:"Brussels",logo:"assets/brussels.png",brand:"#061a54",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#061a54"},
-BA:{name:"British Airways",short:"British Airways",logo:"assets/british-airways.png",brand:"#075aaa",accent:"#fff",desc:"oneworld member",alliance:false,biz:"#143b72"},
+OS:{name:"Austrian Airlines",short:"Austrian",logo:"austrian.png",brand:"#e21b22",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#2B3087"},
+LH:{name:"Lufthansa",short:"Lufthansa",logo:"lufthansa.png",brand:"#071d49",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#071d49"},
+LX:{name:"SWISS",short:"SWISS",logo:"swiss.png",brand:"#e00000",accent:"#fff",desc:"Swiss International Air Lines · Star Alliance",alliance:true,biz:"#b80000"},
+SN:{name:"Brussels Airlines",short:"Brussels",logo:"brussels.png",brand:"#061a54",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#061a54"},
+BA:{name:"British Airways",short:"British Airways",logo:"british-airways.png",brand:"#075aaa",accent:"#fff",desc:"oneworld member",alliance:false,biz:"#143b72"},
 EW:{name:"Eurowings",short:"Eurowings",brand:"#6b2b72",accent:"#fff",desc:"Lufthansa Group",alliance:false,biz:"#6b2b72"},
 TK:{name:"Turkish Airlines",short:"Turkish Airlines",brand:"#c70a0c",accent:"#fff",desc:"Star Alliance member",alliance:true,biz:"#9c0a0b"},
 AC:{name:"Air Canada",short:"Air Canada",brand:"#d8292f",accent:"#fff",desc:"Star Alliance member",alliance:true,biz:"#1c1c1c"},

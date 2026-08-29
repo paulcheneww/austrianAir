@@ -49,3 +49,7 @@ Die hochgeladenen Original-Logos werden lokal eingebunden, wo vorhanden.
 
 ## GitHub Pages
 Alle Dateien gemeinsam in ein Repository hochladen. `index.html` ist der Arbeitsplatz, `customer-display.html` der zweite Bildschirm.
+
+
+## Dateistruktur
+Alle HTML-Dateien und Bilder liegen absichtlich im selben Hauptordner. Es gibt keinen `assets`-Unterordner.
