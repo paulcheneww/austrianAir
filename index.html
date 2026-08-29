@@ -1,243 +1,409 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VIE Multi-Airline Check-in V6</title>
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vienna Airport · Multi-Airline Check-in V7</title>
 <style>
-:root{--brand:#00733f;--brand2:#054d3d;--accent:#fff;--bg:#edf1f3;--panel:#fff;--ink:#1a2026;--muted:#6d7780;--line:#d9dfe3;--good:#257b55;--warn:#9b6814;--bad:#a53a3a;--biz:#2B3087}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer}
-header{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 18px;position:fixed;inset:0 0 auto 0;z-index:30}.vie{width:165px;height:45px;object-fit:contain}.headtitle{margin-left:18px;padding-left:18px;border-left:1px solid var(--line)}.headtitle b{font-size:15px}.headtitle small{display:block;font-size:9px;color:var(--muted);margin-top:3px}.headright{margin-left:auto;display:flex;align-items:center;gap:7px}.pill{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 10px;font-size:9px}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 11px;font-size:9px;font-weight:850}.btn:hover{box-shadow:0 5px 15px #0000000d}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}.btn.dark{background:#1c2126;border-color:#1c2126;color:#fff}.btn.soft{background:#f8f9fa}.btn.warn{background:#fff5e1;color:#8c5c10;border-color:#ecd4a2}.btn.good{background:#eaf6ef;color:#21734d;border-color:#cbe4d5}
-.layout{display:grid;grid-template-columns:255px minmax(0,1fr);min-height:100vh;padding-top:72px}aside{background:linear-gradient(180deg,#171b20,#101316);color:#fff;padding:14px;position:relative}.brandCard{background:#fff;border-radius:11px;padding:9px;height:75px;display:grid;place-items:center;margin-bottom:12px}.brandCard img{width:100%;height:55px;object-fit:contain}.sideTitle{font-size:8px;color:#78828b;text-transform:uppercase;letter-spacing:.12em;margin:13px 8px 6px}nav{display:grid;gap:4px}nav button{border:0;background:transparent;color:#abb4bc;padding:10px;border-radius:8px;text-align:left;font-size:9px;font-weight:750}nav button.active,nav button:hover{background:#2a3036;color:#fff}nav button.active{box-shadow:inset 3px 0 var(--brand)}.sidebottom{position:absolute;bottom:14px;left:14px;right:14px;display:grid;gap:6px}.sidebottom button{background:#252b31;color:#fff;border:1px solid #373f46;border-radius:8px;padding:9px;font-size:8px}
-main{padding:20px;max-width:1720px;width:100%;margin:auto}.view{display:none}.view.active{display:block}.hero{background:linear-gradient(125deg,var(--brand),var(--brand2));color:#fff;border-radius:15px;padding:20px;display:flex;align-items:center;min-height:112px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:330px;height:330px;border:55px solid #ffffff12;border-radius:50%;right:-100px;top:-160px}.hero img{background:#fff;border-radius:9px;padding:6px;width:205px;height:62px;object-fit:contain}.hero .meta{margin-left:18px;z-index:2}.hero h1{font-size:22px;margin:0 0 4px}.hero p{font-size:9px;margin:0;opacity:.85}.hero .fmeta{margin-left:auto;text-align:right;z-index:2}.hero .fmeta b{font-size:20px}.hero .fmeta small{display:block;margin-top:4px}
-.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:12px 0}.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 8px 22px #15202a0a}.stat{padding:11px}.stat small{display:block;font-size:7px;color:var(--muted)}.stat strong{font-size:19px;display:block;margin-top:4px}.grid2{display:grid;grid-template-columns:1.3fr .9fr;gap:12px}.panelhead{padding:11px 13px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.panelhead h2{font-size:11px;margin:0}.panelbody{padding:12px}
-.flightGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.flightCard{border:1px solid var(--line);border-radius:9px;padding:10px;cursor:pointer;position:relative}.flightCard:hover{border-color:#acb6bd}.flightCard.active{border:2px solid var(--brand);padding:9px}.flightCard b{font-size:12px}.flightCard small{display:block;color:var(--muted);font-size:8px;margin-top:3px}.flightCard .count{position:absolute;right:8px;top:8px;border-radius:99px;padding:4px 6px;background:#eef1f3;font-size:7px}
-.queueitem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 11px;border-bottom:1px solid var(--line)}.queueitem:last-child{border:0}.queueitem b{font-size:9px}.queueitem small{display:block;font-size:7px;color:var(--muted);margin-top:3px}.badge{border-radius:99px;padding:4px 6px;font-size:7px;background:#eef1f3}.badge.warn{background:#fff3dc;color:#8e5d0f}.badge.biz{background:#eeeeff;color:var(--biz)}.badge.good{background:#e9f6ef;color:#23734d}
-.workspace{display:grid;grid-template-columns:320px 1fr;gap:11px}.searchrow{display:flex;gap:6px}input,select,textarea{width:100%;border:1px solid #cfd6db;border-radius:7px;padding:8px 9px;font-size:9px;background:#fff}textarea{min-height:64px;resize:vertical}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field label{display:block;font-size:7px;font-weight:850;color:#67727a;margin-bottom:4px}.full{grid-column:1/-1}.details{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.dl{display:grid;grid-template-columns:92px 1fr;gap:6px;font-size:8px}.dl dt{color:var(--muted)}.dl dd{margin:0;font-weight:650}.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.tabs{display:flex;gap:5px;margin:10px 0}.tab{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;font-size:8px;font-weight:800}.tab.active{background:#20252a;color:#fff;border-color:#20252a}
-.seatmap{display:grid;grid-template-columns:repeat(3,33px) 16px repeat(3,33px);gap:4px;justify-content:center;padding:12px}.seat{height:29px;border:1px solid #ccd3d8;background:#fff;border-radius:5px;font-size:8px}.seat.biz{border:2px solid var(--biz);background:#f4f4ff;color:var(--biz)}.seat.occ{background:#dce1e4;color:#979fa5}.seat.sel{background:var(--brand);color:#fff;border-color:var(--brand)}.aisle{width:16px}
-.displayGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.displayBtn{min-height:74px;text-align:left;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff}.displayBtn b{display:block;font-size:9px}.displayBtn small{display:block;color:var(--muted);font-size:7px;line-height:1.35;margin-top:4px}.displayBtn.brand{border-top:4px solid var(--brand)}.displayBtn.star{border-top:4px solid #111}
-.infoCard{background:#f8fafb;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:8px;line-height:1.5}.modalbg{position:fixed;inset:0;background:#0008;display:grid;place-items:center;padding:20px;z-index:80}.hidden{display:none!important}.modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:12px;padding:17px}.modal h2{font-size:15px;margin:0 0 5px}.modal p{font-size:8px;color:var(--muted)}.modalactions{display:flex;justify-content:flex-end;gap:6px;margin-top:12px}.toast{position:fixed;right:18px;bottom:18px;background:#20252a;color:#fff;padding:10px 12px;border-radius:8px;font-size:8px;opacity:0;transition:.2s;z-index:90}.toast.show{opacity:1}
-@media(max-width:1100px){.layout{grid-template-columns:1fr}aside{position:relative}.grid2,.workspace{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.flightGrid{grid-template-columns:1fr 1fr}.displayGrid{grid-template-columns:repeat(2,1fr)}}
-</style></head><body>
-<header><img src="vie-airport.png" class="vie"><div class="headtitle"><b>Multi-Airline Check-in · V6</b><small>Vienna Airport · Common Use Training · Passenger-facing display</small></div><div class="headright"><span class="pill" id="clock"></span><button class="btn dark" id="openDisplayTop">2. Bildschirm öffnen</button></div></header>
-<div class="layout"><aside><div class="brandCard"><img id="sideLogo" src="vie-airport.png"></div><div class="sideTitle">Arbeitsplatz</div><nav>
-<button class="active" data-view="dashboard">⌂ Übersicht</button><button data-view="flights">✈ Flug auswählen</button><button data-view="checkin">✓ Check-in</button><button data-view="passengers">◉ Passagiere</button><button data-view="seats">▦ Sitzplan</button><button data-view="display">▣ 2. Bildschirm</button><button data-view="transactions">€ Gebühren</button>
-</nav><div class="sidebottom"><button id="changeAirline">Airline wechseln</button><button data-screen="airlineSaver">Airline Screensaver</button><button data-screen="vieSaver">VIE Screensaver</button><button data-screen="ads">Werbung</button></div></aside>
-<main>
-<section class="view active" id="view-dashboard"><div class="hero"><img id="heroLogo"><div class="meta"><h1 id="heroAirline"></h1><p id="heroDesc"></p></div><div class="fmeta"><b id="heroFlight">Kein Flug gewählt</b><small id="heroFlightSub">Bitte Flug auswählen</small></div></div>
-<div class="stats" id="stats"></div><div class="grid2"><div class="panel"><div class="panelhead"><h2>Verfügbare Flüge</h2><button class="btn primary" data-action="chooseFlightModal">Flug wählen</button></div><div class="panelbody flightGrid" id="dashFlights"></div></div><div class="panel"><div class="panelhead"><h2>Aktive Warteschlange</h2><span id="queueCount"></span></div><div id="dashQueue"></div></div></div></section>
+*{box-sizing:border-box}
+:root{
+  --brand:#d71920; --brand-dark:#a70f15; --brand-soft:#fff2f2;
+  --secondary:#2B3087; --bg:#070b0f; --panel:#0d1319; --panel2:#111820;
+  --line:#27313a; --text:#edf2f5; --muted:#8b98a4; --success:#2aa36b;
+}
+html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+body[data-style="swiss"]{--brand:#e60000;--brand-dark:#b00000;--brand-soft:#fff0f0;--secondary:#111;--bg:#f3f3f3;--panel:#fff;--panel2:#fafafa;--line:#ddd;--text:#111;--muted:#6b6b6b}
+body[data-style="lufthansa"]{--brand:#05164d;--brand-dark:#031039;--brand-soft:#fff7d1;--secondary:#f9ba00;--bg:#061229;--panel:#0b1b39;--panel2:#102244;--line:#28416d;--text:#fff;--muted:#99acd0}
+body[data-style="brussels"]{--brand:#071d49;--brand-dark:#061532;--brand-soft:#fff1f3;--secondary:#e4002b;--bg:#07101d;--panel:#0b1728;--panel2:#102036;--line:#253c59;--text:#fff;--muted:#9aabc0}
+body[data-style="ba"]{--brand:#075aaa;--brand-dark:#053d75;--brand-soft:#eef6ff;--secondary:#d71920;--bg:#f3f5f7;--panel:#fff;--panel2:#f8fafb;--line:#dbe1e6;--text:#10243c;--muted:#697b8c}
+body[data-style="star"]{--brand:#111;--brand-dark:#000;--brand-soft:#f1f1f1;--secondary:#777;--bg:#e9eaec;--panel:#fff;--panel2:#f8f8f8;--line:#d8d9db;--text:#111;--muted:#707070}
 
-<section class="view" id="view-flights"><div class="hero"><img id="flightHeroLogo"><div class="meta"><h1>Flug auswählen</h1><p>Danach werden Check-in, Passagiere und Display auf diesen Flug eingeschränkt.</p></div></div><div class="panel" style="margin-top:12px"><div class="panelbody flightGrid" id="allFlights"></div></div></section>
+.topbar{
+  height:76px;background:#05090d;border-bottom:1px solid #1f2932;
+  display:flex;align-items:center;padding:0 22px;position:sticky;top:0;z-index:50
+}
+body[data-style="swiss"] .topbar,body[data-style="ba"] .topbar,body[data-style="star"] .topbar{background:#fff;border-bottom-color:var(--line)}
+.vie-logo{width:185px;height:48px;object-fit:contain}
+.top-title{margin-left:18px;padding-left:18px;border-left:1px solid #36414a}
+body[data-style="swiss"] .top-title,body[data-style="ba"] .top-title,body[data-style="star"] .top-title{border-left-color:var(--line)}
+.top-title b{display:block;font-size:15px}
+.top-title small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:7px;padding:10px 12px;font-size:9px;font-weight:850}
+.btn:hover{filter:brightness(1.08)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.secondary{background:var(--secondary);border-color:var(--secondary);color:#fff}
+.btn.white{background:#fff;color:#111;border-color:#ddd}
+.btn.success{background:var(--success);border-color:var(--success);color:#fff}
+.pill{border:1px solid var(--line);background:var(--panel2);border-radius:99px;padding:8px 11px;font-size:9px;color:var(--muted)}
 
-<section class="view" id="view-checkin"><div class="hero"><img id="checkinHeroLogo"><div class="meta"><h1>Passagierabfertigung</h1><p id="checkinSub">Zuerst Flug auswählen</p></div></div><div class="workspace" style="margin-top:12px"><div><div class="panel"><div class="panelbody"><div class="searchrow"><input id="searchPax" placeholder="Name oder PNR"><button class="btn primary" data-action="searchPassenger">Suchen</button></div></div></div><div class="panel" style="margin-top:10px"><div class="panelhead"><h2>Noch einzuchecken</h2></div><div id="queue"></div></div></div><div class="panel" id="work"><div class="panelbody">Kein Passagier geöffnet.</div></div></div></section>
+.app{padding:14px;max-width:1800px;margin:auto}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.step-head{display:flex;align-items:center;gap:9px;padding:10px 13px;border-bottom:1px solid var(--line)}
+.step-no{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--brand);color:#fff;font-size:10px;font-weight:900}
+.step-title{font-size:11px;font-weight:900}
+.step-sub{font-size:8px;color:var(--muted)}
+.step-body{padding:10px 12px}
 
-<section class="view" id="view-passengers"><div class="hero"><img id="paxHeroLogo"><div class="meta"><h1>Passagierübersicht</h1><p>Offen, eingecheckt und Sonderfälle des aktiven Flugs.</p></div></div><div class="tabs"><button class="tab active" data-pfilter="all">Alle</button><button class="tab" data-pfilter="open">Offen</button><button class="tab" data-pfilter="done">Eingecheckt</button><button class="tab" data-pfilter="special">Sonderfälle</button></div><div id="allPax"></div></section>
+.airlines{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}
+.air-card{
+  min-height:68px;border:1px solid var(--line);background:var(--panel2);
+  border-radius:8px;padding:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative
+}
+.air-card:hover{border-color:var(--brand)}
+.air-card.active{border:2px solid var(--brand);padding:7px;background:var(--panel)}
+.air-card img{max-width:100%;height:42px;object-fit:contain}
+.air-card.star-special img{height:34px}
+.air-card small{position:absolute;right:6px;bottom:5px;color:var(--muted);font-size:6px}
 
-<section class="view" id="view-seats"><div class="hero"><img id="seatHeroLogo"><div class="meta"><h1>Sitzplan</h1><p>Intern auswählen oder dieselbe Sitzkarte auf den Kundenbildschirm senden.</p></div></div><div id="seatPanel" class="panel" style="margin-top:12px"><div class="panelbody">Kein Passagier geöffnet.</div></div></section>
+.flight-layout{display:grid;grid-template-columns:1.4fr .9fr;gap:10px}
+.flight-table{width:100%;border-collapse:collapse;font-size:9px}
+.flight-table th,.flight-table td{padding:9px;border-bottom:1px solid var(--line);text-align:left}
+.flight-table th{color:var(--muted);font-weight:700;background:var(--panel2)}
+.flight-table tr.selectable{cursor:pointer}
+.flight-table tr.selectable:hover td{background:color-mix(in srgb,var(--brand) 8%,transparent)}
+.flight-table tr.active td{background:var(--brand);color:#fff}
+.flight-table tr.active td:first-child{font-weight:900}
+.flight-side{border:1px solid var(--line);border-radius:8px;padding:12px;background:var(--panel2)}
+.flight-side img{width:170px;height:48px;object-fit:contain;background:#fff;border-radius:6px;padding:5px}
+.flight-side h2{margin:12px 0 4px;font-size:20px}
+.flight-side p{margin:0;color:var(--muted);font-size:9px;line-height:1.45}
+.flight-mini{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:11px}
+.mini{border-top:1px solid var(--line);padding-top:7px}
+.mini small{display:block;color:var(--muted);font-size:7px}
+.mini b{display:block;font-size:13px;margin-top:2px}
 
-<section class="view" id="view-display"><div class="hero"><img id="displayHeroLogo"><div class="meta"><h1>Kundendisplay steuern</h1><p>Der zweite Bildschirm steht dem Kunden gegenüber. Du entscheidest, welche Informationen er sieht.</p></div><div class="fmeta"><button class="btn" id="openDisplayInner">Display öffnen</button></div></div>
-<div class="panel" style="margin-top:12px"><div class="panelhead"><h2>Allgemein</h2></div><div class="panelbody displayGrid">
-<button class="displayBtn brand" data-screen="airlineSaver"><b>Airline Screensaver</b><small>Großes Airline-Logo, Welcome, animierte Markenfläche.</small></button>
-<button class="displayBtn" data-screen="vieSaver"><b>Vienna Airport Screensaver</b><small>Grünes VIE-Logo auf weißem Hintergrund.</small></button>
-<button class="displayBtn" data-screen="blank"><b>Leerer Bildschirm</b><small>Komplett weiß, keine Information.</small></button>
-<button class="displayBtn" data-screen="flight"><b>Aktuelle Fluginformation</b><small>Ziel, Flug, Zeit, Gate, Flugzeug, Counter und Fortschritt.</small></button>
-<button class="displayBtn" data-screen="ready"><b>Bereit für nächsten Passagier</b><small>Airline-spezifischer Next Passenger Screen.</small></button>
-<button class="displayBtn" data-screen="ads"><b>Werbung</b><small>Airport-, Airline-, Lounge-, Shopping- und Reiseanzeigen.</small></button>
-<button class="displayBtn star" data-screen="star"><b>Star Alliance Info</b><small>Alliance-Wortmarke und Info, wenn für Airline passend.</small></button>
-<button class="displayBtn" data-screen="closed"><b>Schalter geschlossen</b><small>Airline-Branding + Counter Closed.</small></button>
-</div></div>
-<div class="panel" style="margin-top:10px"><div class="panelhead"><h2>Airline-spezifische Informationen</h2></div><div class="panelbody displayGrid">
-<button class="displayBtn brand" data-screen="baggageRules"><b>Aufgabegepäck</b><small>Freigepäck, maximale Stückgewichte und Hinweis auf Tarifabhängigkeit.</small></button>
-<button class="displayBtn brand" data-screen="cabinRules"><b>Handgepäck-Größen</b><small>Airline-Profil mit Gewicht, Abmessungen und Personal Item.</small></button>
-<button class="displayBtn brand" data-screen="checkinInfo"><b>Check-in Hinweise</b><small>Dokumente, Schalter, Bag Drop und Boarding-Hinweise.</small></button>
-<button class="displayBtn brand" data-screen="premiumInfo"><b>Business / Status</b><small>Priority, Premium-Zone, Lounge-/Statushinweis.</small></button>
-</div></div>
-<div class="panel" style="margin-top:10px"><div class="panelhead"><h2>Aktiver Passagier</h2></div><div class="panelbody displayGrid">
-<button class="displayBtn" data-screen="journey"><b>Reiseübersicht</b><small>Name, Strecke, Flug, Gate, Sitz, Klasse und Gepäck.</small></button>
-<button class="displayBtn" data-action="displaySeatMap"><b>Sitzplan</b><small>Komplette Kabine mit aktuellem Sitz und Business-Zone.</small></button>
-<button class="displayBtn" data-screen="bagCurrent"><b>Aktuelles Gepäck</b><small>Gewicht, Freigrenze und mögliche Gebühr.</small></button>
-<button class="displayBtn" data-screen="boardingpass"><b>Boardingpass</b><small>Große digitale Boardingpass-Vorschau.</small></button>
-<button class="displayBtn" data-screen="bagtag"><b>Bag Tag</b><small>Gepäckanhänger mit Ziel und Flug.</small></button>
-<button class="displayBtn" data-screen="special"><b>Special Assistance</b><small>SSR-/Assistance-Information für den Kunden.</small></button>
-<button class="displayBtn" data-screen="connection"><b>Anschlussflug</b><small>Transfer-/Connection-Übersicht.</small></button>
-<button class="displayBtn" data-screen="upgrade"><b>Upgrade-Angebot</b><small>Business-Class-Angebot mit Preis.</small></button>
-</div></div></section>
+.main-grid{display:grid;grid-template-columns:390px 1fr;gap:10px}
+.queue{max-height:430px;overflow:auto}
+.pax{display:grid;grid-template-columns:34px 1fr auto;gap:9px;align-items:center;padding:9px 10px;border-bottom:1px solid var(--line);cursor:pointer}
+.pax:hover{background:var(--panel2)}
+.pax.active{outline:1px solid var(--brand);background:color-mix(in srgb,var(--brand) 7%,transparent)}
+.pax .num{width:28px;height:28px;border-radius:50%;background:var(--panel2);display:grid;place-items:center;font-size:8px;font-weight:900}
+.pax b{font-size:9px}
+.pax small{display:block;color:var(--muted);font-size:7px;margin-top:2px}
+.badge{display:inline-block;border-radius:99px;padding:4px 6px;background:#1c2630;color:#aebbc6;font-size:6px}
+body[data-style="swiss"] .badge,body[data-style="ba"] .badge,body[data-style="star"] .badge{background:#eef1f3;color:#59636d}
+.badge.warn{background:#3b2b13;color:#ffc76b}
+.badge.red{background:#3c1619;color:#ff8e95}
+.badge.biz{background:#20235c;color:#cfd2ff}
 
-<section class="view" id="view-transactions"><div class="hero"><img id="txHeroLogo"><div class="meta"><h1>Gebühren & Zahlungen</h1><p>Sitzplatz, Übergepäck und Upgrade.</p></div></div><div id="txList" style="margin-top:12px"></div></section>
-</main></div>
-<div class="modalbg hidden" id="modalbg"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div>
+.work-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.work-head{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center}
+.work-head img{width:145px;height:38px;object-fit:contain;background:#fff;border-radius:5px;padding:3px}
+.work-head .who{margin-left:13px}
+.work-head h2{font-size:16px;margin:0}
+.work-head p{font-size:8px;color:var(--muted);margin:3px 0 0}
+.work-head .status-right{margin-left:auto;text-align:right}
+.work-head .status-right b{font-size:18px}
+.work-head .status-right small{display:block;color:var(--muted);font-size:7px}
+
+.form-body{padding:12px}
+.form-section{border-bottom:1px solid var(--line);padding:10px 0}
+.form-section:first-child{padding-top:0}.form-section:last-child{border-bottom:0}
+.form-section h3{font-size:9px;margin:0 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.formgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.field label{display:block;font-size:7px;color:var(--muted);font-weight:800;margin-bottom:4px}
+input,select,textarea{width:100%;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:6px;padding:8px;font-size:9px;outline:none}
+body[data-style="swiss"] input,body[data-style="swiss"] select,body[data-style="swiss"] textarea,
+body[data-style="ba"] input,body[data-style="ba"] select,body[data-style="ba"] textarea,
+body[data-style="star"] input,body[data-style="star"] select,body[data-style="star"] textarea{background:#fff}
+textarea{min-height:55px}
+.full{grid-column:1/-1}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.notice{padding:8px 10px;border-left:3px solid var(--brand);background:var(--panel2);font-size:8px;line-height:1.45;margin-bottom:8px}
+
+.display-tools{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.display-tool{border:1px solid var(--line);border-radius:8px;background:var(--panel2);padding:10px;text-align:left;color:var(--text)}
+.display-tool:hover{border-color:var(--brand)}
+.display-tool b{display:block;font-size:8px}
+.display-tool small{display:block;color:var(--muted);font-size:6px;line-height:1.35;margin-top:4px}
+
+.bottom-nav{display:flex;gap:6px;padding:10px 0}
+.bottom-nav button.active{background:var(--brand);border-color:var(--brand);color:#fff}
+
+.toast{position:fixed;right:18px;bottom:18px;background:#111;color:#fff;padding:10px 13px;border-radius:7px;font-size:8px;opacity:0;transform:translateY(8px);transition:.18s;z-index:100}
+.toast.show{opacity:1;transform:none}
+.modalbg{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:20px;z-index:90}
+.hidden{display:none!important}
+.modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:16px}
+.modal h2{font-size:16px;margin:0 0 5px}.modal p{font-size:8px;color:var(--muted)}
+.modalactions{display:flex;justify-content:flex-end;gap:6px;margin-top:12px}
+.seatmap{display:grid;grid-template-columns:repeat(3,34px) 18px repeat(3,34px);gap:5px;justify-content:center;margin:10px 0}
+.seat{height:31px;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:5px;font-size:8px}
+.seat.occupied{opacity:.35}.seat.selected{background:var(--brand);color:#fff;border-color:var(--brand)}
+.seat.business:not(.selected){border:2px solid var(--secondary);color:var(--secondary)}
+.aisle{width:18px}
+@media(max-width:1100px){
+  .airlines{grid-template-columns:repeat(3,1fr)}
+  .flight-layout,.main-grid{grid-template-columns:1fr}
+  .formgrid{grid-template-columns:repeat(2,1fr)}
+  .display-tools{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body data-style="austrian">
+<header class="topbar">
+  <img src="vie-airport.png" class="vie-logo">
+  <div class="top-title"><b>Common Use Check-in</b><small>Vienna Airport · private training simulator · V7</small></div>
+  <div class="top-actions">
+    <span class="pill" id="clock"></span>
+    <button class="btn white" id="openDisplay">▣ 2. BILDSCHIRM ÖFFNEN</button>
+  </div>
+</header>
+
+<div class="app">
+  <section class="step">
+    <div class="step-head"><span class="step-no">1</span><div><div class="step-title">AIRLINE WÄHLEN</div><div class="step-sub">Design, Farben, Display und Flüge wechseln vollständig mit.</div></div></div>
+    <div class="step-body"><div class="airlines" id="airlineCards"></div></div>
+  </section>
+
+  <section class="step">
+    <div class="step-head"><span class="step-no">2</span><div><div class="step-title">FLUG WÄHLEN · <span id="airlineLabel"></span></div><div class="step-sub">Nur Passagiere dieses Flugs werden danach im Check-in angezeigt.</div></div></div>
+    <div class="step-body flight-layout">
+      <div><table class="flight-table"><thead><tr><th>FLUG</th><th>NACH</th><th>ABFLUG</th><th>GATE</th><th>STATUS</th><th>EINGECHECKT</th></tr></thead><tbody id="flightRows"></tbody></table></div>
+      <div class="flight-side">
+        <img id="selectedAirlineLogo">
+        <h2 id="selectedFlightTitle">Kein Flug gewählt</h2>
+        <p id="selectedFlightText">Wähle links einen Flug aus.</p>
+        <div class="flight-mini">
+          <div class="mini"><small>COUNTER</small><b id="counterValue">–</b></div>
+          <div class="mini"><small>AIRCRAFT</small><b id="aircraftValue">–</b></div>
+          <div class="mini"><small>OFFEN</small><b id="openValue">–</b></div>
+          <div class="mini"><small>STATUS</small><b id="statusValue">–</b></div>
+        </div>
+        <div class="actions"><button class="btn primary" data-screen="flight">Fluginfo aufs Display</button><button class="btn" data-screen="ready">Next Passenger</button></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="main-grid">
+    <section class="step">
+      <div class="step-head"><span class="step-no">3</span><div><div class="step-title">PASSAGIERE · <span id="paxFlightLabel">KEIN FLUG</span></div><div class="step-sub">Nur noch offene Passagiere dieses Flugs.</div></div></div>
+      <div class="step-body" style="padding:0"><div class="queue" id="queue"></div></div>
+    </section>
+
+    <section class="work-card">
+      <div class="work-head">
+        <img id="workLogo">
+        <div class="who"><h2 id="workName">Kein Passagier ausgewählt</h2><p id="workSub">Wähle links eine Person aus.</p></div>
+        <div class="status-right"><b id="workSeat">–</b><small>SITZ</small></div>
+      </div>
+      <div class="form-body" id="workBody"></div>
+    </section>
+  </div>
+
+  <section class="step" style="margin-top:10px">
+    <div class="step-head"><span class="step-no">5</span><div><div class="step-title">KUNDENDISPLAY</div><div class="step-sub">Airline-spezifisch, mit Bildern, Star Alliance und deutlich unterschiedlichen Screens.</div></div></div>
+    <div class="step-body">
+      <div class="display-tools">
+        <button class="display-tool" data-screen="airlineSaver"><b>AIRLINE SCREENSAVER</b><small>Eigenes Branding, Logo, Begrüßung und Animation.</small></button>
+        <button class="display-tool" data-screen="vieSaver"><b>VIENNA AIRPORT</b><small>VIE-Logo auf weißem Hintergrund.</small></button>
+        <button class="display-tool" data-screen="flight"><b>FLUGINFORMATION</b><small>Flug, Ziel, Zeit, Gate, Check-in-Fortschritt.</small></button>
+        <button class="display-tool" data-screen="ready"><b>NÄCHSTER PASSAGIER</b><small>Ready-for-next-passenger Screen.</small></button>
+        <button class="display-tool" data-screen="baggageRules"><b>GEPÄCKREGELN</b><small>Airline-spezifische Aufgabegepäck-Infos.</small></button>
+        <button class="display-tool" data-screen="cabinRules"><b>HANDGEPÄCK</b><small>Maße, Gewicht und Personal Item.</small></button>
+        <button class="display-tool" data-screen="premium"><b>BUSINESS / STATUS</b><small>Premium-Info mit lokalem Business-Bild.</small></button>
+        <button class="display-tool" data-screen="star"><b>STAR ALLIANCE</b><small>Eigener Alliance-Screen mit beiden Logos.</small></button>
+        <button class="display-tool" data-screen="ads"><b>WERBUNG</b><small>Airline, Vienna, Business und City mit Bildern.</small></button>
+        <button class="display-tool" data-screen="closed"><b>SCHALTER GESCHLOSSEN</b><small>Gebrandete Closed-Anzeige.</small></button>
+        <button class="display-tool" data-screen="blank"><b>NICHTS ANZEIGEN</b><small>Komplett weiß.</small></button>
+        <button class="display-tool" data-screen="journey"><b>REISEÜBERSICHT</b><small>Aktiver Passagier: Strecke, Sitz, Gate, Gepäck.</small></button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="modalbg hidden" id="modalbg"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
 <script>
-const AIR={A3:{name:'Aegean Airlines',color:'#13294b',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/A3.png',star:true},AC:{name:'Air Canada',color:'#d8292f',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AC.png',star:true},CA:{name:'Air China',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/CA.png',star:true},AI:{name:'Air India',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AI.png',star:true},NZ:{name:'Air New Zealand',color:'#111111',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/NZ.png',star:true},NH:{name:'ANA',color:'#183b8f',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/NH.png',star:true},OZ:{name:'Asiana Airlines',color:'#7a1f3d',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/OZ.png',star:true},OS:{name:'Austrian Airlines',color:'#e21b22',logo:'austrian.png',star:true},AV:{name:'Avianca',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AV.png',star:true},SN:{name:'Brussels Airlines',color:'#061a54',logo:'brussels.png',star:true},CM:{name:'Copa Airlines',color:'#154a8a',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/CM.png',star:true},OU:{name:'Croatia Airlines',color:'#17478b',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/OU.png',star:true},MS:{name:'EGYPTAIR',color:'#153e7e',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/MS.png',star:true},ET:{name:'Ethiopian Airlines',color:'#0b7a3b',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/ET.png',star:true},BR:{name:'EVA Air',color:'#007f6d',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/BR.png',star:true},LO:{name:'LOT Polish Airlines',color:'#0d2d5e',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/LO.png',star:true},LH:{name:'Lufthansa',color:'#071d49',logo:'lufthansa.png',star:true},ZH:{name:'Shenzhen Airlines',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/ZH.png',star:true},SQ:{name:'Singapore Airlines',color:'#0b2d59',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/SQ.png',star:true},SA:{name:'South African Airways',color:'#0c6cab',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/SA.png',star:true},LX:{name:'SWISS',color:'#e00000',logo:'swiss.png',star:true},TG:{name:'Thai Airways',color:'#5f2c83',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/TG.png',star:true},TP:{name:'TAP Air Portugal',color:'#1b8f4d',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/TP.png',star:true},TK:{name:'Turkish Airlines',color:'#c8102e',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/TK.png',star:true},UA:{name:'United Airlines',color:'#005daa',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/UA.png',star:true},AZ:{name:'ITA Airways',color:'#0064a8',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AZ.png',star:true},BA:{name:'British Airways',color:'#075aaa',logo:'british-airways.png',star:false},EW:{name:'Eurowings',color:'#6b2b72',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/EW.png',star:false},
-EI:{name:'Aer Lingus',color:'#137b49',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/EI.png',star:false},
-AF:{name:'Air France',color:'#1f4e9a',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AF.png',star:false},
-JU:{name:'Air Serbia',color:'#183b72',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/JU.png',star:false},
-BT:{name:'airBaltic',color:'#a7c628',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/BT.png',star:false},
-CI:{name:'China Airlines',color:'#6d388b',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/CI.png',star:false},
-MU:{name:'China Eastern Airlines',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/MU.png',star:false},
-DE:{name:'Condor',color:'#ffd100',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/DE.png',star:false},
-EK:{name:'Emirates',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/EK.png',star:false},
-EY:{name:'Etihad Airways',color:'#7a6a3a',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/EY.png',star:false},
-AY:{name:'Finnair',color:'#17365d',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/AY.png',star:false},
-IB:{name:'Iberia',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/IB.png',star:false},
-KL:{name:'KLM',color:'#00a1de',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/KL.png',star:false},
-KE:{name:'Korean Air',color:'#1b56a5',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/KE.png',star:false},
-QR:{name:'Qatar Airways',color:'#5b0f2f',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/QR.png',star:false},
-FR:{name:'Ryanair',color:'#073590',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/FR.png',star:false},
-SK:{name:'SAS Scandinavian Airlines',color:'#123d72',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/SK.png',star:false},
-SV:{name:'Saudia',color:'#107b61',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/SV.png',star:false},
-TR:{name:'Scoot',color:'#f6c800',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/TR.png',star:false},
-RJ:{name:'Royal Jordanian',color:'#9c7d3a',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/RJ.png',star:false},
-OV:{name:'SalamAir',color:'#4b9b42',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/OV.png',star:false},
-G9:{name:'Air Arabia',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/G9.png',star:false},
-PC:{name:'Pegasus Airlines',color:'#f4c300',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/PC.png',star:false},
-XQ:{name:'SunExpress',color:'#ef7b1b',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/XQ.png',star:false},
-VY:{name:'Vueling',color:'#f6d900',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/VY.png',star:false},
-KM:{name:'KM Malta Airlines',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/KM.png',star:false},
-LG:{name:'Luxair',color:'#0b62a3',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/LG.png',star:false},
-U2:{name:'easyJet Europe',color:'#f05a28',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/U2.png',star:false},
-SM:{name:'Air Cairo',color:'#d71920',logo:'https://cdn.jsdelivr.net/gh/spydogenesis/airlines-logo@latest/airlines-logo/200x200_v2/SM.png',star:false}};
-const STAR=["A3","AC","CA","AI","NH","OS","SN","OU","MS","ET","BR","LO","LH","LX","TP","TK"];
-const VIE_ACTIVE=["OS","LH","LX","SN","A3","AC","CA","AI","NH","OU","MS","ET","BR","LO","TP","TK","EI","AF","JU","BT","BA","CI","MU","DE","EK","EY","EW","AY","IB","KL","KE","QR","FR","SK","SV","TR","RJ","OV","G9","PC","XQ","VY","KM","LG","U2","SM"];
-const ROUTES={
-OS:["FRA|Frankfurt","MUC|Munich","ZRH|Zurich","BRU|Brussels","CDG|Paris CDG","LHR|London Heathrow","ARN|Stockholm","BCN|Barcelona","FCO|Rome Fiumicino","JFK|New York JFK","ORD|Chicago O'Hare","BKK|Bangkok","ALC|Alicante","BIO|Bilbao","BGO|Bergen","BIA|Bastia","OHD|Ohrid","MJT|Mytilene","PDL|Ponta Delgada"],
-LH:["FRA|Frankfurt","MUC|Munich"], LX:["ZRH|Zurich"], SN:["BRU|Brussels"], A3:["ATH|Athens"],
-AC:["YYZ|Toronto"], CA:["PEK|Beijing"], AI:["DEL|Delhi"], NH:["HND|Tokyo Haneda"], OU:["ZAG|Zagreb"],
-MS:["CAI|Cairo"], ET:["ADD|Addis Ababa","CPH|Copenhagen","BRU|Brussels"], BR:["TPE|Taipei"],
-LO:["WAW|Warsaw"], TP:["LIS|Lisbon"], TK:["IST|Istanbul"],
-EI:["DUB|Dublin"], AF:["CDG|Paris CDG"], JU:["BEG|Belgrade"], BT:["RIX|Riga","TLL|Tallinn"],
-BA:["LHR|London Heathrow"], CI:["TPE|Taipei"], MU:["PVG|Shanghai Pudong","XIY|Xi'an"], DE:["FRA|Frankfurt"],
-EK:["DXB|Dubai"], EY:["AUH|Abu Dhabi"], EW:["DUS|Düsseldorf","HAM|Hamburg","CGN|Cologne/Bonn"],
-AY:["HEL|Helsinki"], IB:["MAD|Madrid"], KL:["AMS|Amsterdam"], KE:["ICN|Seoul Incheon"],
-QR:["DOH|Doha"], FR:["STN|London Stansted","PMI|Palma de Mallorca","BCN|Barcelona","FCO|Rome Fiumicino"],
-SK:["CPH|Copenhagen"], SV:["JED|Jeddah"], TR:["SIN|Singapore"], RJ:["AMM|Amman"], OV:["MCT|Muscat"],
-G9:["SHJ|Sharjah"], PC:["SAW|Istanbul Sabiha Gökçen"], XQ:["AYT|Antalya"], VY:["BCN|Barcelona"],
-KM:["MLA|Malta"], LG:["LUX|Luxembourg"], U2:["LGW|London Gatwick","BRS|Bristol","LPL|Liverpool","BSL|Basel","BOD|Bordeaux"],
-SM:["HRG|Hurghada"]
+const AIRLINES = {
+  OS:{name:"Austrian Airlines",code:"OS",logo:"austrian.png",style:"austrian",brand:"#d71920",secondary:"#2B3087",star:true,tag:"SERVUS.",counter:"T3 · 351–372",
+      baggage:{cabin:"55 × 40 × 23 cm",weight:"8 kg",personal:"1 persönliches Stück",economy:"1 × 23 kg je Tarif",business:"2 × 32 kg je Tarif"},
+      flights:[
+        ["OS201","Frankfurt","FRA","09:20","F05","A320neo"],["OS195","Zürich","ZRH","10:15","F09","A320neo"],["OS451","London Heathrow","LHR","11:00","F21","A320neo"],["OS431","Paris CDG","CDG","12:10","F25","A320neo"],["OS087","New York JFK","JFK","13:10","G31","B787-9"],["OS025","Bangkok","BKK","14:35","G36","B787-9"]
+      ]},
+  LH:{name:"Lufthansa",code:"LH",logo:"lufthansa.png",style:"lufthansa",brand:"#05164d",secondary:"#f9ba00",star:true,tag:"WELCOME.",counter:"T3 · Lufthansa Group",
+      baggage:{cabin:"55 × 40 × 23 cm",weight:"8 kg",personal:"1 persönliches Stück",economy:"bis 23 kg je Tarif",business:"bis 2 × 32 kg je Tarif"},
+      flights:[["LH1239","Frankfurt","FRA","08:50","F14","A320neo"],["LH2329","München","MUC","11:05","F17","A320neo"],["LH1241","Frankfurt","FRA","14:10","F11","A321"]]},
+  LX:{name:"SWISS",code:"LX",logo:"swiss.png",style:"swiss",brand:"#e60000",secondary:"#111111",star:true,tag:"GRÜEZI.",counter:"T3 · Lufthansa Group",
+      baggage:{cabin:"55 × 40 × 23 cm",weight:"8 kg",personal:"1 persönliches Stück",economy:"bis 23 kg je Tarif",business:"bis 2 × 32 kg je Tarif"},
+      flights:[["LX1575","Zürich","ZRH","09:40","F08","A220-300"],["LX1583","Zürich","ZRH","14:45","F06","A220-300"],["LX1591","Zürich","ZRH","19:15","F10","A320"]]},
+  SN:{name:"Brussels Airlines",code:"SN",logo:"brussels.png",style:"brussels",brand:"#071d49",secondary:"#e4002b",star:true,tag:"HELLO.",counter:"T3 · Lufthansa Group",
+      baggage:{cabin:"55 × 40 × 23 cm",weight:"8 kg",personal:"1 persönliches Stück",economy:"tarifabhängig",business:"bis 2 × 32 kg"},
+      flights:[["SN2902","Brüssel","BRU","09:25","F18","A319"],["SN2906","Brüssel","BRU","15:10","F20","A320"]]},
+  BA:{name:"British Airways",code:"BA",logo:"british-airways.png",style:"ba",brand:"#075aaa",secondary:"#d71920",star:false,tag:"WELCOME.",counter:"T1 · Common Use",
+      baggage:{cabin:"56 × 45 × 25 cm",weight:"bis 23 kg",personal:"40 × 30 × 15 cm",economy:"tarifabhängig",business:"höhere Freigrenzen"},
+      flights:[["BA699","London Heathrow","LHR","10:35","D18","A320neo"],["BA703","London Heathrow","LHR","15:55","D22","A321neo"],["BA705","London Heathrow","LHR","20:10","D16","A320neo"]]},
+  STAR:{name:"Star Alliance",code:"STAR",logo:"star-alliance-wordmark.png",style:"star",brand:"#111111",secondary:"#777777",star:true,tag:"CONNECTED.",counter:"Common Use · Star Alliance",
+      baggage:{cabin:"Airlineabhängig",weight:"Airlineabhängig",personal:"Airlineabhängig",economy:"Operating carrier rules",business:"Operating carrier rules"},
+      flights:[
+        ["LH1239","Frankfurt · Lufthansa","FRA","08:50","F14","A320neo"],["A3861","Athen · Aegean","ATH","10:20","D23","A320neo"],["TK1884","Istanbul · Turkish Airlines","IST","10:45","D31","A321neo"],["AC887","Toronto · Air Canada","YYZ","11:00","G15","B787-9"],["LO224","Warschau · LOT","WAW","13:20","F26","E195"],["TP1271","Lissabon · TAP","LIS","19:55","D27","A321neo"]
+      ]}
 };
-const COUNTERS={OS:"T3 · 351–372",LH:"T3 · 351–372",SN:"T3 · 351–372",LX:"T3 · 351–372",TP:"T3 · 351–372",AC:"T3 · 301–348",CA:"T3 · 331–347",AI:"T3 · 321–325",NH:"T3 · 301–348",A3:"T1 · 173–196",TK:"T1 · 173–196",BA:"T1 · 173–196",LO:"T1 · 173–196",EW:"Common-use training",AZ:"Star Alliance training",EI:'T1 · 173–196',AF:'T1 · 188–193',JU:'T1 · 173–196',BT:'T1 · 151–162',CI:'T1A · 111–120',MU:'T3 · 301–348',DE:'T1 · 173–196',EK:'T3 · 301–313',EY:'T3 · 301–348',AY:'T1 · 173–196',IB:'T1 · 173–196',KL:'T1 · 188–193',KE:'T3 · 302–308',QR:'T3 · 301–348',FR:'T1 · 151–162',SK:'T1 · 173–196',SV:'T1 · 173–196',TR:'T3 · 301–348',RJ:'T3 · 301–348',OV:'T3 · 301–348',G9:'T1A · 111–132',PC:'T1A · 111–132',XQ:'T1A · 111–132',VY:'T1A · 111–132',KM:'T1 · 173–196',LG:'T3 · 351–372',U2:'T1A · 111–132',SM:'T1A · 111–132',OU:'T3 · 351–372',MS:'T3 · 301–348',ET:'T3 · 311–314',BR:'T3 · 301–348'};
 
-const BAG_PROFILES={
-OS:{cabin:"55 × 40 × 23 cm",cabinWeight:"8 kg",personal:"1 kleines persönliches Stück",economy:"1 × 23 kg (tarifabhängig)",business:"2 × 32 kg (tarifabhängig)",max:"32 kg pro Stück"},
-LH:{cabin:"55 × 40 × 23 cm",cabinWeight:"8 kg",personal:"1 persönliches Stück",economy:"bis 23 kg je Tarif",business:"bis 2 × 32 kg je Tarif",max:"32 kg pro Stück"},
-LX:{cabin:"55 × 40 × 23 cm",cabinWeight:"8 kg",personal:"1 persönliches Stück",economy:"bis 23 kg je Tarif",business:"bis 2 × 32 kg je Tarif",max:"32 kg pro Stück"},
-SN:{cabin:"55 × 40 × 23 cm",cabinWeight:"8 kg",personal:"1 persönliches Stück",economy:"tarifabhängig",business:"bis 2 × 32 kg",max:"32 kg pro Stück"},
-BA:{cabin:"56 × 45 × 25 cm",cabinWeight:"bis 23 kg",personal:"40 × 30 × 15 cm",economy:"tarifabhängig",business:"höhere Freigrenzen je Tarif",max:"32 kg pro Stück"},
-FR:{cabin:"40 × 30 × 20 cm inklusive",cabinWeight:"tarifabhängig",personal:"kleine Tasche",economy:"Aufgabegepäck optional",business:"–",max:"32 kg pro Stück"},
-U2:{cabin:"45 × 36 × 20 cm inklusive",cabinWeight:"muss selbst gehoben werden können",personal:"kleines Handgepäck",economy:"Aufgabegepäck optional",business:"–",max:"32 kg pro Stück"},
-EK:{cabin:"55 × 38 × 22 cm",cabinWeight:"7 kg Economy",personal:"tarif-/klassenabhängig",economy:"tarif-/streckenabhängig",business:"höhere Freigrenzen",max:"32 kg pro Stück"},
-QR:{cabin:"50 × 37 × 25 cm",cabinWeight:"7 kg Economy",personal:"kleines persönliches Stück",economy:"strecken-/tarifabhängig",business:"höhere Freigrenzen",max:"32 kg pro Stück"},
-TK:{cabin:"55 × 40 × 23 cm",cabinWeight:"8 kg",personal:"40 × 30 × 15 cm",economy:"tarifabhängig",business:"höhere Freigrenzen",max:"32 kg pro Stück"}
-};
-const DEFAULT_BAG={cabin:"55 × 40 × 23 cm",cabinWeight:"8 kg (Trainingsprofil)",personal:"1 kleines persönliches Stück",economy:"Freigepäck tarifabhängig",business:"höhere Freigrenze je Tarif",max:"32 kg pro Stück"};
+const first=["Thomas","Paul","Anna","David","Leyla","Maria","Sophie","Felix","Emma","Lukas","Nina","Daniel","Laura","Jonas"];
+const last=["Müller","Schneider","Huber","Kovacs","Yilmaz","Garcia","Berger","Gruber","Wagner","Mayer","Hofer","Fischer","Leitner"];
+let state={air:"OS",flight:null,paxId:null,passengers:[],transactions:[]};
 
-const AIRLINE_COPY={
-OS:{welcome:"SERVUS.",tag:"Austrian hospitality via Vienna.",premium:"Business Class · Priority · Austrian Lounge je Berechtigung"},
-LH:{welcome:"WELCOME.",tag:"Nonstop you.",premium:"Business Class · Priority Services · Lounge je Berechtigung"},
-LX:{welcome:"GRÜEZI.",tag:"Swiss service from Vienna.",premium:"SWISS Business · Priority · Lounge je Berechtigung"},
-SN:{welcome:"HELLO.",tag:"Belgian hospitality in the air.",premium:"Business / b.flex priority services je Tarif"},
-BA:{welcome:"WELCOME.",tag:"To Fly. To Serve.",premium:"Club Europe / Club World · Priority je Berechtigung"},
-EK:{welcome:"HELLO.",tag:"Fly better.",premium:"Business Class · Premium services je Berechtigung"},
-QR:{welcome:"WELCOME.",tag:"Going Places Together.",premium:"Business Class · Premium services je Berechtigung"},
-TK:{welcome:"MERHABA.",tag:"Widen Your World.",premium:"Business Class · Star Alliance benefits je Status"}
-};
-const DEFAULT_COPY={welcome:"WELCOME.",tag:"Vienna check-in.",premium:"Premium / status benefits depend on fare and eligibility."};
-
-const first=["Anna","Lukas","Sophie","Michael","Laura","Jonas","Clara","Felix","Mara","Oliver","Nina","Thomas","Sarah","Julia","Daniel","Emily","Noah","Emma"];
-const last=["Berger","Huber","Keller","Novak","Schmidt","Weiß","Hartmann","Wagner","Steiner","Meier","Fischer","Leitner","Moser","Gruber","König"];
-let state={air:"OS",activeFlight:null,activePax:null,paused:false,pfilter:"all",tx:[],pax:[]};
-function rand(a,i){return a[i%a.length]}
-function themeAir(){return AIR[state.air]}
-function bagProfile(){return BAG_PROFILES[state.air]||DEFAULT_BAG}
-function copyProfile(){return AIRLINE_COPY[state.air]||DEFAULT_COPY}
-function buildFlights(){
- const routes=ROUTES[state.air]||[];
- return routes.slice(0,state.air==="OS"?10:Math.min(6,routes.length)).map((r,i)=>{let [iata,to]=r.split("|");return{no:state.air+String(110+i*17),to,iata,time:String(7+i*2).padStart(2,"0")+":"+["05","20","35","50"][i%4],gate:["F12","F23","G03","G17","D26","C31"][i%6],aircraft:["A320neo","A321","A220","B787-9"][i%4],closed:false}})
+function air(){return AIRLINES[state.air]}
+function flights(){return air().flights.map((f,i)=>({no:f[0],to:f[1],iata:f[2],time:f[3],gate:f[4],aircraft:f[5],closed:false,index:i}))}
+function seed(){
+  state.passengers=[];let id=1;
+  flights().forEach((f,fi)=>{
+    for(let i=0;i<(f.aircraft.includes("787")?18:12);i++){
+      const cls=i===0||i===7?"Business":"Economy";
+      const specials=["","","WCHR","UMNR","","","DOC CHECK","","UPGRADE","","OVERWEIGHT",""][i%12];
+      state.passengers.push({
+        id:id++,flight:f.no,name:first[(i+fi)%first.length]+" "+last[(i*2+fi)%last.length],
+        pnr:air().code+String(410000+i+fi*40),class:cls,status:i<2?"Checked-in":"Open",
+        seat:i<2?(5+i)+"A":"",docs:i<2?"OK":"Open",bag:null,special:specials,note:""
+      });
+    }
+  });
 }
-let flights=[];
-function reseedAir(){
- flights=buildFlights();state.activeFlight=null;state.activePax=null;state.pax=[];let id=1;
- flights.forEach((f,fi)=>{for(let i=0;i<(f.aircraft==="B787-9"?16:11);i++){let cls=i%8===0?"Business":"Economy";let sp=["","OVERWEIGHT","DOC CHECK","WCHR","UMNR","PETC","STANDBY","CONNECTION","UPGRADE","",""][i%11];state.pax.push({id:id++,pnr:state.air+String(10000+id),name:rand(first,fi+i)+" "+rand(last,fi*2+i),flight:f.no,class:cls,fare:cls==="Business"?"Business":"Economy Classic",status:"Open",seat:"",docs:"Open",bags:[],ticket:state.air+"-"+(400000000+id),special:sp,note:""});}});save(false)
+function currentFlight(){return flights().find(f=>f.no===state.flight)}
+function currentPax(){return state.passengers.find(p=>p.id===state.paxId)}
+function flightPax(no){return state.passengers.filter(p=>p.flight===no)}
+function openPaxForFlight(){return state.flight?flightPax(state.flight).filter(p=>p.status==="Open"):[]}
+function toast(t){const x=document.getElementById("toast");x.textContent=t;x.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>x.classList.remove("show"),1800)}
+function send(payload){
+  payload.t=Date.now();payload.air=air();payload.flight=currentFlight();payload.passenger=currentPax();
+  localStorage.setItem("vieV7display",JSON.stringify(payload));
+  try{window.bc??=new BroadcastChannel("vie-v7-display");window.bc.postMessage(payload)}catch(e){}
 }
-function save(render=true){localStorage.setItem("vieV6State",JSON.stringify(state));if(render)renderAll()}
-function flight(no){return flights.find(f=>f.no===no)}function ap(){return state.pax.find(p=>p.id===state.activePax)}function money(v){return new Intl.NumberFormat("de-AT",{style:"currency",currency:"EUR"}).format(v||0)}
-function send(payload){let a=themeAir();payload.ts=Date.now();payload.air={code:state.air,name:a.name,logo:a.logo,color:a.color,star:a.star,copy:copyProfile(),bag:bagProfile()};localStorage.setItem("vieDisplayV6",JSON.stringify(payload));try{window.bc??=new BroadcastChannel("vie-display-v6");window.bc.postMessage(payload)}catch(e){}}
-function toast(t){let e=document.getElementById("toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),1800)}
-function setTheme(){
- let a=themeAir();document.documentElement.style.setProperty("--brand",a.color);document.documentElement.style.setProperty("--brand2",a.color);["sideLogo","heroLogo","flightHeroLogo","checkinHeroLogo","paxHeroLogo","seatHeroLogo","displayHeroLogo","txHeroLogo"].forEach(id=>document.getElementById(id).src=a.logo);heroAirline.textContent=a.name;heroDesc.textContent=(a.star?"Star Alliance · ":"")+"Vienna Airport check-in";sideLogo.src=a.logo;
+function applyTheme(){
+  const a=air();document.body.dataset.style=a.style;
+  document.documentElement.style.setProperty("--brand",a.brand);
+  document.documentElement.style.setProperty("--secondary",a.secondary);
+  document.getElementById("airlineLabel").textContent=a.name.toUpperCase();
+  document.getElementById("selectedAirlineLogo").src=a.logo;
+  document.getElementById("workLogo").src=a.logo;
 }
-function activeFlightInfo(){
- let f=state.activeFlight?flight(state.activeFlight):null;if(!f){heroFlight.textContent="Kein Flug gewählt";heroFlightSub.textContent="Bitte Flug auswählen";checkinSub.textContent="Zuerst Flug auswählen";return}
- heroFlight.textContent=f.no+" · "+f.to;heroFlightSub.textContent=f.time+" · Gate "+f.gate+" · "+f.aircraft;checkinSub.textContent=f.no+" · "+f.to+" · "+f.time+" · Gate "+f.gate
+function renderAirlines(){
+  const keys=Object.keys(AIRLINES);
+  airlineCards.innerHTML=keys.map(k=>`<div class="air-card ${state.air===k?"active":""} ${k==="STAR"?"star-special":""}" data-air="${k}"><img src="${AIRLINES[k].logo}"><small>${k==="STAR"?"ALLIANCE MODE":AIRLINES[k].code}</small></div>`).join("");
 }
-function qrow(p){return `<div class="queueitem"><div><b>${p.name}</b><small>${p.pnr} · ${p.class}${p.special?" · "+p.special:""}</small></div><button class="btn" data-action="openPax" data-id="${p.id}">Öffnen</button></div>`}
-function renderAll(){
- setTheme();activeFlightInfo();let open=state.pax.filter(p=>p.status==="Open").length,done=state.pax.length-open,bags=state.pax.reduce((s,p)=>s+p.bags.length,0),fees=state.tx.reduce((s,t)=>s+t.amount,0),af=state.activeFlight?flight(state.activeFlight):null;
- stats.innerHTML=[["Flüge",flights.length],["Offen",open],["Eingecheckt",done],["Gepäck",bags],["Sonderfälle",state.pax.filter(p=>p.status==="Open"&&p.special).length],["Gebühren",money(fees)]].map(x=>`<div class="stat"><small>${x[0]}</small><strong>${x[1]}</strong></div>`).join("");
- let cards=flights.map(f=>{let q=state.pax.filter(p=>p.flight===f.no&&p.status==="Open").length;return`<div class="flightCard ${state.activeFlight===f.no?"active":""}" data-action="activateFlight" data-flight="${f.no}"><span class="count">${q} offen</span><b>${f.no} · ${f.to}</b><small>VIE → ${f.iata} · ${f.time}</small><small>Gate ${f.gate} · ${f.aircraft}</small></div>`}).join("");
- dashFlights.innerHTML=cards;allFlights.innerHTML=cards;
- let q=af?state.pax.filter(p=>p.flight===af.no&&p.status==="Open"):[];queueCount.textContent=q.length?q.length+" offen":"";dashQueue.innerHTML=q.length?q.slice(0,7).map(qrow).join(""):`<div class="panelbody" style="font-size:8px;color:#777">${af?"Keine offenen Passagiere.":"Zuerst Flug auswählen."}</div>`;queue.innerHTML=q.length?q.map(qrow).join(""):`<div class="panelbody" style="font-size:8px;color:#777">Keine offenen Passagiere.</div>`;
- renderPassengers();renderWork();renderSeats();renderTx()
+function renderFlights(){
+  const fs=flights();
+  flightRows.innerHTML=fs.map(f=>{
+    const all=flightPax(f.no),done=all.filter(p=>p.status!=="Open").length;
+    return `<tr class="selectable ${state.flight===f.no?"active":""}" data-flight="${f.no}">
+      <td>${f.no}</td><td>${f.to}</td><td>${f.time}</td><td>${f.gate}</td><td>${f.closed?"Closed":"Check-in"}</td><td>${done} / ${all.length}</td>
+    </tr>`;
+  }).join("");
+  const f=currentFlight();
+  if(!f){
+    selectedFlightTitle.textContent="Kein Flug gewählt";selectedFlightText.textContent="Wähle links einen Flug aus.";
+    counterValue.textContent=air().counter;aircraftValue.textContent="–";openValue.textContent="–";statusValue.textContent="–";
+    paxFlightLabel.textContent="KEIN FLUG";return;
+  }
+  const open=openPaxForFlight().length;
+  selectedFlightTitle.textContent=`${f.no} · ${f.to}`;
+  selectedFlightText.textContent=`VIE → ${f.iata} · Abflug ${f.time} · Gate ${f.gate}`;
+  counterValue.textContent=air().counter;aircraftValue.textContent=f.aircraft;openValue.textContent=open;statusValue.textContent=f.closed?"CLOSED":"OPEN";
+  paxFlightLabel.textContent=`${f.no} ${f.to.toUpperCase()} (${f.iata})`;
 }
-function renderPassengers(){
- let arr=state.activeFlight?state.pax.filter(p=>p.flight===state.activeFlight):[];if(state.pfilter==="open")arr=arr.filter(p=>p.status==="Open");if(state.pfilter==="done")arr=arr.filter(p=>p.status!=="Open");if(state.pfilter==="special")arr=arr.filter(p=>p.special);
- allPax.innerHTML=arr.length?arr.map(p=>`<div class="panel queueitem" style="margin-bottom:7px"><div><b>${p.name}</b><small>${p.pnr} · ${p.class} · ${p.status}${p.seat?" · "+p.seat:""}${p.special?" · "+p.special:""}</small></div><div><span class="badge ${p.class==="Business"?"biz":p.status==="Open"?"warn":"good"}">${p.status}</span> <button class="btn" data-action="openPax" data-id="${p.id}">Öffnen</button></div></div>`).join(""):`<div class="panel"><div class="panelbody">Keine Passagiere in dieser Ansicht.</div></div>`
+function renderQueue(){
+  const q=openPaxForFlight();
+  if(!state.flight){queue.innerHTML=`<div style="padding:18px;color:var(--muted);font-size:8px">Bitte zuerst einen Flug auswählen.</div>`;return}
+  queue.innerHTML=q.length?q.map((p,i)=>`<div class="pax ${state.paxId===p.id?"active":""}" data-pax="${p.id}">
+    <div class="num">${String(i+1).padStart(2,"0")}</div>
+    <div><b>${p.name}</b><small>${p.pnr} · ${p.class}${p.special?" · "+p.special:""}</small></div>
+    <span class="badge ${p.class==="Business"?"biz":p.special?"warn":""}">${p.seat||"–"}</span>
+  </div>`).join(""):`<div style="padding:18px;color:var(--muted);font-size:8px">Alle Passagiere eingecheckt.</div>`;
 }
 function renderWork(){
- let p=ap(),box=document.getElementById("work");if(!p){box.innerHTML=`<div class="panelbody">${state.activeFlight?"Wähle links einen Passagier.":"Zuerst Flug auswählen."}</div>`;return}let f=flight(p.flight);
- box.innerHTML=`<div class="panelhead"><h2>${p.name} · ${p.pnr}</h2><span class="badge ${p.class==="Business"?"biz":"warn"}">${p.class}</span></div><div class="panelbody">
- ${p.special?`<div class="infoCard"><b>Sonderfall:</b> ${p.special}. Bitte im Vermerk dokumentieren und passenden Kundenbildschirm verwenden.</div>`:""}
- <div class="details" style="margin-top:10px"><dl class="dl"><dt>Flug</dt><dd>${f.no} · ${f.to}</dd><dt>Zeit</dt><dd>${f.time}</dd><dt>Gate</dt><dd>${f.gate}</dd></dl><dl class="dl"><dt>Tarif</dt><dd>${p.fare}</dd><dt>Sitz</dt><dd>${p.seat||"Noch keiner"}</dd><dt>Dokument</dt><dd>${p.docs}</dd></dl><dl class="dl"><dt>Gepäck</dt><dd>${p.bags.length}</dd><dt>Ticket</dt><dd>${p.ticket}</dd><dt>Status</dt><dd>${p.status}</dd></dl></div>
- <div class="actions"><button class="btn" data-action="docs">Dokumente</button><button class="btn" data-action="autoSeat">Auto Seat</button><button class="btn" data-action="displaySeatMap">Sitzplan Display</button><button class="btn" data-view="seats">Sitzplan intern</button><button class="btn" data-action="bag">Gepäck</button><button class="btn" data-action="showJourney">Reiseübersicht</button><button class="btn" data-action="showRules">Gepäckregeln</button><button class="btn primary" data-action="complete">Check-in abschließen</button></div>
- </div>`
+  const p=currentPax(),f=currentFlight();
+  if(!p||!f){
+    workName.textContent="Kein Passagier ausgewählt";workSub.textContent="Wähle links eine Person aus.";workSeat.textContent="–";
+    workBody.innerHTML=`<div class="notice">Dokumente, Gepäck, Sitzplatz und Sonderfälle erscheinen hier.</div>`;return;
+  }
+  workName.textContent=p.name;workSub.textContent=`${p.pnr} · ${f.no} · ${f.to} · ${p.class}`;workSeat.textContent=p.seat||"–";
+  workBody.innerHTML=`
+    ${p.special?`<div class="notice"><b>Sonderfall:</b> ${p.special}. Bitte dokumentieren und passenden Display-Screen verwenden.</div>`:""}
+    <div class="form-section"><h3>Dokument</h3><div class="formgrid">
+      <div class="field"><label>Dokumentart</label><select id="docType"><option>Reisepass</option><option>Personalausweis</option></select></div>
+      <div class="field"><label>Dokumentnummer</label><input id="docNo" placeholder="z. B. P12345678"></div>
+      <div class="field"><label>Prüfstatus</label><select id="docStatus"><option>OK</option><option>Manual check</option><option>Visa check</option><option>Rejected</option></select></div>
+      <div class="field"><label>Nationalität</label><input id="nation" value="AT"></div>
+    </div><div class="actions"><button class="btn" data-action="saveDocs">Dokument speichern</button><button class="btn" data-screen="verification">Auf Display prüfen</button></div></div>
+    <div class="form-section"><h3>Gepäck & Handgepäck</h3><div class="formgrid">
+      <div class="field"><label>Aufgabegepäck kg</label><input id="bagWeight" type="number" step=".1" value="${p.bag||""}" placeholder="Gewicht"></div>
+      <div class="field"><label>Stücke</label><select id="bagPieces"><option>1</option><option>2</option><option>0</option></select></div>
+      <div class="field"><label>Bag Drop</label><select id="bagDrop"><option>Normal</option><option>Fast Bag Drop</option></select></div>
+      <div class="field"><label>Handgepäck</label><select id="cabinOk"><option>OK</option><option>Zu groß</option><option>Zu schwer</option></select></div>
+    </div><div class="actions"><button class="btn" data-action="randomBag">Gewicht simulieren</button><button class="btn" data-action="saveBag">Gepäck übernehmen</button><button class="btn" data-screen="baggage">Waage aufs Display</button><button class="btn" data-screen="cabinRules">Handgepäck-Regeln</button></div></div>
+    <div class="form-section"><h3>Sitzplatz & Besonderheiten</h3><div class="formgrid">
+      <div class="field"><label>Sitz</label><input id="seatInput" value="${p.seat}" placeholder="z. B. 14A"></div>
+      <div class="field"><label>SSR</label><select id="ssr"><option>Keine</option><option ${p.special==="WCHR"?"selected":""}>WCHR</option><option ${p.special==="UMNR"?"selected":""}>UMNR</option><option>PETC</option></select></div>
+      <div class="field full"><label>Interne Notiz</label><textarea id="note" placeholder="Assistance, Dokumente, Standby, Haustier ...">${p.note||""}</textarea></div>
+    </div><div class="actions"><button class="btn" data-action="autoSeat">Sitz automatisch</button><button class="btn" data-action="seatMap">Sitzplan öffnen</button><button class="btn" data-screen="journey">Reiseübersicht</button><button class="btn" data-screen="special">Special Assistance</button></div></div>
+    <div class="actions" style="justify-content:flex-end"><button class="btn secondary" data-screen="boardingpass">Boardingpass Vorschau</button><button class="btn primary" data-action="complete">CHECK-IN ABSCHLIESSEN</button></div>
+  `;
 }
-function occupied(p){return new Set(state.pax.filter(x=>x.flight===p.flight&&x.id!==p.id&&x.seat).map(x=>x.seat))}
-function renderSeats(){
- let p=ap(),panel=document.getElementById("seatPanel");if(!p){panel.innerHTML='<div class="panelbody">Kein Passagier geöffnet.</div>';return}let f=flight(p.flight),max=f.aircraft==="B787-9"?34:28,occ=occupied(p),h=`<div class="panelhead"><h2>${p.name} · ${p.flight}</h2><b>Sitz ${p.seat||"–"}</b></div><div class="seatmap">`;for(let r=1;r<=max;r++){for(let l of ["A","B","C"])h+=seatBtn(r+l,r,occ,p);h+='<span class="aisle"></span>';for(let l of ["D","E","F"])h+=seatBtn(r+l,r,occ,p)}h+=`</div><div class="panelbody" style="font-size:8px;color:#777">Reihen 1–4 = Premium/Business-Zone in dieser Simulation. Airline-/Tarifregeln können abweichen.</div>`;panel.innerHTML=h
+function renderAll(){applyTheme();renderAirlines();renderFlights();renderQueue();renderWork()}
+function chooseAir(k){state.air=k;state.flight=null;state.paxId=null;seed();renderAll();send({mode:"airlineSaver"})}
+function chooseFlight(no){state.flight=no;state.paxId=null;renderAll();send({mode:"flight"})}
+function choosePax(id){state.paxId=+id;renderAll();send({mode:"journey"})}
+function randomWeight(){return +(12+Math.random()*17).toFixed(1)}
+function bagResult(weight,p){
+  const limit=p.class==="Business"?32:23;
+  if(weight>32)return {status:"REPACK",text:"Über 32 kg · Umpacken erforderlich",fee:0,limit};
+  if(weight>limit)return {status:"OVERWEIGHT",text:"Übergepäck",fee:55,limit};
+  return {status:"OK",text:"Gepäck innerhalb der Freigrenze",fee:0,limit};
 }
-function seatBtn(s,r,occ,p){return `<button class="seat ${occ.has(s)?"occ":p.seat===s?"sel":""} ${r<=4?"biz":""}" ${occ.has(s)?"disabled":""} data-action="selectSeat" data-seat="${s}">${s}</button>`}
-function renderTx(){txList.innerHTML=state.tx.length?state.tx.slice().reverse().map(t=>`<div class="panel queueitem" style="margin-bottom:7px"><div><b>${t.passenger}</b><small>${t.type} · ${t.flight}</small></div><strong>${money(t.amount)}</strong></div>`).join(""):`<div class="panel"><div class="panelbody">Noch keine Gebühren.</div></div>`}
-function view(v){document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===v));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));document.getElementById("view-"+v).classList.add("active")}
-function activateFlight(no){state.activeFlight=no;state.activePax=null;save();sendFlight();view("checkin");toast(no+" aktiviert")}
-function chooseFlightModal(){let opts=flights.map(f=>`<option value="${f.no}">${f.no} · ${f.to} · ${f.time} · ${state.pax.filter(p=>p.flight===f.no&&p.status==="Open").length} offen</option>`).join("");modal(`<h2>Aktiven Check-in-Flug wählen</h2><p>Danach arbeitet der Schalter nur noch diesen Flug ab.</p><select id="flightChoice">${opts}</select><div class="modalactions"><button class="btn" data-action="closeModal">Abbrechen</button><button class="btn primary" data-action="confirmFlight">Aktivieren</button></div>`)}
-function confirmFlight(){activateFlight(document.getElementById("flightChoice").value);closeModal()}
-function openPax(id){if(!state.activeFlight)return toast("Zuerst Flug wählen");let p=state.pax.find(x=>x.id===+id);if(!p||p.flight!==state.activeFlight)return toast("Passagier gehört nicht zum aktiven Flug");state.activePax=p.id;save();view("checkin");showJourney()}
-function searchPassenger(){let q=searchPax.value.toLowerCase().trim(),p=state.pax.find(x=>x.flight===state.activeFlight&&x.status==="Open"&&(x.name.toLowerCase().includes(q)||x.pnr.toLowerCase().includes(q)));if(!p)return toast("Nicht gefunden");openPax(p.id)}
-function docs(){let p=ap();modal(`<h2>Dokumentenprüfung</h2><p>${p.name}</p><div class="formgrid"><div class="field"><label>Dokumentart</label><select id="docType"><option>Passport</option><option>ID Card</option></select></div><div class="field"><label>Dokumentnummer</label><input id="docNumber" placeholder="Nummer eintragen"></div><div class="field"><label>Prüfergebnis</label><select id="docResult"><option>OK</option><option>Manual check</option><option>Visa check</option><option>Rejected</option></select></div><div class="field"><label>Nationalität</label><input id="nation" value="AT"></div></div><div class="modalactions"><button class="btn" data-action="closeModal">Abbrechen</button><button class="btn primary" data-action="saveDocs">Speichern</button></div>`)}
-function saveDocs(){let p=ap();p.docs=document.getElementById("docResult").value;p.docno=document.getElementById("docNumber").value;p.doctype=document.getElementById("docType").value;save();closeModal();send({mode:"verification",title:p.docs==="OK"?"Documents verified":"Document check",passenger:p.name,lines:[["Document",p.doctype],["Number",p.docno||"–"],["Result",p.docs]]})}
-function autoSeat(){let p=ap(),f=flight(p.flight),max=f.aircraft==="B787-9"?34:28,occ=occupied(p),out=[];for(let r=p.class==="Business"?1:5;r<=(p.class==="Business"?4:max);r++)for(let l of ["A","B","C","D","E","F"])if(!occ.has(r+l))out.push(r+l);if(!out.length)return toast("Keine freien Sitze");p.seat=out[Math.floor(Math.random()*out.length)];save();send({mode:"seatConfirm",passenger:p.name,seat:p.seat,class:p.class})}
-function selectSeat(s){let p=ap(),r=parseInt(s),fee=(r<=4&&p.class!=="Business")?12:0;if(fee){modal(`<h2>Premium-Zone · ${s}</h2><p>Simulation: Für diesen Economy-Passagier werden 12 € berechnet.</p><div class="modalactions"><button class="btn" data-action="closeModal">Abbrechen</button><button class="btn primary" data-action="paidSeat" data-seat="${s}">12 € berechnen</button></div>`);return}applySeat(s,0)}
-function paidSeat(s){state.tx.push({passenger:ap().name,flight:ap().flight,type:"Seat "+s,amount:12});applySeat(s,12);closeModal()}
-function applySeat(s,fee){let p=ap();p.seat=s;save();renderSeats();send({mode:"seatConfirm",passenger:p.name,seat:s,class:p.class,fee})}
-function displaySeatMap(){let p=ap();if(!p)return toast("Kein Passagier");let f=flight(p.flight),max=f.aircraft==="B787-9"?34:28;send({mode:"seatmap",p:{name:p.name,flight:p.flight,to:f.to,iata:f.iata,current:p.seat,rows:max,occupied:[...occupied(p)],class:p.class}})}
-function randomWeight(){let x=Math.random();return +(x<.75?(12+Math.random()*10.5):x<.95?(23.5+Math.random()*7.5):(32.2+Math.random()*4)).toFixed(1)}
-function bagResult(p,w){let limit=p.class==="Business"?32:23;if(w>32)return{text:"Over 32 kg – repack required",fee:0,reject:true,limit};if(w>limit)return{text:"Overweight baggage",fee:55,reject:false,limit};return{text:"Within baggage allowance",fee:0,reject:false,limit}}
-function bag(){let p=ap(),w=randomWeight();modal(`<h2>Gepäck annehmen</h2><p>${p.name}</p><div class="formgrid"><div class="field"><label>Gewicht</label><input id="bagW" value="${w}"></div><div class="field"><label>Art</label><select id="bagType"><option>Standard</option><option>Priority</option><option>Sportgepäck</option></select></div><div class="field"><label>Bag Drop</label><select id="bagDrop"><option>Normal</option><option>Fast Bag Drop</option></select></div><div class="field"><label>Ziel</label><input id="bagDest" value="${flight(p.flight).iata}"></div></div><div class="modalactions"><button class="btn" data-action="rerollBag">Neu wiegen</button><button class="btn" data-action="previewBag">Am Display</button><button class="btn" data-action="closeModal">Abbrechen</button><button class="btn primary" data-action="acceptBag">Übernehmen</button></div>`);previewBag()}
-function previewBag(){let p=ap(),w=+document.getElementById("bagW").value,r=bagResult(p,w);send({mode:"baggage",passenger:p.name,weight:w,result:r,class:p.class})}
-function rerollBag(){document.getElementById("bagW").value=randomWeight();previewBag()}
-function acceptBag(){let p=ap(),w=+document.getElementById("bagW").value,r=bagResult(p,w);if(r.reject)return toast("Über 32 kg: umpacken");p.bags.push({weight:w,type:document.getElementById("bagType").value,dest:document.getElementById("bagDest").value});if(r.fee)state.tx.push({passenger:p.name,flight:p.flight,type:"Overweight baggage",amount:r.fee});save();closeModal();send({mode:"bagAccepted",passenger:p.name,weight:w,result:r})}
-function showJourney(){let p=ap();if(!p)return toast("Kein Passagier");let f=flight(p.flight);send({mode:"journey",p:{name:p.name,flight:p.flight,to:f.to,iata:f.iata,time:f.time,gate:f.gate,seat:p.seat||"Not assigned",class:p.class,bags:p.bags.length,special:p.special||""}})}
-function showRules(){send({mode:"baggageRules"})}
-function sendFlight(){if(!state.activeFlight)return toast("Kein Flug gewählt");let f=flight(state.activeFlight),all=state.pax.filter(p=>p.flight===f.no);send({mode:"flight",f:{...f,open:all.filter(p=>p.status==="Open").length,done:all.filter(p=>p.status!=="Open").length,total:all.length,counter:COUNTERS[state.air]||"Common Use"}})}
-function displayScreen(mode){
- let p=ap(),f=state.activeFlight?flight(state.activeFlight):null;
- if(["flight","ready"].includes(mode)&&!f)return toast("Zuerst Flug wählen");
- if(["journey","bagCurrent","boardingpass","bagtag","special","connection","upgrade"].includes(mode)&&!p)return toast("Zuerst Passagier öffnen");
- if(mode==="flight")return sendFlight();
- if(mode==="ready"){let all=state.pax.filter(x=>x.flight===f.no);return send({mode:"ready",f:{...f,open:all.filter(x=>x.status==="Open").length,total:all.length}})}
- if(mode==="journey")return showJourney();
- if(mode==="bagCurrent"){let last=p.bags[p.bags.length-1];if(!last)return toast("Noch kein Gepäck");let r=bagResult(p,last.weight);return send({mode:"baggage",passenger:p.name,weight:last.weight,result:r,class:p.class})}
- if(mode==="boardingpass")return send({mode:"boardingpass",p:{name:p.name,flight:p.flight,to:f.to,iata:f.iata,time:f.time,gate:f.gate,seat:p.seat||"–",class:p.class,group:p.class==="Business"?1:3}});
- if(mode==="bagtag"){let last=p.bags[p.bags.length-1];if(!last)return toast("Noch kein Gepäck");return send({mode:"bagtag",p:{name:p.name,flight:p.flight,iata:f.iata,to:f.to,time:f.time,weight:last.weight}})}
- if(mode==="special")return send({mode:"special",title:p.special||"Special Service",text:p.special?("Service request: "+p.special):"No special service request is stored.",passenger:p.name});
- if(mode==="connection")return send({mode:"connection",p:{name:p.name,from:"VIE",to:f.iata,destination:f.to,text:p.special==="CONNECTION"?"Connection information available at transfer desk.":"No onward connection stored in this training record."}});
- if(mode==="upgrade")return send({mode:"upgrade",passenger:p.name,amount:f.aircraft==="B787-9"?299:99});
- return send({mode})
+function saveDocs(){
+  const p=currentPax();if(!p)return;p.docs=docStatus.value;p.docNo=docNo.value;renderAll();toast("Dokument gespeichert");send({mode:"verification"});
 }
-function complete(){let p=ap(),f=flight(p.flight);if(p.docs!=="OK")return toast("Dokumente noch nicht OK");if(!p.seat)return toast("Noch kein Sitz");p.status="Checked-in";state.activePax=null;save();send({mode:"success",title:"Check-in complete",text:p.name,class:p.class});setTimeout(sendFlight,2200)}
-function modal(h){document.getElementById("modal").innerHTML=h;document.getElementById("modalbg").classList.remove("hidden")}function closeModal(){document.getElementById("modalbg").classList.add("hidden")}
-function handle(b){let a=b.dataset.action,id=b.dataset.id,s=b.dataset.seat,f=b.dataset.flight;({chooseFlightModal,confirmFlight,activateFlight:()=>activateFlight(f),openPax:()=>openPax(id),searchPassenger,docs,saveDocs,autoSeat,displaySeatMap,selectSeat:()=>selectSeat(s),paidSeat:()=>paidSeat(s),bag,rerollBag,previewBag,acceptBag,showJourney,showRules,complete,closeModal}[a]||(()=>{}))()}
-document.addEventListener("click",e=>{let v=e.target.closest("[data-view]");if(v){view(v.dataset.view);return}let pf=e.target.closest("[data-pfilter]");if(pf){state.pfilter=pf.dataset.pfilter;document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===pf));renderPassengers();return}let sc=e.target.closest("[data-screen]");if(sc){displayScreen(sc.dataset.screen);return}let b=e.target.closest("[data-action]");if(b)handle(b)});
-document.getElementById("searchPax").addEventListener("keydown",e=>{if(e.key==="Enter")searchPassenger()});
-document.getElementById("openDisplayTop").onclick=document.getElementById("openDisplayInner").onclick=()=>window.open("passenger-display.html","VIE_DISPLAY_V6","width=1280,height=800");
-document.getElementById("changeAirline").onclick=()=>{let opts=VIE_ACTIVE.map(c=>`<option value="${c}">${AIR[c].name}</option>`).join("");modal(`<h2>Airline wechseln</h2><p>Alle Trainingsdaten werden für die gewählte Airline neu erzeugt.</p><select id="airChoice">${opts}</select><div class="modalactions"><button class="btn" data-action="closeModal">Abbrechen</button><button class="btn primary" id="confirmAir">Wechseln</button></div>`);setTimeout(()=>{document.getElementById("confirmAir").onclick=()=>{state.air=document.getElementById("airChoice").value;reseedAir();closeModal();renderAll();send({mode:"airlineSaver"})}},0)};
-document.getElementById("modalbg").addEventListener("click",e=>{if(e.target===document.getElementById("modalbg"))closeModal()});
-setInterval(()=>document.getElementById("clock").textContent=new Date().toLocaleTimeString("de-AT"),1000);
-reseedAir();renderAll();send({mode:"vieSaver"});
-</script></body></html>
+function randomBag(){bagWeight.value=randomWeight();send({mode:"baggage"})}
+function saveBag(){
+  const p=currentPax();if(!p)return;const w=+(bagWeight.value||0),r=bagResult(w,p);if(r.status==="REPACK")return toast("Über 32 kg – nicht übernehmen");
+  p.bag=w;if(r.fee)state.transactions.push({name:p.name,type:"Übergepäck",amount:r.fee});renderAll();toast("Gepäck übernommen");send({mode:"baggage"});
+}
+function occupied(){
+  const p=currentPax();return new Set(state.passengers.filter(x=>x.flight===p.flight&&x.id!==p.id&&x.seat).map(x=>x.seat));
+}
+function autoSeat(){
+  const p=currentPax();if(!p)return;const occ=occupied(),start=p.class==="Business"?1:5,end=p.class==="Business"?4:28,free=[];
+  for(let r=start;r<=end;r++)for(const l of ["A","B","C","D","E","F"])if(!occ.has(r+l))free.push(r+l);
+  p.seat=free[Math.floor(Math.random()*free.length)];renderAll();send({mode:"seatConfirm"});toast("Sitz "+p.seat+" gewählt");
+}
+function seatMap(){
+  const p=currentPax();if(!p)return;const occ=occupied();let h=`<h2>Sitzplatz wählen · ${p.name}</h2><p>Reihen 1–4 sind in dieser Simulation Premium/Business-Zone.</p><div class="seatmap">`;
+  for(let r=1;r<=28;r++){for(const l of ["A","B","C"]){const s=r+l;h+=seatBtn(s,r,occ,p)}h+=`<span class="aisle"></span>`;for(const l of ["D","E","F"]){const s=r+l;h+=seatBtn(s,r,occ,p)}}
+  h+=`</div><div class="modalactions"><button class="btn" data-action="closeModal">Schließen</button><button class="btn primary" data-screen="seatmap">Sitzplan aufs Display</button></div>`;modal(h);
+}
+function seatBtn(s,r,occ,p){return `<button class="seat ${occ.has(s)?"occupied":p.seat===s?"selected":""} ${r<=4?"business":""}" ${occ.has(s)?"disabled":""} data-action="selectSeat" data-seat="${s}">${s}</button>`}
+function selectSeat(s){const p=currentPax();if(!p)return;const row=parseInt(s);if(row<=4&&p.class!=="Business"){state.transactions.push({name:p.name,type:"Premium-Sitz "+s,amount:12})}p.seat=s;closeModal();renderAll();send({mode:"seatConfirm"})}
+function complete(){
+  const p=currentPax();if(!p)return;if(p.docs!=="OK")return toast("Dokument noch nicht OK");if(!p.seat)return toast("Sitzplatz fehlt");
+  p.note=document.getElementById("note")?.value||p.note;p.status="Checked-in";send({mode:"success"});state.paxId=null;renderAll();setTimeout(()=>send({mode:"flight"}),2200);toast("Check-in abgeschlossen");
+}
+function display(mode){
+  const p=currentPax(),f=currentFlight();
+  if(["flight","ready"].includes(mode)&&!f)return toast("Zuerst Flug wählen");
+  if(["journey","verification","baggage","boardingpass","special","seatmap"].includes(mode)&&!p)return toast("Zuerst Passagier wählen");
+  send({mode});
+}
+function modal(h){modal.innerHTML=h;modalbg.classList.remove("hidden")}
+function closeModal(){modalbg.classList.add("hidden")}
+document.addEventListener("click",e=>{
+  const a=e.target.closest("[data-air]");if(a)return chooseAir(a.dataset.air);
+  const f=e.target.closest("[data-flight]");if(f)return chooseFlight(f.dataset.flight);
+  const p=e.target.closest("[data-pax]");if(p)return choosePax(p.dataset.pax);
+  const s=e.target.closest("[data-screen]");if(s)return display(s.dataset.screen);
+  const b=e.target.closest("[data-action]");if(!b)return;
+  const map={saveDocs,randomBag,saveBag,autoSeat,seatMap,complete,closeModal};
+  if(b.dataset.action==="selectSeat")return selectSeat(b.dataset.seat);
+  (map[b.dataset.action]||(()=>{}))();
+});
+openDisplay.onclick=()=>window.open("passenger-display.html","VIE_V7_DISPLAY","width=1280,height=800");
+modalbg.addEventListener("click",e=>{if(e.target===modalbg)closeModal()});
+setInterval(()=>clock.textContent=new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"}),1000);
+seed();renderAll();send({mode:"vieSaver"});
+</script>
+</body>
+</html>

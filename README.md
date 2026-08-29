@@ -1,46 +1,26 @@
-# VIE Multi-Airline Check-in V6
+# Vienna Airport Multi-Airline Check-in V7
 
-V6 combines the multi-airline/real-route project with the much richer second-screen workflow from the older Austrian V11 simulator.
+## Was neu ist
+- komplettes Redesign als echter Code, nicht als Mockup
+- keine CSS-Farbverläufe im Agenten-UI
+- Airline-Designs unterscheiden sich deutlich:
+  - Austrian: schwarz/rot
+  - Lufthansa: navy/gelb
+  - SWISS: weiß/rot
+  - Brussels: navy/rot
+  - British Airways: weiß/navy/rot
+  - Star Alliance: schwarz/weiß/grau
+- echte hochgeladene Logos direkt im selben Ordner
+- eigener Star-Alliance-Modus
+- erst Airline wählen, dann Flug, dann Passagier
+- nur Passagiere des aktiven Flugs werden angezeigt
+- Dokumente, Gepäck, Sitzplatz, Sonderfälle und Check-in
+- zweiter Bildschirm per Button
+- Kundendisplay mit airline-spezifischem Screensaver
+- Fluginfo, Next Passenger, Reiseübersicht, Gepäck, Handgepäck, Boardingpass, Sitzplan, Special Assistance
+- Star Alliance Screen
+- Werbung mit lokalen Bilddateien
+- Business-/Premium-Anzeige mit Bild
 
-## Main workflow
-- choose airline
-- choose one active flight
-- check-in queue is limited to that flight
-- passenger search
-- document verification
-- seat assignment / seat map
-- baggage weighing and fee simulation
-- special cases
-- check-in completion
-- passenger overview and transaction view
-
-## Second screen
-The passenger-facing display can be opened directly from the top bar or display view.
-
-Screens:
-- Vienna Airport screensaver
-- airline-specific screensaver
-- blank screen
-- flight info
-- ready for next passenger
-- journey overview
-- seat map
-- baggage scale
-- airline-specific checked baggage information
-- airline-specific cabin baggage size information
-- check-in info
-- business/status information
-- document verification
-- boarding pass
-- bag tag
-- special assistance
-- connection information
-- upgrade offer
-- success animation
-- Star Alliance information
-- advertising
-- closed counter
-
-Airline-specific baggage information is a training profile and can vary by fare, ticket, route and current airline policy.
-
-The project remains flat: all local images are next to `index.html`.
+## Dateien
+Alle Dateien liegen flach im selben Ordner.
