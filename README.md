@@ -1,20 +1,51 @@
-# Austrian Check-in Simulator V11
+# VIE Multi-Airline Check-in Simulator V2
 
-Completely rebuilt from scratch as a stable standalone check-in simulation.
+V2 erweitert den Multi-Airline-Check-in deutlich.
 
-- all check-in data and logic live inside `index.html`
-- select an active flight
-- queue only shows passengers from that flight
-- document verification
-- no automatic seat on passenger opening
-- automatic seat only when pressing **Sitz automatisch**
-- rows 1–4 Business zone
-- Business auto-seat uses rows 1–4
-- Economy auto-seat uses rows 5+
-- Economy may manually select rows 1–4 for €12
-- internal seat map and passenger-display seat map
-- random baggage weight
-- baggage fee / rejection logic
-- check-in complete removes passenger from the open queue
-- second display: standard, flight, journey, seat map, baggage, success and advertising
-- pause mode keeps ads and shows a closed-counter strip
+## Airlines
+- Austrian
+- Lufthansa
+- SWISS
+- Brussels Airlines
+- British Airways
+- Eurowings
+- Turkish Airlines
+- Air Canada
+- United
+
+Die hochgeladenen Original-Logos werden lokal eingebunden, wo vorhanden.
+
+## Neue Check-in-Fälle
+- Übergepäck mit simuliertem Preis
+- kostenpflichtige Premium-/Business-Sitzplatzwahl
+- Dokument nicht akzeptiert / manuelle Prüfung
+- Anschlussflug
+- Fast Bag Drop
+- Business Class
+- Statuskunden
+- Wheelchair / WCHR
+- UMNR / unbegleitete Minderjährige
+- PETC / Haustier in Kabine
+- Standby
+- Upgrade-Angebot und Annahme
+- SSR- und interne Notizen
+
+## Zweiter Bildschirm
+- VIE-Screensaver
+- leerer Bildschirm
+- Fluginformation
+- Passagierprüfung
+- Zahlung
+- Sitzplatzanzeige
+- Upgrade-Angebot
+- Special-Service-Hinweis
+- Anschlussflug
+- Boardingpass
+- Bag Tag
+- Star Alliance Info
+- Werbung
+- Check-in-Erfolg
+- Schalter geschlossen
+
+## GitHub Pages
+Alle Dateien gemeinsam in ein Repository hochladen. `index.html` ist der Arbeitsplatz, `customer-display.html` der zweite Bildschirm.

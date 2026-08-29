@@ -1,177 +1,175 @@
-<!doctype html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Austrian Check-in Simulator V11</title>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VIE Multi-Airline Check-in Simulator V2</title>
 <style>
-*{box-sizing:border-box} :root{--red:#d71920;--biz:#2B3087;--bg:#f4f5f7;--line:#dfe3e8;--text:#20252b;--muted:#707982}
-html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
-button,input,select{font:inherit}button{cursor:pointer}
-header{height:68px;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:fixed;inset:0 0 auto 0;z-index:20}
-.brand{display:flex;align-items:center;gap:10px}.logo{width:38px;height:38px;background:var(--red);color:#fff;border-radius:9px;display:grid;place-items:center;font-weight:900}.brand b{font-size:14px}.brand small{display:block;color:var(--muted);font-size:9px;margin-top:2px}
-.topcenter{display:flex;gap:9px;align-items:center}.pill{font-size:9px;padding:7px 9px;border:1px solid var(--line);border-radius:999px;background:#fafbfc;color:#5f6871}.agent{font-size:10px;text-align:right}.agent small{display:block;color:var(--muted)}
-aside{position:fixed;top:68px;bottom:0;left:0;width:250px;background:#24292f;padding:14px;color:#fff}
-nav{display:grid;gap:4px}nav button{border:0;background:transparent;color:#abb3bb;padding:10px 11px;border-radius:8px;text-align:left;font-size:10px}nav button.active,nav button:hover{background:#343a40;color:#fff}nav button.active{box-shadow:inset 3px 0 var(--red)}
-.sidebottom{position:absolute;left:14px;right:14px;bottom:14px;display:grid;gap:7px}.sidebottom button{border:1px solid #4c545b;background:#30363d;color:#fff;border-radius:8px;padding:9px;font-size:9px}
-main{margin-left:250px;padding-top:68px}.view{display:none;padding:28px;max-width:1550px;margin:auto}.view.active{display:block}
-.head{display:flex;justify-content:space-between;gap:15px;align-items:flex-end;margin-bottom:18px}.eyebrow{font-size:8px;color:var(--red);font-weight:900;letter-spacing:.13em}.head h1{margin:5px 0 0;font-size:25px}.head p{font-size:10px;color:var(--muted);margin:5px 0 0}.btns{display:flex;gap:7px;flex-wrap:wrap}
-.btn{border-radius:8px;padding:9px 11px;font-size:9px;font-weight:800;border:1px solid var(--line);background:#fff}.btn.red{background:var(--red);color:#fff;border-color:var(--red)}.btn.purple{background:var(--biz);color:#fff;border-color:var(--biz)}.btn.soft{background:#fff4f4;color:var(--red);border-color:#efc8ca}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:10px}.stat{padding:14px}.stat small{font-size:8px;color:var(--muted)}.stat strong{display:block;font-size:23px;margin-top:6px}
-.grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:13px}.panelhead{padding:13px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.panelhead h2{font-size:12px;margin:0}.panelbody{padding:14px}
-.table{width:100%;border-collapse:collapse;font-size:9px}.table th,.table td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:left}.table th{background:#fafbfc;color:var(--muted)}
-.status{display:inline-block;padding:4px 7px;border-radius:999px;font-size:7px;font-weight:800}.open{background:#eaf5ef;color:#2e7c57}.closed{background:#fff0f0;color:#aa3434}.warn{background:#fff5e4;color:#96600f}.biz{background:#ededff;color:var(--biz)}
-.queueitem{padding:11px 13px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.queueitem:last-child{border-bottom:0}.queueitem strong{font-size:10px}.queueitem small{display:block;color:var(--muted);font-size:8px;margin-top:3px}
-.workspace{display:grid;grid-template-columns:310px 1fr;gap:13px}.search{padding:13px}.searchrow{display:flex;gap:6px}.searchrow input{flex:1}
-input,select{width:100%;border:1px solid #cfd5db;border-radius:7px;padding:8px 9px;font-size:9px;outline:none}
-.details{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.dl{display:grid;grid-template-columns:100px 1fr;gap:6px 8px;font-size:8px}.dl dt{color:var(--muted)}.dl dd{margin:0;font-weight:650}
-.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
-.seatmap{display:grid;grid-template-columns:repeat(3,36px) 18px repeat(3,36px);gap:5px;justify-content:center;padding:18px}.seat{height:31px;border:1px solid #cfd5db;background:#fff;border-radius:6px;font-size:8px}.seat.occ{background:#dde1e5;color:#999}.seat.sel{background:var(--red);color:#fff;border-color:var(--red)}.seat.business:not(.occ):not(.sel){border:2px solid var(--biz);color:var(--biz);background:#f5f5ff}.aisle{width:18px}
-.note{font-size:9px;color:var(--muted);padding:10px 14px;border-top:1px solid var(--line)}
-.modalbg{position:fixed;inset:0;background:rgba(20,24,28,.52);display:grid;place-items:center;padding:20px;z-index:50}.hidden{display:none!important}.modal{width:min(720px,100%);background:#fff;border-radius:12px;padding:19px;max-height:90vh;overflow:auto}.modal h2{font-size:17px;margin:0 0 5px}.modal p{font-size:9px;color:var(--muted)}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font-size:8px;font-weight:800;margin-bottom:4px}.modalactions{display:flex;justify-content:flex-end;gap:7px;margin-top:14px}
-.toast{position:fixed;right:20px;bottom:20px;background:#252b31;color:#fff;padding:10px 13px;border-radius:8px;font-size:9px;opacity:0;transition:.2s;z-index:70}.toast.show{opacity:1}
-@media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}.grid2,.workspace,.details{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<header>
- <div class="brand"><div class="logo">OS</div><div><b>Austrian Airlines</b><small>Vienna Airport · Check-in Simulator V11</small></div></div>
- <div class="topcenter"><span class="pill" id="activeFlightPill">Kein aktiver Flug</span><span class="pill" id="counterState">Schalter offen</span><span class="pill" id="clock"></span></div>
- <div class="agent"><b>Paul S.</b><small>Counter 351 · VIE Terminal 3</small></div>
-</header>
-<aside>
- <nav>
-  <button class="active" data-view="dashboard">⌂ Übersicht</button>
-  <button data-view="checkin">✓ Check-in</button>
-  <button data-view="flights">✈ Flüge</button>
-  <button data-view="passengers">◉ Passagiere</button>
-  <button data-view="seats">▦ Sitzplan</button>
-  <button data-view="transactions">€ Zahlungen</button>
- </nav>
- <div class="sidebottom">
-  <button id="openDisplay">Passagierdisplay öffnen</button>
-  <button data-action="displayStandard">Display Standard</button>
-  <button data-action="displayFlight">Display Fluginfo</button>
-  <button data-action="displayAds">Display Werbung</button>
- </div>
-</aside>
+:root{--brand:#e21b22;--accent:#fff;--ink:#17202a;--muted:#6d7680;--bg:#edf1f3;--panel:#fff;--line:#dce1e5;--warn:#b97411;--ok:#25845c;--bad:#b64040}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:13px}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{height:76px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 22px;position:sticky;top:0;z-index:20}
+.vie{height:42px;max-width:190px;object-fit:contain}.headtitle{margin-left:22px;border-left:1px solid var(--line);padding-left:22px}.headtitle b{font-size:16px}.headtitle span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.status{margin-left:auto;display:flex;gap:8px;align-items:center}.pill{border:1px solid var(--line);border-radius:99px;padding:8px 11px;background:#fff;font-size:11px}.dot{width:8px;height:8px;border-radius:50%;background:#24a568;display:inline-block;margin-right:6px}
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:calc(100vh - 76px)}
+aside{background:#161b20;color:#dbe0e4;padding:18px 13px;position:relative}.airtitle{font-size:10px;color:#88939c;text-transform:uppercase;letter-spacing:.12em;padding:8px}
+.airbtn{width:100%;height:58px;border:0;border-radius:9px;margin:5px 0;background:#20262c;color:#fff;display:flex;align-items:center;padding:8px 11px;cursor:pointer;text-align:left;transition:.18s}.airbtn:hover{background:#2a3138}.airbtn.active{outline:2px solid var(--brand);background:#fff;color:#111}
+.airbtn img{width:100px;height:34px;object-fit:contain;object-position:left center;margin-right:9px}.airbtn .fallback{font-weight:900;font-size:14px;width:100px}.airbtn small{display:block;font-size:9px;color:#89939b}.airbtn.active small{color:#666}
+nav{margin-top:16px;border-top:1px solid #30373d;padding-top:12px}.navbtn{width:100%;border:0;background:transparent;color:#cfd5d9;padding:10px;border-radius:7px;text-align:left;cursor:pointer;font-weight:700;font-size:11px}.navbtn:hover,.navbtn.active{background:#2a3138;color:#fff}
+main{padding:20px}.hero{border-radius:14px;min-height:122px;background:var(--brand);color:var(--accent);padding:20px 23px;display:flex;align-items:center;overflow:hidden;position:relative}.hero:after{content:"";position:absolute;width:340px;height:340px;border:55px solid rgba(255,255,255,.08);border-radius:50%;right:-100px;top:-160px}
+.brandlogo{width:220px;height:65px;object-fit:contain;object-position:left center}.brandfallback{font-size:29px;font-weight:900}.hero .meta{margin-left:auto;text-align:right;z-index:2}.hero .meta b{font-size:24px}.hero .meta span{display:block;font-size:11px;margin-top:5px;opacity:.85}
+.grid{display:grid;grid-template-columns:1.32fr .92fr;gap:14px;margin-top:14px}.panel{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 8px 24px #1c273011}.ph{padding:12px 14px;border-bottom:1px solid var(--line);font-weight:900;font-size:12px;display:flex;align-items:center}.ph span{margin-left:auto;color:var(--muted);font-size:10px;font-weight:500}.pb{padding:13px}
+.flight{display:grid;grid-template-columns:82px 1fr 80px 65px 80px;gap:9px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:10px;margin-bottom:7px;cursor:pointer}.flight:hover{border-color:#adb5bc}.flight.selected{border:2px solid var(--brand);padding:9px}.flight small{color:var(--muted)}.gate{font-weight:900}.badge{border-radius:99px;background:#edf1f3;padding:5px 8px;font-size:9px;text-align:center}.badge.warn{background:#fff3da;color:#94620f}.badge.ok{background:#e8f5ee;color:#267654}
+.passenger{border:1px solid var(--line);border-radius:9px;padding:10px;margin-bottom:7px;cursor:pointer}.passenger:hover{background:#fafbfb}.passenger.active{border:2px solid var(--brand);padding:9px}.passenger b{display:block}.passenger small{color:var(--muted)}
+.casechips{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}.chip{font-size:8px;border-radius:99px;padding:4px 6px;background:#eef1f3;color:#59636b}.chip.warn{background:#fff1dd;color:#94620f}.chip.bad{background:#fff0f0;color:#a63e3e}.chip.biz{background:#eef0fb;color:#404b92}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field label{font-size:9px;font-weight:800;color:#69727a;display:block;margin-bottom:4px}.field input,.field select,.field textarea{width:100%;border:1px solid #cfd5da;border-radius:7px;padding:9px;background:#fff}.field textarea{min-height:68px;resize:vertical}.full{grid-column:1/-1}
+.section{border-top:1px solid var(--line);margin-top:13px;padding-top:12px}.section h3{font-size:11px;margin:0 0 8px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 12px;font-weight:800;font-size:10px}.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--accent)}.btn.dark{background:#1b2025;color:#fff;border-color:#1b2025}.btn.warn{background:#fff5df;border-color:#ead39d;color:#8d5c0e}.btn.good{background:#eaf6ef;border-color:#c9e5d5;color:#237650}.btn:disabled{opacity:.4}
+.seatmap{display:grid;grid-template-columns:repeat(7,32px);gap:5px;justify-content:center;margin:10px 0}.seat{height:30px;border:1px solid #cbd1d5;border-radius:5px;background:#f7f8f9;font-size:9px}.seat.biz{background:#eef0fb;border-color:#7981ad}.seat.taken{background:#d9dde0;color:#9aa1a6}.seat.sel{background:var(--brand);color:var(--accent);border-color:var(--brand)}.aisle{visibility:hidden}
+.pricebox{border:1px solid #ead6a9;background:#fff8e8;border-radius:9px;padding:10px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}.pricebox strong{font-size:20px}
+.issue{padding:9px 10px;border-radius:8px;background:#fff0f0;border:1px solid #efcece;font-size:10px;margin-top:8px}.okbox{padding:9px 10px;border-radius:8px;background:#edf8f2;border:1px solid #cce6d7;font-size:10px;margin-top:8px}
+.screenctl{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.screenctl .btn{min-height:42px}.log{max-height:500px;overflow:auto;font-size:10px}.log div{padding:7px 0;border-bottom:1px solid #eee}
+.hidden{display:none!important}
+@media(max-width:980px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.airbtn{display:inline-flex;width:180px;margin-right:4px}.flight{grid-template-columns:70px 1fr 60px}.flight>*:nth-child(4),.flight>*:nth-child(5){display:none}}
+</style></head><body>
+<header><img src="assets/vie-airport.png" class="vie"><div class="headtitle"><b>Common Use Check-in V2</b><span>Vienna International Airport · Terminal 3 · Counter 347</span></div><div class="status"><div class="pill"><i class="dot"></i>Display verbunden</div><div class="pill" id="clock"></div></div></header>
+<div class="layout"><aside><div class="airtitle">Airline auswählen</div><div id="airlines"></div><nav>
+<button class="navbtn active" data-view="work">Check-in Arbeitsplatz</button><button class="navbtn" data-view="display">Kundendisplay</button><button class="navbtn" data-view="log">Schichtprotokoll</button></nav></aside>
 <main>
-<section class="view active" id="view-dashboard">
- <div class="head"><div><span class="eyebrow">VIENNA HUB</span><h1>Check-in Operations</h1><p>Fiktive Trainingsdaten, keine echten Passagier- oder Flugdaten.</p></div><div class="btns"><button class="btn soft" data-action="chooseFlight">Flug wählen</button><button class="btn" id="closeFlightBtn" data-action="toggleFlightCheckin">Check-in schließen</button><button class="btn" id="pauseBtn" data-action="togglePause">Pause</button></div></div>
- <div class="stats"><div class="stat"><small>Flüge</small><strong id="sFlights"></strong></div><div class="stat"><small>Offen</small><strong id="sOpen"></strong></div><div class="stat"><small>Eingecheckt</small><strong id="sDone"></strong></div><div class="stat"><small>Gepäckstücke</small><strong id="sBags"></strong></div><div class="stat"><small>Gebühren</small><strong id="sFees"></strong></div></div>
- <div class="grid2"><div class="panel"><div class="panelhead"><h2>Flüge</h2></div><div id="dashFlights"></div></div><div class="panel"><div class="panelhead"><h2>Aktive Warteschlange</h2></div><div id="dashQueue"></div></div></div>
-</section>
-
-<section class="view" id="view-checkin">
- <div class="head"><div><span class="eyebrow">DCS</span><h1>Passagierabfertigung</h1><p>Dokumente, Sitzplatz, Gepäck und Bordkarte.</p></div></div>
- <div class="workspace"><div><div class="panel search"><div class="searchrow"><input id="searchPax" placeholder="PNR oder Name"><button class="btn red" data-action="searchPassenger">Suchen</button></div></div><div class="panel" style="margin-top:10px"><div class="panelhead"><h2>Offene Passagiere</h2></div><div id="queue"></div></div></div><div class="panel" id="work"><div class="panelbody">Kein Passagier geöffnet.</div></div></div>
-</section>
-
-<section class="view" id="view-flights"><div class="head"><div><span class="eyebrow">FLIGHT CONTROL</span><h1>Flüge</h1></div></div><div class="panel"><div id="allFlights"></div></div></section>
-<section class="view" id="view-passengers"><div class="head"><div><span class="eyebrow">PASSENGERS</span><h1>Passagiere</h1></div></div><div id="allPax"></div></section>
-<section class="view" id="view-seats"><div class="head"><div><span class="eyebrow">SEATS</span><h1>Sitzplan</h1><p>Reihen 1–4 = Business-Zone. Economy: manuelle Auswahl dort +12 €.</p></div></div><div id="seatPanel" class="panel"><div class="panelbody">Kein Passagier geöffnet.</div></div></section>
-<section class="view" id="view-transactions"><div class="head"><div><span class="eyebrow">PAYMENTS</span><h1>Zahlungen</h1></div></div><div id="txList"></div></section>
-</main>
-<div class="modalbg hidden" id="modalbg"><div class="modal" id="modal"></div></div>
-<div class="toast" id="toast"></div>
-
+<section id="workView"><div class="hero"><div id="heroBrand"></div><div class="meta"><b id="heroName"></b><span id="heroDesc"></span></div></div>
+<div class="grid"><div>
+<div class="panel"><div class="ph">Abflüge <span id="flightCount"></span></div><div class="pb" id="flightList"></div></div>
+<div class="panel" style="margin-top:14px"><div class="ph">Passagier bearbeiten <span id="currentFlightLabel">Kein Flug ausgewählt</span></div><div class="pb" id="passengerWork"><div style="color:#7a838a">Wähle zuerst einen Flug und anschließend einen Passagier.</div></div></div>
+</div><div>
+<div class="panel"><div class="ph">Passagierliste <span id="paxCount"></span></div><div class="pb" id="passengers"><div style="color:#7a838a">Noch kein Flug gewählt.</div></div></div>
+<div class="panel" style="margin-top:14px"><div class="ph">Display-Schnellsteuerung</div><div class="pb screenctl">
+<button class="btn" data-screen="idle">Airport Screensaver</button><button class="btn" data-screen="blank">Nichts anzeigen</button><button class="btn" data-screen="flight">Fluginformation</button><button class="btn" data-screen="ad">Werbung</button><button class="btn" data-screen="star">Star Alliance</button><button class="btn dark" data-screen="closed">Schalter geschlossen</button>
+</div></div></div></div></section>
+<section id="displayView" class="hidden"><div class="panel"><div class="ph">Kundendisplay / Bildschirm 2</div><div class="pb"><div class="screenctl"><button class="btn" data-screen="idle">Airport Screensaver</button><button class="btn" data-screen="blank">Leerer Bildschirm</button><button class="btn" data-screen="flight">Fluginformation</button><button class="btn" data-screen="ad">Werbung</button><button class="btn" data-screen="star">Star Alliance</button><button class="btn dark" data-screen="closed">Schalter geschlossen</button></div><p style="color:#6d7680;margin-top:12px">Boardingpass, Bag Tag, Zahlungen, Upgrade und Sonderfall-Hinweise werden automatisch aus dem Arbeitsablauf gesendet.</p></div></div></section>
+<section id="logView" class="hidden"><div class="panel"><div class="ph">Schichtprotokoll</div><div class="pb log" id="logBox"></div></div></section>
+</main></div>
 <script>
-(()=>{
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const STORE="auaV11";
-const flights=[
- {no:"OS201",to:"Berlin",iata:"BER",time:"07:00",gate:"F12",aircraft:"A320neo",closed:false},
- {no:"OS451",to:"London",iata:"LHR",time:"08:20",gate:"D24",aircraft:"A320neo",closed:false},
- {no:"OS431",to:"Paris",iata:"CDG",time:"09:25",gate:"F22",aircraft:"A320neo",closed:false},
- {no:"OS81",to:"Los Angeles",iata:"LAX",time:"10:35",gate:"D31",aircraft:"B787-9",closed:false},
- {no:"OS65",to:"Chicago",iata:"ORD",time:"10:55",gate:"D34",aircraft:"B787-9",closed:false},
- {no:"OS87",to:"New York",iata:"JFK",time:"11:20",gate:"D36",aircraft:"B787-9",closed:false},
- {no:"OS513",to:"Milan",iata:"MXP",time:"12:20",gate:"F19",aircraft:"A320",closed:false},
- {no:"OS721",to:"Belgrade",iata:"BEG",time:"14:30",gate:"D15",aircraft:"A320",closed:false}
-];
-const first=["Anna","Lukas","Sophie","Michael","Laura","Jonas","Clara","Felix","Mara","Oliver","Nina","Thomas","Sarah","Julia","Daniel","Emily","Noah","Emma"];
-const last=["Berger","Huber","Keller","Novak","Schmidt","Weiß","Hartmann","Wagner","Steiner","Meier","Fischer","Leitner","Moser","Gruber","König"];
-function seed(){
- let id=1,pax=[];
- flights.forEach((f,fi)=>{
-  const count=f.aircraft==="B787-9"?16:10;
-  for(let i=0;i<count;i++){
-   const cls=i%7===0?"Business":"Economy";
-   pax.push({id:id++,pnr:`A${String(10000+id).slice(-5)}`,name:`${first[(fi+i)%first.length]} ${last[(fi*2+i)%last.length]}`,flight:f.no,class:cls,fare:cls==="Business"?"Business Classic":i%4===0?"Economy Light":"Economy Classic",status:"Open",seat:"",docs:i%15===0?"Manual check":"Open",bags:[],ticket:`257-${4000000000+id}`});
-  }
- });
- return {pax,activeFlight:null,activePax:null,paused:false,tx:[]};
+const A={
+OS:{name:"Austrian Airlines",short:"Austrian",logo:"assets/austrian.png",brand:"#e21b22",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#2B3087"},
+LH:{name:"Lufthansa",short:"Lufthansa",logo:"assets/lufthansa.png",brand:"#071d49",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#071d49"},
+LX:{name:"SWISS",short:"SWISS",logo:"assets/swiss.png",brand:"#e00000",accent:"#fff",desc:"Swiss International Air Lines · Star Alliance",alliance:true,biz:"#b80000"},
+SN:{name:"Brussels Airlines",short:"Brussels",logo:"assets/brussels.png",brand:"#061a54",accent:"#fff",desc:"Lufthansa Group · Star Alliance",alliance:true,biz:"#061a54"},
+BA:{name:"British Airways",short:"British Airways",logo:"assets/british-airways.png",brand:"#075aaa",accent:"#fff",desc:"oneworld member",alliance:false,biz:"#143b72"},
+EW:{name:"Eurowings",short:"Eurowings",brand:"#6b2b72",accent:"#fff",desc:"Lufthansa Group",alliance:false,biz:"#6b2b72"},
+TK:{name:"Turkish Airlines",short:"Turkish Airlines",brand:"#c70a0c",accent:"#fff",desc:"Star Alliance member",alliance:true,biz:"#9c0a0b"},
+AC:{name:"Air Canada",short:"Air Canada",brand:"#d8292f",accent:"#fff",desc:"Star Alliance member",alliance:true,biz:"#1c1c1c"},
+UA:{name:"United Airlines",short:"United",brand:"#005daa",accent:"#fff",desc:"Star Alliance member",alliance:true,biz:"#003b6f"}
+};
+const destinations=["London Heathrow","Frankfurt","Zurich","Brussels","Paris CDG","Amsterdam","Stockholm","Copenhagen","Barcelona","Rome Fiumicino","New York JFK","Chicago O'Hare","Istanbul","Munich","Berlin","Hamburg","Athens","Lisbon"];
+const first=["Anna","Felix","Sophie","Leon","Emma","Lukas","Mia","David","Laura","Jonas","Sarah","Noah","Julia","Maximilian","Nina","Alexander","Lena","Daniel","Marie","Tobias"];
+const last=["Huber","Gruber","Wagner","Mayer","Schmidt","Bauer","Hofer","Leitner","Moser","Berger","Fischer","Steiner","Wolf","Pichler","Weber"];
+let state={air:"OS",flight:null,pax:null,logs:[]};
+function rand(a){return a[Math.floor(Math.random()*a.length)]}
+function casesFor(j,flightIndex){
+ const list=[];
+ if(j===1)list.push("STATUS");
+ if(j===2)list.push("OVERWEIGHT");
+ if(j===3)list.push("DOC");
+ if(j===4)list.push("WCHR");
+ if(j===5)list.push("UMNR");
+ if(j===6)list.push("PET");
+ if(j===7)list.push("STANDBY");
+ if(j===8)list.push("CONNECTION");
+ if(j===9||flightIndex===2&&j===0)list.push("UPGRADE");
+ return list;
 }
-let state;try{state=JSON.parse(localStorage.getItem(STORE))||seed()}catch(e){state=seed()}
-function save(){localStorage.setItem(STORE,JSON.stringify(state));renderAll()}
-function flight(no){return flights.find(f=>f.no===no)} function ap(){return state.pax.find(p=>p.id===state.activePax)}
-function money(v){return new Intl.NumberFormat("de-AT",{style:"currency",currency:"EUR"}).format(v||0)}
-function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),1800)}
-function send(payload){payload.ts=Date.now();localStorage.setItem("auaDisplayV11",JSON.stringify(payload));try{window.ch??=new BroadcastChannel("aua-display-v11");window.ch.postMessage(payload)}catch(e){}}
-function displayStandard(){send({mode:"idle",paused:state.paused})}
-function displayAds(){send({mode:"ads",paused:state.paused})}
-function displayFlight(){if(!state.activeFlight)return toast("Kein aktiver Flug");const f=flight(state.activeFlight),all=state.pax.filter(p=>p.flight===f.no);send({mode:"flight",paused:state.paused,f:{...f,open:all.filter(p=>p.status==="Open").length,done:all.filter(p=>p.status==="Checked-in").length,total:all.length,counter:"351"}})}
-function view(v){$$("nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===v));$$(".view").forEach(x=>x.classList.remove("active"));$("#view-"+v).classList.add("active");if(v==="seats")renderSeats()}
-function renderAll(){
- const open=state.pax.filter(p=>p.status==="Open").length,done=state.pax.length-open,bags=state.pax.reduce((s,p)=>s+p.bags.length,0),fees=state.tx.reduce((s,t)=>s+t.amount,0);
- $("#sFlights").textContent=flights.length;$("#sOpen").textContent=open;$("#sDone").textContent=done;$("#sBags").textContent=bags;$("#sFees").textContent=money(fees);
- const af=state.activeFlight?flight(state.activeFlight):null;$("#activeFlightPill").textContent=af?`${af.no} · ${af.to} · ${af.time}`:"Kein aktiver Flug";$("#counterState").textContent=state.paused?"Pause":"Schalter offen";
- $("#pauseBtn").textContent=state.paused?"Pause beenden":"Pause";$("#closeFlightBtn").textContent=af&&af.closed?"Check-in öffnen":"Check-in schließen";$("#closeFlightBtn").disabled=!af;
- $("#dashFlights").innerHTML=`<table class="table"><thead><tr><th>Flug</th><th>Ziel</th><th>Zeit</th><th>Gate</th><th>Status</th></tr></thead><tbody>${flights.map(f=>`<tr><td><b>${f.no}</b></td><td>${f.to}</td><td>${f.time}</td><td>${f.gate}</td><td><span class="status ${f.closed?"closed":"open"}">${f.closed?"geschlossen":"offen"}</span></td></tr>`).join("")}</tbody></table>`;
- const q=state.activeFlight?state.pax.filter(p=>p.flight===state.activeFlight&&p.status==="Open"):[];
- $("#dashQueue").innerHTML=q.length?q.slice(0,8).map(qrow).join(""):`<div class="panelbody" style="font-size:9px;color:#777">${state.activeFlight?"Keine offenen Passagiere.":"Zuerst Flug wählen."}</div>`;
- $("#queue").innerHTML=q.length?q.map(qrow).join(""):`<div class="panelbody" style="font-size:9px;color:#777">Keine offenen Passagiere.</div>`;
- $("#allFlights").innerHTML=$("#dashFlights").innerHTML;
- $("#allPax").innerHTML=state.pax.slice(0,100).map(p=>`<div class="panel queueitem" style="margin-bottom:7px"><div><strong>${p.name}</strong><small>${p.pnr} · ${p.flight} · ${p.class} · ${p.status}</small></div><button class="btn" data-action="openPax" data-id="${p.id}">Öffnen</button></div>`).join("");
- $("#txList").innerHTML=state.tx.length?state.tx.slice().reverse().map(t=>`<div class="panel queueitem" style="margin-bottom:7px"><div><strong>${t.passenger}</strong><small>${t.type} · ${t.flight}</small></div><b>${money(t.amount)}</b></div>`).join(""):`<div class="panel"><div class="panelbody">Noch keine Zahlungen.</div></div>`;
- renderWork();
+function flightData(code,i){
+ let h=9+i*2+(code.charCodeAt(0)%2),m=[5,20,35,50][i%4];
+ return {id:code+(110+i*17),dest:destinations[(i+code.charCodeAt(1))%destinations.length],time:String(h%24).padStart(2,"0")+":"+String(m).padStart(2,"0"),gate:["F12","F23","G03","G17","D26","C31"][i%6],status:i===0?"CHECK-IN":i===1?"OPEN":"SCHEDULED",aircraft:["A320neo","A321","A220","B787-9"][i%4],pax:makePax(code,i)}
 }
-function qrow(p){return `<div class="queueitem"><div><strong>${p.name}</strong><small>${p.pnr} · ${p.class}</small></div><button class="btn" data-action="openPax" data-id="${p.id}">Öffnen</button></div>`}
+function makePax(code,i){
+ return Array.from({length:10},(_,j)=>({
+  id:j,name:rand(first)+" "+rand(last),booking:code+String(420000+i*100+j),doc:j===3?"Passport":"ID Card",docStatus:j===3?"CHECK_REQUIRED":"OK",
+  bag:null,seat:null,group:null,status:j===0?"Checked-in":"Waiting",fare:j===1?"Business":"Economy",tier:j===1?"Frequent Traveller":"None",
+  cases:casesFor(j,i),special:j===4?"Wheelchair requested":j===5?"Unaccompanied minor":j===6?"Pet in cabin":j===7?"Standby passenger":j===8?"Connection via "+["FRA","MUC","ZRH"][i%3]:"",
+  payment:0,upgrade:false,fastBag:false
+ }))
+}
+const flightDB={};Object.keys(A).forEach(k=>flightDB[k]=Array.from({length:6},(_,i)=>flightData(k,i)));
+function send(p){localStorage.setItem("vieDisplay",JSON.stringify({...p,t:Date.now(),air:state.air,theme:A[state.air]}))}
+function log(x){state.logs.unshift(new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"})+" · "+x);renderLog()}
+function renderAir(){airlines.innerHTML=Object.entries(A).map(([k,a])=>`<button class="airbtn ${state.air===k?"active":""}" data-air="${k}">${a.logo?`<img src="${a.logo}">`:`<span class="fallback">${a.short}</span>`}<span><b>${k}</b><small>${a.alliance?"Star Alliance":"Partner airline"}</small></span></button>`).join("")}
+function setTheme(){let a=A[state.air];document.documentElement.style.setProperty("--brand",a.brand);document.documentElement.style.setProperty("--accent",a.accent);heroBrand.innerHTML=a.logo?`<img class="brandlogo" src="${a.logo}">`:`<div class="brandfallback">${a.name}</div>`;heroName.textContent=a.name;heroDesc.textContent=a.desc}
+function renderFlights(){let fs=flightDB[state.air];flightCount.textContent=fs.length+" Flüge";flightList.innerHTML=fs.map(f=>`<div class="flight ${state.flight===f.id?"selected":""}" data-flight="${f.id}"><b>${f.id}</b><div><b>${f.dest}</b><small> ${f.aircraft}</small></div><div><b>${f.time}</b><small> Abflug</small></div><div class="gate">${f.gate}</div><div class="badge ${f.status==="CHECK-IN"?"ok":f.status==="OPEN"?"warn":""}">${f.status}</div></div>`).join("")}
+function curFlight(){return flightDB[state.air].find(x=>x.id===state.flight)}
+function curPax(){let f=curFlight();return f?.pax.find(x=>x.id===state.pax)}
+function caseLabel(c){return {STATUS:"Statuskunde",OVERWEIGHT:"Übergepäck",DOC:"Dokument prüfen",WCHR:"Special Assistance",UMNR:"Minderjährig",PET:"Haustier",STANDBY:"Standby",CONNECTION:"Anschlussflug",UPGRADE:"Upgrade möglich"}[c]||c}
+function renderPax(){
+ let f=curFlight();if(!f){passengers.innerHTML='<div style="color:#7a838a">Noch kein Flug gewählt.</div>';paxCount.textContent="";return}
+ currentFlightLabel.textContent=f.id+" · "+f.dest;paxCount.textContent=f.pax.filter(x=>x.status==="Waiting").length+" offen";
+ passengers.innerHTML=f.pax.map(p=>`<div class="passenger ${state.pax===p.id?"active":""}" data-pax="${p.id}"><b>${p.name}</b><small>${p.booking} · ${p.status}${p.seat?" · Sitz "+p.seat:""}</small><div class="casechips">${p.fare==="Business"?'<span class="chip biz">Business</span>':""}${p.cases.map(c=>`<span class="chip ${["OVERWEIGHT","DOC","STANDBY"].includes(c)?"warn":""}">${caseLabel(c)}</span>`).join("")}</div></div>`).join("")
+}
+function seatMap(p){let out="";for(let r=1;r<=16;r++){for(let c=0;c<7;c++){if(c===3){out+='<span class="aisle"></span>';continue}let l="ABCDEF"[c>3?c-1:c],s=r+l,taken=((r*7+c)%11===0);out+=`<button class="seat ${r<=4?"biz":""} ${taken?"taken":""} ${p.seat===s?"sel":""}" ${taken?"disabled":""} data-seat="${s}">${s}</button>`}}return out}
+function extraCost(p,newSeat){
+ let row=Number((newSeat||p.seat||"99").match(/\d+/)?.[0]||99),cost=0;
+ if(p.fare==="Economy"&&row<=4)cost+=12;
+ return cost;
+}
 function renderWork(){
- const p=ap(),box=$("#work");if(!p){box.innerHTML=`<div class="panelbody">${state.activeFlight?"Wähle links den nächsten Passagier.":"Zuerst einen Flug auswählen."}</div>`;return}
- const f=flight(p.flight);
- box.innerHTML=`<div class="panelhead"><h2>${p.name} · ${p.pnr}</h2><span class="status ${p.class==="Business"?"biz":"open"}">${p.class}</span></div><div class="panelbody"><div class="details">
- <dl class="dl"><dt>Flug</dt><dd>${p.flight} · ${f.to}</dd><dt>Zeit</dt><dd>${f.time}</dd><dt>Gate</dt><dd>${f.gate}</dd></dl>
- <dl class="dl"><dt>Tarif</dt><dd>${p.fare}</dd><dt>Sitz</dt><dd>${p.seat||"Noch keiner"}</dd><dt>Dokumente</dt><dd>${p.docs}</dd></dl>
- <dl class="dl"><dt>Gepäck</dt><dd>${p.bags.length}</dd><dt>Ticket</dt><dd>${p.ticket}</dd><dt>Status</dt><dd>${p.status}</dd></dl></div>
- <div class="actions"><button class="btn" data-action="docs">Dokumente prüfen</button><button class="btn" data-action="autoSeat">Sitz automatisch</button><button class="btn" data-action="displaySeatMap">Sitzplan am Display</button><button class="btn" data-view="seats">Sitzplan intern</button><button class="btn" data-action="bag">Gepäck</button><button class="btn soft" data-action="sendJourney">Passagierdisplay</button><button class="btn red" data-action="complete">Check-in abschließen</button></div></div>`;
+ let f=curFlight(),p=curPax();if(!p){passengerWork.innerHTML='<div style="color:#7a838a">Wähle einen Passagier aus der Liste.</div>';return}
+ let issueText=p.cases.length?`<div class="issue"><b>Sonderfall:</b> ${p.cases.map(caseLabel).join(" · ")}<br>${p.special||""}</div>`:'<div class="okbox">Keine besonderen Hinweise für diesen Passagier.</div>';
+ passengerWork.innerHTML=`${issueText}
+ <div class="section"><h3>1 · Identität & Dokumente</h3><div class="formgrid">
+ <div class="field"><label>Name</label><input value="${p.name}" id="nm"></div><div class="field"><label>Buchungscode</label><input value="${p.booking}" id="pnr"></div>
+ <div class="field"><label>Reisedokument</label><select id="doc"><option>${p.doc}</option><option>Passport</option><option>ID Card</option></select></div>
+ <div class="field"><label>Dokumentennummer</label><input id="docno" placeholder="z. B. P4382019"></div>
+ <div class="field"><label>Dokumentenprüfung</label><select id="doccheck"><option value="OK">Gültig / geprüft</option><option value="MANUAL">Manuelle Prüfung erforderlich</option><option value="FAIL">Nicht akzeptiert</option></select></div>
+ <div class="field"><label>Nationalität</label><input id="nation" value="AT"></div></div></div>
+
+ <div class="section"><h3>2 · Gepäck & Bag Drop</h3><div class="formgrid">
+ <div class="field"><label>Aufgabegepäck kg</label><input id="bag" type="number" step=".1" placeholder="Gewicht kg"></div>
+ <div class="field"><label>Handgepäck</label><select id="cabin"><option>1 Stück</option><option>2 Stück</option><option>Keines</option></select></div>
+ <div class="field"><label>Bag Drop</label><select id="bagdrop"><option>Normaler Check-in</option><option>Fast Bag Drop</option></select></div>
+ <div class="field"><label>Bag Tag Ziel</label><input id="bagdest" value="${p.cases.includes("CONNECTION")?p.special.split(" ").pop():f.dest}"></div>
+ </div><div class="actions"><button class="btn" id="weigh">Gewicht simulieren</button><button class="btn" id="calcBag">Übergepäck prüfen</button><button class="btn" id="showBag">Bag Tag anzeigen</button></div><div id="bagCost"></div></div>
+
+ <div class="section"><h3>3 · Sitzplatz & Reiseklasse</h3><div class="seatmap">${seatMap(p)}</div>
+ <div class="actions"><button class="btn" id="autoSeat">Automatisch wählen</button><button class="btn" id="showSeat">Sitzplatz am Display</button>${p.cases.includes("UPGRADE")||p.fare==="Economy"?'<button class="btn warn" id="offerUpgrade">Upgrade anbieten</button>':""}</div><div id="seatCost"></div></div>
+
+ <div class="section"><h3>4 · Sonderfälle</h3><div class="formgrid">
+ <div class="field"><label>SSR / Assistance</label><select id="ssr"><option>Keine</option><option ${p.cases.includes("WCHR")?"selected":""}>WCHR · Wheelchair</option><option ${p.cases.includes("UMNR")?"selected":""}>UMNR · Unaccompanied Minor</option><option ${p.cases.includes("PET")?"selected":""}>PETC · Pet in cabin</option></select></div>
+ <div class="field"><label>Status / Priority</label><select id="tier"><option>${p.tier}</option><option>Frequent Traveller</option><option>Senator</option><option>HON Circle</option></select></div>
+ <div class="field"><label>Standby</label><select id="standby"><option>${p.cases.includes("STANDBY")?"Ja":"Nein"}</option><option>Ja</option><option>Nein</option></select></div>
+ <div class="field"><label>Anschlussflug</label><input id="connection" value="${p.cases.includes("CONNECTION")?p.special:"Keiner"}"></div>
+ <div class="field full"><label>Interne Notiz</label><textarea id="note" placeholder="z. B. Assistance bestätigt, Guardian geprüft, PETC Dokumente geprüft">${p.special}</textarea></div></div>
+ <div class="actions"><button class="btn" id="showSpecial">Hinweis am Display</button><button class="btn" id="showConnection">Anschlussinfo anzeigen</button></div></div>
+
+ <div class="section"><h3>5 · Abschluss</h3><div class="actions"><button class="btn" id="showPax">Passagierinfo</button><button class="btn" id="showBP">Boardingpass Vorschau</button><button class="btn primary" id="complete">Check-in abschließen</button></div></div>`;
+
+ document.querySelectorAll(".seat").forEach(b=>b.onclick=()=>{let old=p.seat;p.seat=b.dataset.seat;let c=extraCost(p,p.seat);seatCost.innerHTML=c?`<div class="pricebox"><span>Sitzplatz-/Premiumzonen-Aufpreis</span><strong>${c.toFixed(2)} €</strong></div>`:"";renderWork();});
+ autoSeat.onclick=()=>{let free=[...document.querySelectorAll(".seat:not(:disabled)")];if(free.length){p.seat=free[Math.floor(Math.random()*free.length)].dataset.seat;renderWork()}};
+ weigh.onclick=()=>bag.value=(8+Math.random()*22).toFixed(1);
+ calcBag.onclick=()=>{let w=+(bag.value||0),limit=p.fare==="Business"?32:23,cost=w>limit?Math.ceil(w-limit)*12:0;p.payment=cost;bagCost.innerHTML=cost?`<div class="pricebox"><span>Übergepäck · ${(w-limit).toFixed(1)} kg</span><strong>${cost.toFixed(2)} €</strong></div>`:`<div class="okbox">Gepäck innerhalb des Freigepäcks (${limit} kg).</div>`;if(cost)send({mode:"payment",title:"Excess baggage",amount:cost,text:`${w.toFixed(1)} kg · allowance ${limit} kg`})};
+ showBag.onclick=()=>send({mode:"bagtag",flight:f,passenger:p,weight:bag.value||"–",destination:bagdest.value});
+ showSeat.onclick=()=>send({mode:"seat",flight:f,passenger:p,cost:extraCost(p,p.seat)});
+ if(document.getElementById("offerUpgrade"))offerUpgrade.onclick=()=>{let price=f.aircraft==="B787-9"?280:95;send({mode:"upgrade",flight:f,passenger:p,amount:price});if(confirm(`Upgrade für ${price} € akzeptieren?`)){p.upgrade=true;p.fare="Business";p.payment+=price;log(`${p.name} Upgrade akzeptiert · ${price} €`);renderWork()}};
+ showSpecial.onclick=()=>send({mode:"special",passenger:p,ssr:ssr.value,note:note.value});
+ showConnection.onclick=()=>send({mode:"connection",flight:f,passenger:p,connection:connection.value});
+ showPax.onclick=()=>send({mode:"passenger",flight:f,passenger:{...p,bag:bag.value||"–",docno:docno.value||"–"}});
+ showBP.onclick=()=>send({mode:"boardingpass",flight:f,passenger:p,seat:p.seat||"–",group:p.group||"–"});
+ complete.onclick=()=>{
+   if(!p.seat)return alert("Bitte Sitzplatz wählen.");
+   if(!docno.value.trim())return alert("Bitte Dokumentennummer eintragen.");
+   if(doccheck.value==="FAIL")return alert("Dokument nicht akzeptiert. Check-in kann nicht abgeschlossen werden.");
+   if(p.cases.includes("UMNR")&&!note.value.trim())return alert("Für UMNR bitte Betreuungs-/Guardian-Vermerk eintragen.");
+   if(p.cases.includes("PET")&&!note.value.toLowerCase().includes("pet"))return alert("Für PETC bitte Dokumenten-/Transportvermerk eintragen.");
+   if(p.cases.includes("STANDBY")&&standby.value==="Ja")return alert("Standby-Passagier muss vor Check-in bestätigt werden.");
+   p.bag=bag.value||"0";p.fastBag=bagdrop.value==="Fast Bag Drop";p.group=p.fare==="Business"?1:Number(p.seat.match(/\d+/)[0])<=4?2:3;p.status="Checked-in";
+   let seatFee=extraCost(p,p.seat);p.payment+=seatFee;
+   log(`${p.name} eingecheckt · ${f.id} · ${p.seat} · Gruppe ${p.group}${p.upgrade?" · Upgrade":""}${p.fastBag?" · Fast Bag Drop":""}`);
+   send({mode:"success",flight:f,passenger:p,total:p.payment});
+   state.pax=null;renderPax();renderWork();setTimeout(()=>send({mode:"boardingpass",flight:f,passenger:p,seat:p.seat,group:p.group}),2200)
+ };
 }
-function chooseFlight(){
- const opts=flights.map(f=>`<option value="${f.no}">${f.no} · ${f.to} · ${f.time} · ${state.pax.filter(p=>p.flight===f.no&&p.status==="Open").length} offen</option>`).join("");
- modal(`<h2>Aktiven Check-in-Flug wählen</h2><p>Danach siehst du nur noch die Passagiere dieses Flugs.</p><select id="flightChoice">${opts}</select><div class="modalactions"><button class="btn" data-action="closeModal">Abbrechen</button><button class="btn red" data-action="confirmFlight">Aktivieren</button></div>`)
-}
-function confirmFlight(){state.activeFlight=$("#flightChoice").value;state.activePax=null;state.paused=false;save();closeModal();displayFlight();view("checkin")}
-function toggleFlight(){if(!state.activeFlight)return toast("Kein Flug gewählt");const f=flight(state.activeFlight);f.closed=!f.closed;renderAll();displayFlight();toast(f.closed?"Check-in geschlossen":"Check-in geöffnet")}
-function togglePause(){state.paused=!state.paused;state.activePax=null;save();if(state.paused)send({mode:"ads",paused:true});else displayFlight();toast(state.paused?"Pause":"Pause beendet")}
-function openPax(id){if(state.paused)return toast("Schalter ist in Pause");const p=state.pax.find(x=>x.id===+id);if(!p)return;if(state.activeFlight&&p.flight!==state.activeFlight)return toast("Falscher Flug");state.activePax=p.id;save();view("checkin");sendJourney()}
-function searchPax(){const q=$("#searchPax").value.toLowerCase().trim();const p=state.pax.find(x=>(!state.activeFlight||x.flight===state.activeFlight)&&x.status==="Open"&&(x.name.toLowerCase().includes(q)||x.pnr.toLowerCase().includes(q)));if(!p)return toast("Nicht gefunden");openPax(p.id)}
-function docs(){const p=ap();modal(`<h2>Dokumentenprüfung</h2><p>${p.name}</p><select id="docResult"><option>OK</option><option>Manual check</option><option>Visa check</option></select><div class="modalactions"><button class="btn" data-action="closeModal">Abbrechen</button><button class="btn red" data-action="saveDocs">Speichern</button></div>`)}
-function saveDocs(){const p=ap();p.docs=$("#docResult").value;save();closeModal();send({mode:"success",title:p.docs==="OK"?"Documents verified":"Document check saved",text:p.docs,class:p.class});setTimeout(sendJourney,1800)}
-function occupied(p){return new Set(state.pax.filter(x=>x.flight===p.flight&&x.id!==p.id&&x.seat).map(x=>x.seat))}
-function freeAutoSeats(p){const f=flight(p.flight),max=f.aircraft==="B787-9"?34:28,occ=occupied(p),out=[];const start=p.class==="Business"?1:5,end=p.class==="Business"?4:max;for(let r=start;r<=end;r++)for(const l of ["A","B","C","D","E","F"]){const s=r+l;if(!occ.has(s))out.push(s)}return out}
-function autoSeat(){const p=ap(),a=freeAutoSeats(p);if(!a.length)return toast("Keine freien Sitze");p.seat=a[Math.floor(Math.random()*a.length)];save();send({mode:"success",title:"Seat assigned",text:`Seat ${p.seat}`,class:p.class});setTimeout(sendJourney,1600)}
-function renderSeats(){const p=ap(),panel=$("#seatPanel");if(!p){panel.innerHTML=`<div class="panelbody">Kein Passagier geöffnet.</div>`;return}const f=flight(p.flight),max=f.aircraft==="B787-9"?34:28,occ=occupied(p);let h=`<div class="panelhead"><h2>${p.name} · ${p.flight}</h2><b>Sitz ${p.seat||"–"}</b></div><div class="seatmap">`;for(let r=1;r<=max;r++){for(const l of ["A","B","C"]){const s=r+l;h+=seatBtn(s,r,occ,p)}h+=`<span class="aisle"></span>`;for(const l of ["D","E","F"]){const s=r+l;h+=seatBtn(s,r,occ,p)}}h+=`</div><div class="note">Reihen 1–4 = Business-Zone (#2B3087). Economy-Auswahl dort kostet 12 €.</div>`;panel.innerHTML=h}
-function seatBtn(s,r,occ,p){return `<button class="seat ${occ.has(s)?"occ":p.seat===s?"sel":""} ${r<=4?"business":""}" ${occ.has(s)?"disabled":""} data-action="selectSeat" data-seat="${s}">${s}</button>`}
-function selectSeat(s){const p=ap(),r=parseInt(s);if(r<=4&&p.class!=="Business"){modal(`<h2>Business-Zone · ${s}</h2><p>Für diesen Economy-Passagier kostet dieser Sitz 12 €.</p><div class="modalactions"><button class="btn" data-action="closeModal">Abbrechen</button><button class="btn purple" data-action="paidSeat" data-seat="${s}">12 € berechnen & auswählen</button></div>`);return}applySeat(s,0)}
-function paidSeat(s){const p=ap();state.tx.push({passenger:p.name,flight:p.flight,type:`Seat ${s}`,amount:12});applySeat(s,12);closeModal()}
-function applySeat(s,fee){const p=ap();p.seat=s;save();renderSeats();send({mode:"success",title:"Seat confirmed",text:`Seat ${s}${fee?" · €12":""}`,class:p.class});setTimeout(sendJourney,1600)}
-function displaySeatMap(){const p=ap();if(!p)return;const f=flight(p.flight),max=f.aircraft==="B787-9"?34:28;send({mode:"seatmap",p:{name:p.name,flight:p.flight,to:f.to,iata:f.iata,current:p.seat,rows:max,occupied:[...occupied(p)],class:p.class}})}
-function randomWeight(){const x=Math.random();return +(x<.72?(12+Math.random()*10.5):x<.94?(23.5+Math.random()*7.8):(32.2+Math.random()*4)).toFixed(1)}
-function bag(){const p=ap(),w=randomWeight();modal(`<h2>Gepäck annehmen</h2><p>${p.name}</p><div class="formgrid"><div class="field"><label>Gewicht</label><input id="bagW" value="${w}" readonly></div><div class="field"><label>Art</label><select id="bagType"><option>Standard</option><option>Priority</option><option>Sportgepäck</option></select></div></div><div class="modalactions"><button class="btn" data-action="rerollBag">Neu wiegen</button><button class="btn soft" data-action="previewBag">Auf Display</button><button class="btn" data-action="closeModal">Abbrechen</button><button class="btn red" data-action="acceptBag">Übernehmen</button></div>`);previewBag()}
-function baggageResult(p,w){const limit=p.class==="Business"?32:23;if(w>32)return {text:"Over 32 kg – not accepted",fee:0,reject:true};if(w>limit)return {text:"Overweight baggage",fee:55,reject:false};return {text:"Within baggage allowance",fee:0,reject:false}}
-function previewBag(){const p=ap(),w=+$("#bagW").value,r=baggageResult(p,w);send({mode:"baggage",passenger:p.name,weight:w,result:r,class:p.class})}
-function rerollBag(){const w=randomWeight();$("#bagW").value=w;previewBag()}
-function acceptBag(){const p=ap(),w=+$("#bagW").value,r=baggageResult(p,w);if(r.reject)return toast("Über 32 kg nicht akzeptiert");p.bags.push({weight:w,type:$("#bagType").value});if(r.fee)state.tx.push({passenger:p.name,flight:p.flight,type:"Overweight baggage",amount:r.fee});save();closeModal();send({mode:"success",title:"Baggage accepted",text:`${w.toFixed(1)} kg`,class:p.class});setTimeout(sendJourney,1700)}
-function sendJourney(){const p=ap();if(!p)return;const f=flight(p.flight);send({mode:"journey",p:{name:p.name,flight:p.flight,to:f.to,iata:f.iata,time:f.time,gate:f.gate,seat:p.seat||"Not assigned",class:p.class,bags:p.bags.length}})}
-function complete(){const p=ap(),f=flight(p.flight);if(f.closed)return toast("Check-in ist geschlossen");if(p.docs!=="OK")return toast("Dokumente noch nicht OK");if(!p.seat)return toast("Noch kein Sitzplatz");p.status="Checked-in";state.activePax=null;save();send({mode:"success",title:"Check-in complete",text:p.name,class:p.class});setTimeout(displayFlight,2200);toast("Passagier eingecheckt")}
-function modal(h){$("#modal").innerHTML=h;$("#modalbg").classList.remove("hidden")}function closeModal(){$("#modalbg").classList.add("hidden")}
-function handle(b){const a=b.dataset.action,id=b.dataset.id,seat=b.dataset.seat;({chooseFlight,confirmFlight,toggleFlightCheckin:toggleFlight,togglePause,openPax:()=>openPax(id),searchPassenger:searchPax,docs,saveDocs,autoSeat,displaySeatMap,selectSeat:()=>selectSeat(seat),paidSeat:()=>paidSeat(seat),bag,rerollBag,previewBag,acceptBag,sendJourney,complete,displayStandard,displayFlight,displayAds,closeModal}[a]||(()=>{}))()}
-document.addEventListener("click",e=>{const v=e.target.closest("[data-view]");if(v){view(v.dataset.view);return}const b=e.target.closest("[data-action]");if(b)handle(b)});
-$("#searchPax").addEventListener("keydown",e=>{if(e.key==="Enter")searchPax()});$("#modalbg").addEventListener("click",e=>{if(e.target===$("#modalbg"))closeModal()});
-$("#openDisplay").addEventListener("click",()=>window.open("passenger-display.html?v=11","AUA_DISPLAY_V11","width=1280,height=800"));
-setInterval(()=>$("#clock").textContent=new Date().toLocaleTimeString("de-AT"),1000);
-renderAll();displayStandard();
-})();
-</script>
-</body>
-</html>
+function renderLog(){logBox.innerHTML=state.logs.map(x=>`<div>${x}</div>`).join("")||"<div>Noch keine Aktionen.</div>"}
+function refresh(){renderAir();setTheme();renderFlights();renderPax();renderWork();renderLog()}
+document.addEventListener("click",e=>{
+ let a=e.target.closest("[data-air]");if(a){state.air=a.dataset.air;state.flight=null;state.pax=null;refresh();send({mode:"idle"});log("Airline gewechselt: "+A[state.air].name)}
+ let f=e.target.closest("[data-flight]");if(f){state.flight=f.dataset.flight;state.pax=null;refresh();send({mode:"flight",flight:curFlight()});log("Flug ausgewählt: "+state.flight)}
+ let p=e.target.closest("[data-pax]");if(p){state.pax=+p.dataset.pax;renderPax();renderWork()}
+ let sc=e.target.closest("[data-screen]");if(sc){let mode=sc.dataset.screen;if(mode==="flight"&&!curFlight())return alert("Zuerst Flug auswählen.");send({mode,flight:curFlight()});log("Display: "+mode)}
+ let n=e.target.closest("[data-view]");if(n){document.querySelectorAll(".navbtn").forEach(x=>x.classList.remove("active"));n.classList.add("active");workView.classList.toggle("hidden",n.dataset.view!=="work");displayView.classList.toggle("hidden",n.dataset.view!=="display");logView.classList.toggle("hidden",n.dataset.view!=="log")}
+});
+setInterval(()=>clock.textContent=new Date().toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"}),1000);
+refresh();send({mode:"idle"});
+</script></body></html>
