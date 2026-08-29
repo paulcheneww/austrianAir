@@ -1,28 +1,46 @@
-# VIE Multi-Airline Check-in V5 – echte Logos
+# VIE Multi-Airline Check-in V6
 
-Diese Version entfernt die vorher selbst erzeugten Trainings-Wordmarks vollständig.
+V6 combines the multi-airline/real-route project with the much richer second-screen workflow from the older Austrian V11 simulator.
 
-## Logos
+## Main workflow
+- choose airline
+- choose one active flight
+- check-in queue is limited to that flight
+- passenger search
+- document verification
+- seat assignment / seat map
+- baggage weighing and fee simulation
+- special cases
+- check-in completion
+- passenger overview and transaction view
 
-Lokal im selben Ordner bleiben die vom Nutzer hochgeladenen Originaldateien:
-- Vienna Airport
-- Austrian Airlines
-- Lufthansa
-- SWISS
-- Brussels Airlines
-- British Airways
-- Star Alliance Wortmarke
-- Star Alliance Symbol
+## Second screen
+The passenger-facing display can be opened directly from the top bar or display view.
 
-Für die weiteren Airlines verwendet die Website echte Airline-Logo-Bilddateien aus der öffentlichen,
-nach IATA-Codes organisierten `spydogenesis/airlines-logo` Sammlung über jsDelivr.
+Screens:
+- Vienna Airport screensaver
+- airline-specific screensaver
+- blank screen
+- flight info
+- ready for next passenger
+- journey overview
+- seat map
+- baggage scale
+- airline-specific checked baggage information
+- airline-specific cabin baggage size information
+- check-in info
+- business/status information
+- document verification
+- boarding pass
+- bag tag
+- special assistance
+- connection information
+- upgrade offer
+- success animation
+- Star Alliance information
+- advertising
+- closed counter
 
-Dadurch werden nicht mehr die selbst erzeugten Kreis-/Textlogos angezeigt.
+Airline-specific baggage information is a training profile and can vary by fare, ticket, route and current airline policy.
 
-## Hinweis
-
-Die zusätzlichen Logos werden beim Öffnen der Website aus dem Internet geladen.
-Die HTML-Dateien und die vom Nutzer gelieferten Logos liegen weiterhin flach im Hauptordner.
-Die Route-/Airline-Logik aus V4 bleibt erhalten.
-
-Alle Marken und Logos gehören ihren jeweiligen Rechteinhabern; Nutzung hier nur im privaten Simulator.
+The project remains flat: all local images are next to `index.html`.
